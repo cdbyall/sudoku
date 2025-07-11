@@ -6,7 +6,7 @@
     <title>Single Prompt AI Sudoku</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Kalam:wght@400;700&family=Patrick+Hand&family=Caveat&family=Shadows+Into+Light&family=Architects+Daughter&family=Roboto+Mono&family=Bangers&family=Creepster&family=Nosifier&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
     <style>
         :root {
@@ -20,6 +20,9 @@
             --given-text-color: #333;
             --error-color: #e74c3c;
             --correct-color: #2ecc71;
+            --candidate-color: #888;
+            --color-mode-one: #a8e6cf; /* green */
+            --color-mode-two: #ffd3b6; /* yellow */
             --font-family: 'Poppins', sans-serif;
         }
 
@@ -33,6 +36,7 @@
             height: 100vh;
             margin: 0;
             overflow: hidden;
+            transition: font-family 0.5s;
         }
         
         #animated-bg {
@@ -47,75 +51,20 @@
             animation: gradientBG 15s ease infinite;
         }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes bg-stars { from { background-position: 0 0; } to { background-position: -10000px 5000px; } }
+        @keyframes bg-bubbles { from { background-position: 0 0; } to { background-position: 1000px 1000px; } }
+        @keyframes bg-sunset { 0% { background-position: 0% 82%; } 50% { background-position: 100% 19%; } 100% { background-position: 0% 82%; } }
 
-        #game-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            max-width: 500px;
-            padding: 10px;
-            box-sizing: border-box;
-            position: relative;
-        }
 
-        #title-screen {
-            text-align: center;
-            animation: fadeIn 2s;
-        }
-
-        #title-screen h1 {
-            font-size: clamp(2rem, 8vw, 3rem);
-            margin-bottom: 20px;
-            animation: slideIn 1s ease-out;
-            color: var(--accent-color);
-            font-weight: 600;
-        }
-
-        #game-board {
-             width: 100%;
-        }
-
-        #top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            max-width: 450px;
-            margin: 0 auto 10px;
-        }
-
-        #lives-container {
-            font-size: 1.5rem;
-            color: var(--accent-color);
-        }
-
-        #game-buttons button {
-             background: none;
-             border: none;
-             font-size: 1.5rem;
-             cursor: pointer;
-             color: var(--text-color);
-             margin-left: 10px;
-        }
-
-        #sudoku-grid {
-            display: grid;
-            grid-template-columns: repeat(9, 1fr);
-            background-color: var(--grid-background);
-            border: 3px solid var(--grid-background);
-            width: 100%;
-            max-width: 450px;
-            aspect-ratio: 1 / 1;
-            margin: 0 auto;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
+        #game-container { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 500px; padding: 10px; box-sizing: border-box; position: relative; }
+        #title-screen { text-align: center; animation: fadeIn 2s; }
+        #title-screen h1 { font-size: clamp(2rem, 8vw, 3rem); margin-bottom: 20px; animation: slideIn 1s ease-out; color: var(--accent-color); font-weight: 600; }
+        #game-board { width: 100%; }
+        #top-bar { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 450px; margin: 0 auto 10px; }
+        #lives-container { font-size: 1.5rem; color: var(--accent-color); }
+        #game-buttons button { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-color); margin-left: 10px; }
+        #sudoku-grid { display: grid; grid-template-columns: repeat(9, 1fr); background-color: var(--grid-background); border: 3px solid var(--grid-background); width: 100%; max-width: 450px; aspect-ratio: 1 / 1; margin: 0 auto; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
 
         .sudoku-cell {
             background-color: var(--cell-background);
@@ -127,7 +76,11 @@
             cursor: pointer;
             border: 1px solid #d1eaf7;
             transition: background-color 0.2s;
+            position: relative;
         }
+        
+        .candidate-grid { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; height: 100%; }
+        .candidate-cell { font-size: 0.6rem; color: var(--candidate-color); text-align: center; }
 
         .sudoku-cell:nth-child(3n):not(:nth-child(9n)) { border-right: 3px solid var(--grid-background); }
         .sudoku-cell:nth-child(9n) { border-right: none; }
@@ -139,61 +92,28 @@
 
         .sudoku-cell.selected { background-color: var(--accent-color); color: white; }
         .sudoku-cell.given { color: var(--given-text-color); cursor: not-allowed; background-color: #e0eef5; }
-        .sudoku-cell.correct { background-color: var(--cell-background); color: var(--correct-color); font-weight: bold; }
+        .sudoku-cell.correct { color: var(--correct-color); font-weight: bold; }
         .sudoku-cell.error { animation: shake 0.5s; background-color: var(--error-color); }
+        .sudoku-cell.color-mode-one { background-color: var(--color-mode-one); }
+        .sudoku-cell.color-mode-two { background-color: var(--color-mode-two); }
 
-        #controls {
-            margin-top: 20px;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 5px;
-        }
-
-        .control-btn {
-            background-color: var(--button-bg);
-            color: var(--button-text);
-            border: none;
-            padding: 10px 20px;
-            font-size: 1em;
-            cursor: pointer;
-            border-radius: 20px;
-            font-weight: 600;
-            transition: transform 0.2s;
-        }
+        #controls { margin-top: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 5px; }
+        .control-btn { background-color: var(--button-bg); color: var(--button-text); border: none; padding: 10px 15px; font-size: 1em; cursor: pointer; border-radius: 20px; font-weight: 600; transition: transform 0.2s, background-color 0.2s; }
         .control-btn:hover { transform: scale(1.05); }
+        .control-btn.active { background-color: var(--accent-color); color: white; }
 
         #xp-bar-container { width: 100%; background-color: #e0eef5; border-radius: 10px; margin-top: 20px; overflow: hidden; }
         #xp-bar { width: 0%; height: 20px; background: linear-gradient(90deg, var(--button-bg), var(--accent-color)); border-radius: 10px; text-align: center; line-height: 20px; color: white; font-weight: 600; transition: width 0.5s ease-in-out; }
         
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 100;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.4);
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background-color: var(--background-color);
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-        }
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center; }
+        .modal-content { background-color: var(--background-color); padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.2); max-height: 80vh; overflow-y: auto; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .options-grid h3 { grid-column: 1 / -1; margin-bottom: 0; }
+        .options-grid button { width: 100%; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes shake {
-            10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(2px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-            40%, 60% { transform: translate3d(4px, 0, 0); }
-        }
+        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
     </style>
 </head>
 <body>
@@ -228,24 +148,14 @@
         </div>
     </div>
 
-    <div id="options-modal" class="modal">
-        <div class="modal-content">
-            <h2>Options</h2>
-            <p>Unlockables coming soon!</p>
-            <button class="control-btn" id="close-options-btn">Close</button>
-        </div>
-    </div>
+    <div id="options-modal" class="modal"><div class="modal-content" id="options-content"></div></div>
+    <div id="game-over-modal" class="modal"><div class="modal-content"><h2>Game Over</h2><p>You've run out of lives!</p><button class="control-btn" id="restart-game-btn">Play Again</button></div></div>
+    <div id="win-modal" class="modal"><div class="modal-content"><h2>You Win!</h2><p>Puzzle complete! Great job!</p><button class="control-btn" id="win-new-game-btn">New Game</button></div></div>
+    <div id="unlock-modal" class="modal"><div class="modal-content" id="unlock-content"></div></div>
     
-    <div id="game-over-modal" class="modal">
-        <div class="modal-content">
-            <h2>Game Over</h2>
-            <p>You've run out of lives!</p>
-            <button class="control-btn" id="restart-game-btn">Play Again</button>
-        </div>
-    </div>
-
     <script>
         // --- DOM Elements ---
+        const animatedBg = document.getElementById('animated-bg');
         const gameContainer = document.getElementById('game-container');
         const titleScreen = document.getElementById('title-screen');
         const newGameBtn = document.getElementById('new-game-btn');
@@ -259,33 +169,110 @@
         const muteBtn = document.getElementById('mute-btn');
         const fullscreenBtn = document.getElementById('fullscreen-btn');
         const optionsModal = document.getElementById('options-modal');
+        const optionsContent = document.getElementById('options-content');
         const gameOverModal = document.getElementById('game-over-modal');
-        const closeOptionsBtn = document.getElementById('close-options-btn');
+        const winModal = document.getElementById('win-modal');
+        const unlockModal = document.getElementById('unlock-modal');
+        const unlockContent = document.getElementById('unlock-content');
         const restartGameBtn = document.getElementById('restart-game-btn');
+        const winNewGameBtn = document.getElementById('win-new-game-btn');
 
         // --- Game State ---
         let selectedCell = null;
-        let boardState = { puzzle: [], solution: [], playerBoard: [] };
+        let boardState = { puzzle: [], solution: [], playerBoard: [], candidates: [] };
         let lives = 3;
         let isMuted = false;
+        let isCandidateMode = false;
+        let isAutoCandidateMode = false;
+        let isColorMode = false;
+        let isRevealMode = false;
+        let revealsLeft = 3;
+
+        // --- Player Data & Unlocks ---
+        let playerData = {
+            level: 1,
+            xp: 0,
+            xpToNextLevel: 100,
+            unlocked: {
+                backgrounds: ['bg-default'],
+                fonts: ['font-default'],
+                features: []
+            }
+        };
+
+        const unlockables = {
+            2: { type: 'background', id: 'bg-stars', name: 'Starry Night' },
+            3: { type: 'font', id: 'font-kalam', name: 'Kalam' },
+            4: { type: 'background', id: 'bg-bubbles', name: 'Bubbly' },
+            5: { type: 'feature', id: 'feature-color-mode', name: 'Color Mode' },
+            6: { type: 'background', id: 'bg-sunset', name: 'Sunset' },
+            7: { type: 'font', id: 'font-patrick-hand', name: 'Patrick Hand' },
+            8: { type: 'background', id: 'bg-forest', name: 'Enchanted Forest' },
+            9: { type: 'font', id: 'font-caveat', name: 'Caveat' },
+            10: { type: 'feature', id: 'feature-reveal', name: 'Reveal' },
+            11: { type: 'font', id: 'font-shadows', name: 'Shadows Into Light' },
+            12: { type: 'background', id: 'bg-ocean', name: 'Deep Ocean' },
+            13: { type: 'font', id: 'font-architect', name: 'Architect\'s Daughter' },
+            14: { type: 'background', id: 'bg-fire', name: 'Cozy Fireplace' },
+            15: { type: 'font', id: 'font-roboto-mono', name: 'Roboto Mono' },
+            16: { type: 'background', id: 'bg-retro', name: 'Retro Vibes' },
+            17: { type: 'font', id: 'font-bangers', name: 'Bangers' },
+            18: { type: 'background', id: 'bg-spooky', name: 'Spooky Graveyard' },
+            19: { type: 'font', id: 'font-creepster', name: 'Creepster' },
+            20: { type: 'background', id: 'bg-matrix', name: 'Matrix' },
+        };
+
+        const backgroundStyles = {
+            'bg-default': 'linear-gradient(45deg, #fdf6f6, #f1e7fe, #e7f5fe, #fdf6f6)',
+            'bg-stars': 'url(https://www.transparenttextures.com/patterns/stardust.png) #2a2a3e',
+            'bg-bubbles': 'url(https://www.transparenttextures.com/patterns/argyle.png) #a3d8f4',
+            'bg-sunset': 'linear-gradient(to right, #ff7e5f, #feb47b)',
+            'bg-forest': 'linear-gradient(to right, #0f2027, #203a43, #2c5364)',
+            'bg-ocean': 'linear-gradient(to right, #2193b0, #6dd5ed)',
+            'bg-fire': 'linear-gradient(45deg, #ff512f, #f09819)',
+            'bg-retro': 'linear-gradient(90deg, #d53369, #daae51)',
+            'bg-spooky': 'linear-gradient(to top, #09203f, #537895)',
+            'bg-matrix': 'linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url(https://www.transparenttextures.com/patterns/green-fibers.png) #000'
+        };
+
+        const fontStyles = {
+            'font-default': "'Poppins', sans-serif",
+            'font-kalam': "'Kalam', cursive",
+            'font-patrick-hand': "'Patrick Hand', cursive",
+            'font-caveat': "'Caveat', cursive",
+            'font-shadows': "'Shadows Into Light', cursive",
+            'font-architect': "'Architects Daughter', cursive",
+            'font-roboto-mono': "'Roboto Mono', monospace",
+            'font-bangers': "'Bangers', cursive",
+            'font-creepster': "'Creepster', cursive",
+            'font-nosifier': "'Nosifier', cursive",
+        };
+
 
         // --- Sound Engine (Tone.js) ---
         const sounds = {
             correct: new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.1 } }).toDestination(),
             error: new Tone.Synth({ oscillator: { type: 'square' }, envelope: { attack: 0.01, decay: 0.3, sustain: 0, release: 0.1 } }).toDestination(),
-            click: new Tone.Synth({ oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 } }).toDestination()
+            click: new Tone.Synth({ oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 } }).toDestination(),
+            win: new Tone.Synth({ oscillator: { type: 'sawtooth' }, envelope: { attack: 0.1, decay: 0.5, sustain: 0.2, release: 0.5 } }).toDestination(),
+            levelUp: new Tone.Synth({ oscillator: { type: 'fmsine' }, envelope: { attack: 0.2, decay: 0.5, sustain: 0, release: 1 } }).toDestination()
         };
 
         function playSound(sound) {
+            if (!isMuted && Tone.context.state !== 'running') {
+                Tone.start();
+            }
             if (!isMuted) {
                 if (sound === 'correct') sounds.correct.triggerAttackRelease('C5', '8n');
                 if (sound === 'error') sounds.error.triggerAttackRelease('C3', '8n');
                 if (sound === 'click') sounds.click.triggerAttackRelease('C4', '16n');
+                if (sound === 'win') sounds.win.triggerAttackRelease('C4', '2n');
+                if (sound === 'levelUp') sounds.levelUp.triggerAttackRelease('G5', '4n');
             }
         }
 
-        // --- Sudoku Generator (from previous step, unchanged) ---
-        class SudokuGenerator {
+        // --- Sudoku Generator ---
+        class SudokuGenerator { /* ... (same as before) ... */ 
             constructor() { this.board = Array(9).fill(0).map(() => Array(9).fill(0)); }
             isValid(row, col, num) {
                 for (let i = 0; i < 9; i++) { if (this.board[row][i] === num || this.board[i][col] === num) return false; }
@@ -338,22 +325,14 @@
             difficultyScreen.style.display = 'none';
             gameBoard.style.display = 'none';
             gameOverModal.style.display = 'none';
+            winModal.style.display = 'none';
             lives = 3;
             updateLivesDisplay();
         }
 
-        newGameBtn.addEventListener('click', () => {
-            playSound('click');
-            titleScreen.style.display = 'none';
-            difficultyScreen.style.display = 'block';
-        });
-
+        newGameBtn.addEventListener('click', () => { playSound('click'); titleScreen.style.display = 'none'; difficultyScreen.style.display = 'block'; });
         difficultyScreen.addEventListener('click', (e) => {
-            if (e.target.classList.contains('control-btn')) {
-                playSound('click');
-                const difficulty = e.target.dataset.difficulty;
-                startGame(difficulty);
-            }
+            if (e.target.classList.contains('control-btn')) { playSound('click'); const difficulty = e.target.dataset.difficulty; startGame(difficulty); }
         });
 
         function startGame(difficulty) {
@@ -362,10 +341,13 @@
             const generator = new SudokuGenerator();
             boardState.puzzle = generator.createPuzzle(difficulty);
             boardState.playerBoard = boardState.puzzle.map(row => [...row]);
+            boardState.candidates = Array(81).fill(0).map(() => new Set());
             createGrid(boardState.puzzle);
             createControls();
             lives = 3;
+            revealsLeft = 3;
             updateLivesDisplay();
+            updateXPBar();
         }
 
         function createGrid(puzzle) {
@@ -397,9 +379,19 @@
                 btn.addEventListener('click', () => inputNumber(i));
                 controls.appendChild(btn);
             }
+            const candidateBtn = document.createElement('button');
+            candidateBtn.classList.add('control-btn');
+            candidateBtn.id = 'candidate-btn';
+            candidateBtn.textContent = 'Notes';
+            candidateBtn.addEventListener('click', toggleCandidateMode);
+            controls.appendChild(candidateBtn);
         }
 
         function selectCell(cell) {
+            if (isRevealMode) {
+                revealCell(cell);
+                return;
+            }
             if (selectedCell) { selectedCell.classList.remove('selected'); }
             selectedCell = cell;
             selectedCell.classList.add('selected');
@@ -410,80 +402,213 @@
             if (selectedCell && !selectedCell.classList.contains('given') && !selectedCell.classList.contains('correct')) {
                 const row = parseInt(selectedCell.dataset.row);
                 const col = parseInt(selectedCell.dataset.col);
-                
-                if (boardState.solution[row][col] === num) {
-                    // Correct number
-                    selectedCell.textContent = num;
-                    selectedCell.classList.add('correct');
-                    selectedCell.classList.remove('selected');
-                    boardState.playerBoard[row][col] = num;
-                    playSound('correct');
-                    addXP(10);
-                    // Check for win condition
+                const cellIndex = row * 9 + col;
+
+                if (isCandidateMode) {
+                    selectedCell.innerHTML = ''; // Clear main number
+                    if (boardState.candidates[cellIndex].has(num)) {
+                        boardState.candidates[cellIndex].delete(num);
+                    } else {
+                        boardState.candidates[cellIndex].add(num);
+                    }
+                    drawCandidates(selectedCell, cellIndex);
                 } else {
-                    // Incorrect number
-                    playSound('error');
-                    lives--;
-                    updateLivesDisplay();
-                    selectedCell.classList.add('error');
-                    setTimeout(() => {
-                        selectedCell.classList.remove('error');
-                    }, 500);
-                    if (lives <= 0) {
-                        handleGameOver();
+                    if (boardState.solution[row][col] === num) {
+                        selectedCell.innerHTML = '';
+                        selectedCell.textContent = num;
+                        selectedCell.classList.add('correct');
+                        selectedCell.classList.remove('selected');
+                        boardState.playerBoard[row][col] = num;
+                        playSound('correct');
+                        addXP(10);
+                        checkWinCondition();
+                    } else {
+                        playSound('error');
+                        lives--;
+                        updateLivesDisplay();
+                        selectedCell.classList.add('error');
+                        setTimeout(() => { selectedCell.classList.remove('error'); }, 500);
+                        if (lives <= 0) { handleGameOver(); }
                     }
                 }
             }
         }
-        
-        function handleGameOver() {
-            gameOverModal.style.display = 'flex';
-        }
 
-        function updateLivesDisplay() {
-            livesContainer.textContent = '♥ '.repeat(lives);
-        }
-
-        // --- Event Listeners for Buttons ---
-        window.addEventListener('keydown', (e) => { if (e.key >= '1' && e.key <= '9') inputNumber(parseInt(e.key)); });
-        muteBtn.addEventListener('click', () => {
-            isMuted = !isMuted;
-            muteBtn.textContent = isMuted ? '🔇' : '🔊';
-        });
-        fullscreenBtn.addEventListener('click', () => {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => console.error(err));
-            } else {
-                document.exitFullscreen();
+        function drawCandidates(cell, cellIndex) {
+            let candidateGrid = cell.querySelector('.candidate-grid');
+            if (!candidateGrid) {
+                candidateGrid = document.createElement('div');
+                candidateGrid.className = 'candidate-grid';
+                for (let i = 1; i <= 9; i++) {
+                    const candidateCell = document.createElement('div');
+                    candidateCell.className = 'candidate-cell';
+                    candidateCell.dataset.num = i;
+                    candidateGrid.appendChild(candidateCell);
+                }
+                cell.appendChild(candidateGrid);
             }
+            const candidates = boardState.candidates[cellIndex];
+            candidateGrid.querySelectorAll('.candidate-cell').forEach(c => {
+                const num = parseInt(c.dataset.num);
+                c.textContent = candidates.has(num) ? num : '';
+            });
+        }
+
+        function toggleCandidateMode() {
+            isCandidateMode = !isCandidateMode;
+            document.getElementById('candidate-btn').classList.toggle('active', isCandidateMode);
+        }
+
+        function checkWinCondition() {
+            for(let r=0; r<9; r++) {
+                for(let c=0; c<9; c++) {
+                    if(boardState.playerBoard[r][c] === 0) return;
+                }
+            }
+            playSound('win');
+            addXP(100); // Bonus XP for winning
+            winModal.style.display = 'flex';
+        }
+        
+        function handleGameOver() { gameOverModal.style.display = 'flex'; }
+        function updateLivesDisplay() { livesContainer.textContent = '♥ '.repeat(lives); }
+
+        // --- Event Listeners ---
+        window.addEventListener('keydown', (e) => { if (e.key >= '1' && e.key <= '9') inputNumber(parseInt(e.key)); });
+        muteBtn.addEventListener('click', () => { isMuted = !isMuted; muteBtn.textContent = isMuted ? '🔇' : '🔊'; });
+        fullscreenBtn.addEventListener('click', () => {
+            if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => console.error(err)); } 
+            else { document.exitFullscreen(); }
         });
-        optionsBtn.addEventListener('click', () => { optionsModal.style.display = 'flex'; playSound('click'); });
-        closeOptionsBtn.addEventListener('click', () => { optionsModal.style.display = 'none'; playSound('click'); });
+        optionsBtn.addEventListener('click', () => { buildOptionsModal(); optionsModal.style.display = 'flex'; playSound('click'); });
         restartGameBtn.addEventListener('click', () => { resetGame(); playSound('click'); });
+        winNewGameBtn.addEventListener('click', () => { resetGame(); playSound('click'); });
 
-
-        // --- XP and Leveling System (Placeholder) ---
-        let currentXP = 0;
-        let currentLevel = 1;
-        const xpToNextLevel = 100;
-
+        // --- XP, Leveling & Unlocks ---
         function addXP(amount) {
-            currentXP += amount;
-            if (currentXP >= xpToNextLevel) { levelUp(); }
+            playerData.xp += amount;
+            if (playerData.xp >= playerData.xpToNextLevel) {
+                levelUp();
+            }
             updateXPBar();
         }
 
         function levelUp() {
-            currentLevel++;
-            currentXP = 0;
-            alert(`Congratulations! You've reached level ${currentLevel}!`);
+            playerData.level++;
+            playerData.xp -= playerData.xpToNextLevel;
+            playerData.xpToNextLevel = Math.floor(playerData.xpToNextLevel * 1.2);
+            playSound('levelUp');
+            
+            const unlock = unlockables[playerData.level];
+            if (unlock) {
+                if (unlock.type === 'background') playerData.unlocked.backgrounds.push(unlock.id);
+                if (unlock.type === 'font') playerData.unlocked.fonts.push(unlock.id);
+                if (unlock.type === 'feature') playerData.unlocked.features.push(unlock.id);
+                showUnlockModal(unlock);
+            } else {
+                showUnlockModal({type: 'level', name: `Level ${playerData.level}`});
+            }
+        }
+
+        function showUnlockModal(unlock) {
+            let message = `<h2>Level Up! You are now Level ${playerData.level}!</h2>`;
+            if (unlock.type !== 'level') {
+                message += `<p>You've unlocked: <strong>${unlock.name}</strong>!</p>`;
+            }
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'control-btn';
+            closeBtn.textContent = 'Awesome!';
+            closeBtn.onclick = () => { unlockModal.style.display = 'none' };
+            unlockContent.innerHTML = message;
+            unlockContent.appendChild(closeBtn);
+            unlockModal.style.display = 'flex';
         }
 
         function updateXPBar() {
-            const percentage = Math.min((currentXP / xpToNextLevel) * 100, 100);
+            const percentage = Math.min((playerData.xp / playerData.xpToNextLevel) * 100, 100);
             xpBar.style.width = `${percentage}%`;
-            xpBar.textContent = `Level ${currentLevel}`;
+            xpBar.textContent = `Level ${playerData.level}`;
         }
+
+        // --- Options & Unlocked Features ---
+        function buildOptionsModal() {
+            let content = `<h2>Options</h2><div class="options-grid">`;
+            
+            // Backgrounds
+            content += `<h3>Backgrounds</h3>`;
+            playerData.unlocked.backgrounds.forEach(bgId => {
+                const bg = Object.entries(unlockables).find(([lvl, val]) => val.id === bgId) || [null, {name: 'Default'}];
+                content += `<button class="control-btn" onclick="applyBackground('${bgId}')">${bg[1].name}</button>`;
+            });
+
+            // Fonts
+            content += `<h3>Fonts</h3>`;
+            playerData.unlocked.fonts.forEach(fontId => {
+                const font = Object.entries(unlockables).find(([lvl, val]) => val.id === fontId) || [null, {name: 'Default'}];
+                content += `<button class="control-btn" onclick="applyFont('${fontId}')">${font[1].name}</button>`;
+            });
+
+            // Features
+             if (playerData.unlocked.features.length > 0) {
+                content += `<h3>Features</h3>`;
+                if (playerData.unlocked.features.includes('feature-color-mode')) {
+                    content += `<button class="control-btn" id="color-mode-btn" onclick="toggleColorMode()">Color Mode: ${isColorMode ? 'ON' : 'OFF'}</button>`;
+                }
+                 if (playerData.unlocked.features.includes('feature-reveal')) {
+                    content += `<button class="control-btn" id="reveal-btn" onclick="toggleRevealMode()">Reveal (${revealsLeft})</button>`;
+                }
+            }
+
+            content += `</div><br><button class="control-btn" onclick="optionsModal.style.display='none'">Close</button>`;
+            optionsContent.innerHTML = content;
+        }
+
+        function applyBackground(bgId) {
+            const style = backgroundStyles[bgId];
+            animatedBg.style.background = style;
+            if (bgId === 'bg-stars') { animatedBg.style.animation = 'bg-stars 150s linear infinite'; }
+            else if (bgId === 'bg-bubbles') { animatedBg.style.animation = 'bg-bubbles 30s linear infinite'; }
+            else if (bgId === 'bg-sunset') { animatedBg.style.animation = 'bg-sunset 15s ease infinite'; }
+            else { animatedBg.style.animation = 'gradientBG 15s ease infinite'; }
+            playSound('click');
+        }
+
+        function applyFont(fontId) {
+            document.body.style.fontFamily = fontStyles[fontId];
+            playSound('click');
+        }
+        
+        function toggleColorMode() {
+            isColorMode = !isColorMode;
+            document.getElementById('color-mode-btn').textContent = `Color Mode: ${isColorMode ? 'ON' : 'OFF'}`;
+            // Logic to apply/remove colors will go here
+            playSound('click');
+        }
+
+        function toggleRevealMode() {
+            if (revealsLeft > 0) {
+                isRevealMode = !isRevealMode;
+                document.getElementById('reveal-btn').classList.toggle('active', isRevealMode);
+                if (!isRevealMode) selectedCell = null;
+            }
+        }
+
+        function revealCell(cell) {
+            if (cell.classList.contains('given') || cell.classList.contains('correct')) {
+                isRevealMode = false;
+                document.getElementById('reveal-btn').classList.remove('active');
+                return;
+            }
+            const row = parseInt(cell.dataset.row);
+            const col = parseInt(cell.dataset.col);
+            const solution = boardState.solution[row][col];
+            inputNumber(solution);
+            revealsLeft--;
+            isRevealMode = false;
+            document.getElementById('reveal-btn').classList.remove('active');
+            buildOptionsModal(); // update count
+        }
+
     </script>
 </body>
 </html>
