@@ -714,9 +714,32 @@
             }
         }
 
+        // --- ## FIXED CODE SECTION ## ---
+        // The checkCompletion function was rewritten and checkWinCondition was removed.
         function checkCompletion(row, col, num) {
             updateCompletedNumberButtons();
-            
+
+            // First, check if the entire board is complete.
+            let isGameWon = true;
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    if (boardState.playerBoard[r][c] === 0) {
+                        isGameWon = false;
+                        break;
+                    }
+                }
+                if (!isGameWon) break;
+            }
+
+            // If the game is won, show the win modal and stop everything else.
+            if (isGameWon) {
+                playSound('win');
+                addXP(100); // Bonus XP for winning
+                winModal.style.display = 'flex';
+                return; // Exit the function to prevent other completion messages
+            }
+
+            // If not a full win, proceed with other checks.
             // Check for number completion
             const btn = Array.from(controls.querySelectorAll('.control-btn')).find(b => parseInt(b.textContent) === num && !b.id);
             if (btn && btn.classList.contains('disabled') && !btn.classList.contains('animation-done')) {
@@ -744,7 +767,7 @@
                 for (let r = 0; r < 9; r++) colCells.push(getCell(r, col));
                 animateCompletion(colCells);
             }
-            
+
             // Check for grid completion
             const startRow = Math.floor(row / 3) * 3, startCol = Math.floor(col / 3) * 3;
             let isGridComplete = true;
@@ -755,8 +778,6 @@
                 for (let r = 0; r < 3; r++) { for (let c = 0; c < 3; c++) gridCells.push(getCell(startRow + r, startCol + c)); }
                 animateCompletion(gridCells);
             }
-            
-            checkWinCondition();
         }
         
         function updateColorMode() {
@@ -793,17 +814,6 @@
         }
 
         function getCell(row, col) { return sudokuGrid.querySelector(`[data-row='${row}'][data-col='${col}']`); }
-
-        function checkWinCondition() {
-            for(let r=0; r<9; r++) {
-                for(let c=0; c<9; c++) {
-                    if(boardState.playerBoard[r][c] === 0) return;
-                }
-            }
-            playSound('win');
-            addXP(100); // Bonus XP for winning
-            winModal.style.display = 'flex';
-        }
         
         function handleGameOver() { gameOverModal.style.display = 'flex'; }
         function updateLivesDisplay() { livesContainer.textContent = '♥ '.repeat(lives); }
