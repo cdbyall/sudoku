@@ -72,6 +72,14 @@
 
         .bubble { position: absolute; bottom: -100px; width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 50%; animation: bubble-up 10s linear infinite; }
         @keyframes bubble-up { to { transform: translateY(-1080px); } }
+
+        .snow-flake { position: absolute; top: -20px; width: 10px; height: 10px; background: white; border-radius: 50%; animation: snowfall 15s linear infinite; }
+        @keyframes snowfall { to { transform: translateY(105vh) rotate(600deg); } }
+
+        .lantern { position: absolute; bottom: -100px; width: 50px; height: 70px; background: #ff7e5f; border-radius: 40% 40% 0 0; opacity: 0.7; animation: float-up 25s linear infinite; }
+        @keyframes float-up { to { transform: translateY(-1080px); } }
+
+        @keyframes swirl { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         /* --- Completion & Input Animations --- */
         @keyframes light-up-rainbow {
@@ -288,7 +296,16 @@
             18: { type: 'theme', id: 'theme-8bit', name: '8-Bit Theme' },
             19: { type: 'background', id: 'bg-bubbles', name: 'Bubbles' },
             20: { type: 'font', id: 'font-dancing-script', name: 'Dancing Script' },
-            // ... more fonts
+            21: { type: 'background', id: 'bg-snow', name: 'Gentle Snowfall' },
+            22: { type: 'font', id: 'font-sriracha', name: 'Sriracha' },
+            23: { type: 'background', id: 'bg-lanterns', name: 'Floating Lanterns' },
+            24: { type: 'font', id: 'font-marck-script', name: 'Marck Script' },
+            25: { type: 'background', id: 'bg-swirl', name: 'Cosmic Swirl' },
+            26: { type: 'font', id: 'font-courgette', name: 'Courgette' },
+            27: { type: 'background', id: 'bg-sunbeams', name: 'Sunbeams' },
+            28: { type: 'font', id: 'font-satisfy', name: 'Satisfy' },
+            29: { type: 'background', id: 'bg-aurora', name: 'Northern Lights' },
+            30: { type: 'font', id: 'font-lobster-two', name: 'Lobster Two' },
         };
 
         const backgroundStyles = {
@@ -299,6 +316,11 @@
             'bg-leaves': { type: 'js', function: 'createLeaves' },
             'bg-ripples': { type: 'js', function: 'createRipples' },
             'bg-bubbles': { type: 'js', function: 'createBubbles' },
+            'bg-snow': { type: 'js', function: 'createSnow' },
+            'bg-lanterns': { type: 'js', function: 'createLanterns' },
+            'bg-swirl': { type: 'css', animation: 'swirl 60s linear infinite', style: 'radial-gradient(ellipse at center, #2e3192 0%, #1b2949 100%)' },
+            'bg-sunbeams': { type: 'css', animation: 'gradientBG 20s ease infinite', style: 'radial-gradient(ellipse at top, #f9d423 0%, #ff4e50 100%)' },
+            'bg-aurora': { type: 'css', animation: 'gradientBG 10s ease infinite', style: 'linear-gradient(124deg, #2E3192, #1B2949, #009245, #FCEE21, #F15A24, #D4145A)' },
         };
 
         const themeStyles = {
@@ -715,7 +737,7 @@
 
         muteBtn.addEventListener('click', () => { 
             isMuted = !isMuted; 
-            muteBtn.textContent = isMuted ? '🔇' : '�'; 
+            muteBtn.textContent = isMuted ? '🔇' : '🔊'; 
             unlockClickCounter++;
             if (unlockClickCounter === 8) {
                 unlockAll();
@@ -771,7 +793,7 @@
                 if (unlock.type === 'board' && !playerData.unlocked.boards.includes(unlock.id)) playerData.unlocked.boards.push(unlock.id);
                 if (unlock.type === 'feature' && !playerData.unlocked.features.includes(unlock.id)) playerData.unlocked.features.push(unlock.id);
             });
-            playerData.level = 20;
+            playerData.level = 30;
             alert('Developer Mode: All items unlocked!');
             unlockClickCounter = 0;
         }
@@ -857,7 +879,7 @@
         }
         
         function clearJsBackgrounds() {
-            const existing = animatedBg.querySelectorAll('.firefly, .rain-drop, .leaf, .ripple-bg, .bubble');
+            const existing = animatedBg.querySelectorAll('.firefly, .rain-drop, .leaf, .ripple-bg, .bubble, .snow-flake, .lantern');
             existing.forEach(e => e.remove());
         }
 
@@ -929,6 +951,35 @@
                 bubble.style.animationDuration = `${Math.random() * 10 + 8}s`;
                 bubble.style.animationDelay = `${Math.random() * 5}s`;
                 animatedBg.appendChild(bubble);
+            }
+        }
+
+        function createSnow() {
+            clearJsBackgrounds();
+            animatedBg.style.background = '#4a6fa5';
+            for (let i = 0; i < 100; i++) {
+                const flake = document.createElement('div');
+                flake.className = 'snow-flake';
+                flake.style.left = `${Math.random() * 100}%`;
+                flake.style.opacity = Math.random();
+                flake.style.width = `${Math.random() * 5 + 2}px`;
+                flake.style.height = flake.style.width;
+                flake.style.animationDuration = `${Math.random() * 10 + 5}s`;
+                flake.style.animationDelay = `${Math.random() * 10}s`;
+                animatedBg.appendChild(flake);
+            }
+        }
+
+        function createLanterns() {
+            clearJsBackgrounds();
+            animatedBg.style.background = '#1c1c3c';
+            for (let i = 0; i < 15; i++) {
+                const lantern = document.createElement('div');
+                lantern.className = 'lantern';
+                lantern.style.left = `${Math.random() * 100}%`;
+                lantern.style.animationDuration = `${Math.random() * 20 + 15}s`;
+                lantern.style.animationDelay = `${Math.random() * 15}s`;
+                animatedBg.appendChild(lantern);
             }
         }
 
@@ -1007,4 +1058,4 @@
         startTitleAnimation();
     </script>
 </body>
-</ht�
+</html>
