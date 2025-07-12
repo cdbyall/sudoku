@@ -20,7 +20,6 @@
             --correct-color: #2ecc71;
             --candidate-color: #888;
             --color-mode-one: #a8e6cf; /* green */
-            --color-mode-two: #ffd3b6; /* yellow */
             --font-family: 'Poppins', sans-serif;
         }
 
@@ -90,6 +89,12 @@
             100% { box-shadow: 0 0 15px #ff2400; }
         }
         .light-up-animation { animation: light-up-rainbow 1s ease-in-out; }
+        
+        @keyframes rainbow-highlight-flow { 
+            0%{background-position:0% 50%}
+            50%{background-position:100% 50%}
+            100%{background-position:0% 50%}
+        }
 
         @keyframes puff { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
         @keyframes ripple { to { transform: scale(4); opacity: 0; } }
@@ -129,7 +134,7 @@
         
         /* Animated Board Themes */
         #sudoku-grid.board-rainbow { background: linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3); background-size: 1800% 1800%; animation: rainbow-flow 18s ease infinite; }
-        #sudoku-grid.board-sands { background-image: url('https://www.transparenttextures.com/patterns/sand.png'), linear-gradient(to right, #c2b280, #e6d8ad); animation: gentle-flow 30s ease infinite; }
+        #sudoku-grid.board-sands { background-image: url('https://www.transparenttextures.com/patterns/sand.png'), linear-gradient(to right, #c2b280, #e6d8ad); animation: gentle-flow 30s ease-infinite; }
         @keyframes rainbow-flow { 0%{background-position:0% 82%} 50%{background-position:100% 19%} 100%{background-position:0% 82%} }
 
         .sudoku-cell {
@@ -141,7 +146,7 @@
             font-weight: 600;
             cursor: pointer;
             border: 1px solid var(--grid-background);
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, color 0.3s;
             position: relative;
             overflow: hidden;
         }
@@ -162,7 +167,12 @@
         .sudoku-cell.correct { color: var(--correct-color); font-weight: bold; }
         .sudoku-cell.error { animation: shake 0.5s; background-color: var(--error-color); }
         .sudoku-cell.color-mode-one { background-color: var(--color-mode-one) !important; }
-        .sudoku-cell.color-mode-two { background-color: var(--color-mode-two) !important; }
+        .sudoku-cell.highlighted-number {
+            background: linear-gradient(135deg, rgba(168, 230, 207, 0.7), rgba(255, 211, 182, 0.7), rgba(163, 216, 244, 0.7));
+            background-size: 400% 400%;
+            animation: rainbow-highlight-flow 4s ease infinite;
+            color: var(--text-color);
+        }
 
         #controls { margin-top: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 5px; }
         .control-btn { background-color: var(--button-bg); color: var(--button-text); border: none; padding: 10px 15px; font-size: 1em; cursor: pointer; border-radius: 20px; font-weight: 600; transition: transform 0.2s, background-color 0.2s, filter 0.3s; }
@@ -197,7 +207,9 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
-    </style></head><body>
+    </style>
+</head>
+<body>
     <div id="animated-bg"></div>
     <div id="game-container">
         <div id="title-screen">
@@ -700,13 +712,47 @@
                     if (value !== 0) {
                         cell.textContent = value;
                         cell.classList.add('given');
-                    } else {
-                        cell.addEventListener('click', () => selectCell(cell));
                     }
+                    cell.addEventListener('click', () => handleCellClick(cell));
                     sudokuGrid.appendChild(cell);
                 }
             }
         }
+        
+        function handleCellClick(cell) {
+            if (isRevealMode) {
+                revealCell(cell);
+                return;
+            }
+            const value = cell.textContent;
+
+            if (value && value >= '1' && value <= '9') {
+                highlightMatchingNumbers(cell);
+                if (selectedCell) {
+                    selectedCell.classList.remove('selected');
+                    selectedCell = null;
+                }
+            } else {
+                selectCell(cell);
+            }
+        }
+        
+        function clearNumberHighlights() {
+            document.querySelectorAll('.highlighted-number').forEach(c => c.classList.remove('highlighted-number'));
+        }
+        
+        function highlightMatchingNumbers(targetCell) {
+            clearNumberHighlights();
+            const number = targetCell.textContent;
+            if (!number) return;
+            
+            document.querySelectorAll('.sudoku-cell').forEach(cell => {
+                if (cell.textContent === number) {
+                    cell.classList.add('highlighted-number');
+                }
+            });
+        }
+
 
         function createControls() {
             controls.innerHTML = '';
@@ -726,10 +772,7 @@
         }
 
         function selectCell(cell) {
-            if (isRevealMode) {
-                revealCell(cell);
-                return;
-            }
+            clearNumberHighlights();
             if (selectedCell) { selectedCell.classList.remove('selected'); }
             selectedCell = cell;
             selectedCell.classList.add('selected');
@@ -930,8 +973,8 @@
         
         function updateColorMode() {
             if (!isColorMode) {
-                document.querySelectorAll('.color-mode-one, .color-mode-two').forEach(c => {
-                    c.classList.remove('color-mode-one', 'color-mode-two');
+                document.querySelectorAll('.color-mode-one').forEach(c => {
+                    c.classList.remove('color-mode-one');
                 });
                 return;
             }
@@ -939,7 +982,7 @@
             for (let r = 0; r < 9; r++) {
                 for (let c = 0; c < 9; c++) {
                     const cell = getCell(r, c);
-                    cell.classList.remove('color-mode-one', 'color-mode-two');
+                    cell.classList.remove('color-mode-one');
                     if (boardState.playerBoard[r][c] === 0) {
                         let possible = [];
                         for (let n = 1; n <= 9; n++) {
@@ -948,7 +991,6 @@
                             }
                         }
                         if (possible.length === 1) cell.classList.add('color-mode-one');
-                        if (possible.length === 2) cell.classList.add('color-mode-two');
                     }
                 }
             }
@@ -1025,7 +1067,7 @@
 
         muteBtn.addEventListener('click', () => { 
             isMuted = !isMuted; 
-            muteBtn.textContent = isMuted ? '🔇' : '🔊'; 
+            muteBtn.textContent = isMuted ? '🔇' : '�'; 
             unlockClickCounter++;
             if (unlockClickCounter === 8) {
                 unlockAll();
@@ -1351,4 +1393,6 @@
         
         // Initial load
         startTitleAnimation();
-    </script></body></html>
+    </script>
+</body>
+</html>
