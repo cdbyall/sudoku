@@ -23,7 +23,6 @@
             --candidate-color: #888;
             --color-mode-one: #a8e6cf; /* green */
             --color-mode-two: #ffd3b6; /* yellow */
-            --light-up-color: rgba(255, 255, 255, 0.8);
             --font-family: 'Poppins', sans-serif;
         }
 
@@ -294,6 +293,7 @@
         let gameTimerInterval = null;
         let secondsElapsed = 0;
         let currentDifficulty = '';
+        let seedForNextGame = null;
 
         // --- Player Data & Unlocks ---
         let playerData = {
@@ -422,7 +422,6 @@
         }
 
         function saveBestTime(timeInSeconds, difficulty) {
-            if (difficulty === 'seeded') return; // Do not save times for seeded puzzles
             const bestTimes = loadBestTimes();
             const newScore = { time: timeInSeconds, difficulty: difficulty };
             bestTimes.push(newScore);
@@ -501,15 +500,11 @@
                 this.fillBoard();
                 boardState.solution = this.board.map(row => [...row]);
                 let attempts;
-                if(typeof difficulty === 'number'){
-                    attempts = difficulty; 
-                } else {
-                    switch (difficulty) {
-                        case 'easy': attempts = 35; break;
-                        case 'medium': attempts = 45; break;
-                        case 'hard': attempts = 55; break;
-                        default: attempts = 45;
-                    }
+                switch (difficulty) {
+                    case 'easy': attempts = 35; break;
+                    case 'medium': attempts = 45; break;
+                    case 'hard': attempts = 55; break;
+                    default: attempts = 45;
                 }
                 
                 let puzzle = this.board.map(row => [...row]);
@@ -580,6 +575,7 @@
 
         newGameBtn.addEventListener('click', () => {
             playSound('click');
+            seedForNextGame = null; // Clear any previously stored seed
             titleButtons.style.display = 'none';
             difficultyScreen.style.display = 'block';
         });
@@ -591,41 +587,43 @@
         });
 
         startFromSeedBtn.addEventListener('click', () => {
-            if(seedInput.value.trim() === ''){
+            const seedWord = seedInput.value.trim();
+            if(seedWord === ''){
                 alert("Please enter a seed word.");
                 return;
             }
             playSound('click');
-            const seed = stringToSeed(seedInput.value.trim().toLowerCase());
-            startGame(seed);
+            seedForNextGame = seedWord;
+            seedScreen.style.display = 'none';
+            difficultyScreen.style.display = 'block';
         });
 
         difficultyScreen.addEventListener('click', (e) => {
             if (e.target.classList.contains('control-btn')) {
                 playSound('click');
                 const difficulty = e.target.dataset.difficulty;
-                startGame(difficulty);
+                
+                const options = { difficulty: difficulty };
+                if (seedForNextGame) {
+                    options.seed = stringToSeed(seedForNextGame.toLowerCase());
+                }
+                
+                startGame(options);
+                seedForNextGame = null; // Reset for the next game
             }
         });
 
-        function startGame(difficultyOrSeed) {
+        function startGame(options) {
             stopTitleAnimation();
             titleScreen.style.display = 'none';
             difficultyScreen.style.display = 'none';
             seedScreen.style.display = 'none';
             gameBoard.style.display = 'block';
 
-            let difficulty, seed;
-
-            if (typeof difficultyOrSeed === 'number') {
-                seed = difficultyOrSeed;
-                difficulty = 45;
-                currentDifficulty = 'seeded';
-            } else {
-                difficulty = difficultyOrSeed;
-                currentDifficulty = difficultyOrSeed;
-                seed = new Date().getTime(); 
-            }
+            const difficulty = options.difficulty;
+            const seed = options.seed || new Date().getTime(); 
+            
+            currentDifficulty = difficulty;
             
             const generator = new SudokuGenerator(seed);
             boardState.puzzle = generator.createPuzzle(difficulty);
