@@ -123,9 +123,12 @@
         }
         #completion-message.show { opacity: 1; top: 10px; }
 
-        #top-bar { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 450px; margin: 0 auto 10px; }
+        #top-bar { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 450px; margin: 0 auto 10px; font-weight: 600; }
+        #stats-container { display: flex; justify-content: space-between; align-items: center; flex-grow: 1; }
         #lives-container { font-size: 1.5rem; color: var(--accent-color); }
+        #games-won-counter { margin-left: 15px; }
         #game-buttons button { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-color); margin-left: 10px; }
+
         #sudoku-grid { display: grid; grid-template-columns: repeat(9, 1fr); background-color: var(--grid-background); border: 3px solid var(--grid-background); width: 100%; max-width: 450px; aspect-ratio: 1 / 1; margin: 0 auto; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: background-color 0.5s; }
         
         /* Animated Board Themes */
@@ -213,7 +216,11 @@
         <div id="game-board" style="display: none;">
             <div id="completion-message"></div>
             <div id="top-bar">
-                <div id="lives-container">♥ ♥ ♥</div>
+                <div id="stats-container">
+                    <span id="timer">00:00</span>
+                    <span id="lives-container">♥ ♥ ♥</span>
+                    <span id="games-won-counter">Wins: 0</span>
+                </div>
                 <div id="game-buttons">
                     <button id="options-btn">⚙️</button>
                     <button id="mute-btn">🔊</button>
@@ -230,7 +237,7 @@
 
     <div id="options-modal" class="modal"><div class="modal-content" id="options-content"></div></div>
     <div id="game-over-modal" class="modal"><div class="modal-content"><h2>Game Over</h2><p>You've run out of lives!</p><button class="control-btn" id="restart-game-btn">Play Again</button></div></div>
-    <div id="win-modal" class="modal"><div class="modal-content"><h2>You Win!</h2><p>Puzzle complete! Great job!</p><button class="control-btn" id="win-new-game-btn">New Game</button></div></div>
+    <div id="win-modal" class="modal"><div class="modal-content"><h2>You Win!</h2><p>Puzzle complete! Great job!</p><button class="control-btn" id="win-new-game-btn">Play Again?</button></div></div>
     <div id="unlock-modal" class="modal"><div class="modal-content" id="unlock-content"></div></div>
     
     <script>
@@ -252,6 +259,8 @@
         const controls = document.getElementById('controls');
         const livesContainer = document.getElementById('lives-container');
         const xpBar = document.getElementById('xp-bar');
+        const timerEl = document.getElementById('timer');
+        const gamesWonCounterEl = document.getElementById('games-won-counter');
         const optionsBtn = document.getElementById('options-btn');
         const muteBtn = document.getElementById('mute-btn');
         const fullscreenBtn = document.getElementById('fullscreen-btn');
@@ -275,12 +284,15 @@
         let revealsLeft = 3;
         let unlockClickCounter = 0;
         let titleAnimationInterval;
+        let timerInterval = null;
+        let secondsElapsed = 0;
 
         // --- Player Data & Unlocks ---
         let playerData = {
             level: 1,
             xp: 0,
             xpToNextLevel: 100,
+            gamesWon: 0,
             unlocked: {
                 backgrounds: ['bg-default'],
                 fonts: ['font-default'],
@@ -369,6 +381,20 @@
                 if (sound === 'win') sounds.win.triggerAttackRelease('C4', '2n');
                 if (sound === 'levelUp') sounds.levelUp.triggerAttackRelease('G5', '4n');
                 if (sound === 'pop') sounds.pop.triggerAttackRelease(note, '16n');
+            }
+        }
+        
+        // --- Data Persistence ---
+        function savePlayerData() {
+            localStorage.setItem('sudokuPlayerData', JSON.stringify(playerData));
+        }
+
+        function loadPlayerData() {
+            const savedData = localStorage.getItem('sudokuPlayerData');
+            if (savedData) {
+                const loadedData = JSON.parse(savedData);
+                // Merge loaded data with default data to prevent errors if new properties are added later
+                playerData = { ...playerData, ...loadedData };
             }
         }
 
@@ -478,6 +504,46 @@
             clearInterval(titleAnimationInterval);
             titleAnimationContainer.innerHTML = '';
         }
+        
+        // --- Timer Functions ---
+        function startTimer() {
+            stopTimer(); // Ensure no multiple timers
+            secondsElapsed = 0;
+            updateTimerDisplay();
+            timerInterval = setInterval(() => {
+                secondsElapsed++;
+                updateTimerDisplay();
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
+            const seconds = (secondsElapsed % 60).toString().padStart(2, '0');
+            timerEl.textContent = `${minutes}:${seconds}`;
+        }
+
+        function formatTime(totalSeconds) {
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            let timeString = '';
+            if (minutes > 0) {
+                timeString += `${minutes} minute${minutes > 1 ? 's' : ''}`;
+            }
+            if (seconds > 0) {
+                if(minutes > 0) timeString += ' and ';
+                timeString += `${seconds} second${seconds > 1 ? 's' : ''}`;
+            }
+            return timeString;
+        }
+
+        function updateGamesWonDisplay() {
+            gamesWonCounterEl.textContent = `Wins: ${playerData.gamesWon}`;
+        }
+
 
         function resetGame() {
             titleScreen.style.display = 'flex';
@@ -490,6 +556,8 @@
             winModal.style.display = 'none';
             lives = 3;
             updateLivesDisplay();
+            stopTimer();
+            updateGamesWonDisplay();
         }
 
         newGameBtn.addEventListener('click', () => {
@@ -549,7 +617,9 @@
             revealsLeft = 3;
             updateLivesDisplay();
             updateXPBar();
+            updateGamesWonDisplay();
             updateCompletedNumberButtons();
+            startTimer();
             if(isColorMode) updateColorMode();
         }
 
@@ -797,15 +867,31 @@
         function checkWinCondition() {
             for(let r=0; r<9; r++) {
                 for(let c=0; c<9; c++) {
-                    if(boardState.playerBoard[r][c] === 0) return;
+                    if(boardState.playerBoard[r][c] === 0) return; // Game not finished
                 }
             }
+            
+            // --- WIN LOGIC ---
+            stopTimer();
             playSound('win');
-            addXP(100); // Bonus XP for winning
+            
+            playerData.gamesWon++;
+            addXP(100); // Bonus XP for winning, also triggers a save
+            updateGamesWonDisplay();
+            savePlayerData();
+            
+            const timeTaken = formatTime(secondsElapsed);
+            const winMessage = winModal.querySelector('p');
+            winMessage.textContent = `You solved it in ${timeTaken}!`;
+
             winModal.style.display = 'flex';
         }
         
-        function handleGameOver() { gameOverModal.style.display = 'flex'; }
+        function handleGameOver() {
+            stopTimer();
+            gameOverModal.style.display = 'flex'; 
+        }
+
         function updateLivesDisplay() { livesContainer.textContent = '♥ '.repeat(lives); }
 
         // --- Event Listeners ---
@@ -842,7 +928,9 @@
         function addXP(amount) {
             playerData.xp += amount;
             if (playerData.xp >= playerData.xpToNextLevel) {
-                levelUp();
+                levelUp(); // levelUp calls savePlayerData
+            } else {
+                savePlayerData();
             }
             updateXPBar();
         }
@@ -855,15 +943,16 @@
             
             const unlock = unlockables[playerData.level];
             if (unlock) {
-                if (unlock.type === 'background') playerData.unlocked.backgrounds.push(unlock.id);
-                if (unlock.type === 'font') playerData.unlocked.fonts.push(unlock.id);
-                if (unlock.type === 'theme') playerData.unlocked.themes.push(unlock.id);
-                if (unlock.type === 'board') playerData.unlocked.boards.push(unlock.id);
-                if (unlock.type === 'feature') playerData.unlocked.features.push(unlock.id);
+                if (unlock.type === 'background' && !playerData.unlocked.backgrounds.includes(unlock.id)) playerData.unlocked.backgrounds.push(unlock.id);
+                if (unlock.type === 'font' && !playerData.unlocked.fonts.includes(unlock.id)) playerData.unlocked.fonts.push(unlock.id);
+                if (unlock.type === 'theme' && !playerData.unlocked.themes.includes(unlock.id)) playerData.unlocked.themes.push(unlock.id);
+                if (unlock.type === 'board' && !playerData.unlocked.boards.includes(unlock.id)) playerData.unlocked.boards.push(unlock.id);
+                if (unlock.type === 'feature' && !playerData.unlocked.features.includes(unlock.id)) playerData.unlocked.features.push(unlock.id);
                 showUnlockModal(unlock);
             } else {
                 showUnlockModal({type: 'level', name: `Level ${playerData.level}`});
             }
+            savePlayerData();
         }
         
         function unlockAll() {
@@ -875,8 +964,11 @@
                 if (unlock.type === 'feature' && !playerData.unlocked.features.includes(unlock.id)) playerData.unlocked.features.push(unlock.id);
             });
             playerData.level = 30;
+            playerData.gamesWon = 99;
+            savePlayerData();
             alert('Developer Mode: All items unlocked!');
             unlockClickCounter = 0;
+            updateGamesWonDisplay();
         }
 
         function showUnlockModal(unlock) {
@@ -1135,7 +1227,10 @@
             }
         }
         
-        // Initial load
+        // Initial Load
+        loadPlayerData();
+        updateXPBar();
+        updateGamesWonDisplay();
         startTitleAnimation();
     </script>
 </body>
