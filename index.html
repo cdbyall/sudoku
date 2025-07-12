@@ -56,10 +56,19 @@
         /* --- Animated Backgrounds --- */
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         @keyframes bg-stars { from { background-position: 0 0; } to { background-position: -10000px 5000px; } }
-        @keyframes gentle-flow { 0% { background-position: 0% 50% } 50% { background-position: 100% 50% } 100% { background-position: 0% 50% } }
+        
         .firefly { position: absolute; width: 5px; height: 5px; background: #fffae1; border-radius: 50%; box-shadow: 0 0 10px #fffae1, 0 0 20px #fffae1; animation: firefly-float 20s infinite alternate, firefly-blink 2s infinite alternate; }
         @keyframes firefly-float { from { transform: translate(0, 0); } to { transform: translate(var(--x-end), var(--y-end)); } }
         @keyframes firefly-blink { 0%, 100% { opacity: 0.1; } 50% { opacity: 1; } }
+
+        .rain-drop { position: absolute; bottom: 100%; width: 2px; height: 80px; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.4)); animation: rain-fall 1s linear infinite; }
+        @keyframes rain-fall { to { transform: translateY(100vh); } }
+
+        .leaf { position: absolute; top: -20px; width: 20px; height: 20px; background-color: #8B4513; border-radius: 0 50% 0 50%; animation: fall 10s linear infinite; }
+        @keyframes fall { to { transform: translateY(105vh) rotate(360deg); } }
+
+        .ripple-bg { position: absolute; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; animation: ripple-expand 4s linear infinite; }
+        @keyframes ripple-expand { from { width: 0; height: 0; opacity: 1; } to { width: 300px; height: 300px; opacity: 0; } }
         
         /* --- Completion & Input Animations --- */
         @keyframes light-up {
@@ -260,14 +269,14 @@
             6: { type: 'background', id: 'bg-fireflies', name: 'Fireflies' },
             7: { type: 'board', id: 'board-rainbow', name: 'Rainbow Board' },
             8: { type: 'theme', id: 'theme-ocean', name: 'Ocean Theme' },
-            9: { type: 'background', id: 'bg-koi', name: 'Koi Pond' },
+            9: { type: 'background', id: 'bg-rain', name: 'Gentle Rain' },
             10: { type: 'feature', id: 'feature-reveal', name: 'Reveal' },
             11: { type: 'font', id: 'font-caveat', name: 'Caveat' },
             12: { type: 'board', id: 'board-sands', name: 'Shifting Sands' },
-            13: { type: 'background', id: 'bg-dust', name: 'Cosmic Dust' },
+            13: { type: 'background', id: 'bg-leaves', name: 'Falling Leaves' },
             14: { type: 'font', id: 'font-architect', name: 'Architect\'s Daughter' },
             15: { type: 'theme', id: 'theme-vampire', name: 'Vampire Theme' },
-            16: { type: 'background', id: 'bg-rain', name: 'Cozy Rain' },
+            16: { type: 'background', id: 'bg-ripples', name: 'Water Ripples' },
             17: { type: 'font', id: 'font-bangers', name: 'Bangers' },
             18: { type: 'theme', id: 'theme-8bit', name: '8-Bit Theme' },
             19: { type: 'background', id: 'bg-zen', name: 'Zen Garden' },
@@ -278,9 +287,9 @@
             'bg-default': { type: 'css', animation: 'gradientBG 15s ease infinite', style: 'linear-gradient(45deg, #fdf6f6, #f1e7fe, #e7f5fe, #fdf6f6)' },
             'bg-stars': { type: 'css', animation: 'bg-stars 150s linear infinite', style: 'url(https://www.transparenttextures.com/patterns/stardust.png) #2a2a3e' },
             'bg-fireflies': { type: 'js', function: 'createFireflies' },
-            'bg-koi': { type: 'css', animation: 'gentle-flow 20s ease infinite', style: 'linear-gradient(to right, #1d2b64, #f8cdda)' },
-            'bg-dust': { type: 'css', animation: 'bg-stars 80s linear infinite', style: 'url(https://www.transparenttextures.com/patterns/gplay.png) #1a1a2e' },
-            'bg-rain': { type: 'css', animation: 'gentle-flow 25s ease infinite', style: 'linear-gradient(to bottom, #6dd5ed, #2193b0)' },
+            'bg-rain': { type: 'js', function: 'createRain' },
+            'bg-leaves': { type: 'js', function: 'createLeaves' },
+            'bg-ripples': { type: 'js', function: 'createRipples' },
             'bg-zen': { type: 'css', animation: 'gentle-flow 80s linear infinite', style: 'url(https://www.transparenttextures.com/patterns/pinstripe-light.png) #e5e5e5' }
         };
 
@@ -840,7 +849,7 @@
         }
         
         function clearJsBackgrounds() {
-            const existing = animatedBg.querySelectorAll('.firefly');
+            const existing = animatedBg.querySelectorAll('.firefly, .rain-drop, .leaf, .ripple-bg');
             existing.forEach(e => e.remove());
         }
 
@@ -856,6 +865,47 @@
                 firefly.style.setProperty('--y-end', `${Math.random() * 200 - 100}px`);
                 firefly.style.animationDelay = `${Math.random() * 20}s`;
                 animatedBg.appendChild(firefly);
+            }
+        }
+
+        function createRain() {
+            clearJsBackgrounds();
+            animatedBg.style.background = '#a3d8f4';
+            for (let i = 0; i < 50; i++) {
+                const drop = document.createElement('div');
+                drop.className = 'rain-drop';
+                drop.style.left = `${Math.random() * 100}%`;
+                drop.style.animationDuration = `${Math.random() * 0.5 + 0.5}s`;
+                drop.style.animationDelay = `${Math.random() * 5}s`;
+                animatedBg.appendChild(drop);
+            }
+        }
+        
+        function createLeaves() {
+            clearJsBackgrounds();
+            animatedBg.style.background = '#fdf6f6';
+            const colors = ['#DAA520', '#B22222', '#8B4513'];
+            for (let i = 0; i < 25; i++) {
+                const leaf = document.createElement('div');
+                leaf.className = 'leaf';
+                leaf.style.left = `${Math.random() * 100}%`;
+                leaf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                leaf.style.animationDuration = `${Math.random() * 5 + 5}s`;
+                leaf.style.animationDelay = `${Math.random() * 5}s`;
+                animatedBg.appendChild(leaf);
+            }
+        }
+
+        function createRipples() {
+            clearJsBackgrounds();
+            animatedBg.style.background = '#6155a6';
+             for (let i = 0; i < 15; i++) {
+                const ripple = document.createElement('div');
+                ripple.className = 'ripple-bg';
+                ripple.style.left = `${Math.random() * 100}%`;
+                ripple.style.top = `${Math.random() * 100}%`;
+                ripple.style.animationDelay = `${Math.random() * 4}s`;
+                animatedBg.appendChild(ripple);
             }
         }
 
@@ -918,6 +968,7 @@
             
             const wasCandidateMode = isCandidateMode;
             isCandidateMode = false;
+            selectCell(cell); // Make sure the cell is selected for input
             inputNumber(solution);
             isCandidateMode = wasCandidateMode;
 
