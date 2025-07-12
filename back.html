@@ -1,7 +1,4 @@
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<!DOCTYPE html><html lang="en"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Single Prompt AI Sudoku</title>
@@ -184,14 +181,23 @@
         
         #best-times-list { list-style-type: decimal; padding-left: 30px; text-align: left; }
         #best-times-list li { margin-bottom: 8px; font-size: 1.1em; }
-
+        
+        /* --- Calendar Styles --- */
+        #calendar-modal .modal-content { width: 90%; max-width: 450px; }
+        #calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        #calendar-header h2 { margin: 0; font-size: 1.5em; }
+        #calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+        .calendar-day, .calendar-weekday { display: flex; justify-content: center; align-items: center; aspect-ratio: 1/1; border-radius: 50%; }
+        .calendar-weekday { font-weight: bold; color: var(--accent-color); }
+        .calendar-day { background-color: var(--cell-background); font-size: 0.9em; position: relative; }
+        .calendar-day.empty { background-color: transparent; }
+        .calendar-day .medal { font-size: 1.2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.5; z-index: -1; }
+        .calendar-day.today { font-weight: bold; border: 2px solid var(--accent-color); }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
-    </style>
-</head>
-<body>
+    </style></head><body>
     <div id="animated-bg"></div>
     <div id="game-container">
         <div id="title-screen">
@@ -199,8 +205,10 @@
             <h1>Single Prompt AI Sudoku</h1>
             <div id="title-buttons">
                 <button class="control-btn" id="new-game-btn">New Game</button>
+                <button class="control-btn" id="daily-puzzle-btn">Daily Puzzle</button>
                 <button class="control-btn" id="seed-game-btn">From Seed</button>
                 <button class="control-btn" id="best-times-btn">Best Times</button>
+                <button class="control-btn" id="calendar-btn">Calendar</button>
             </div>
         </div>
 
@@ -242,6 +250,18 @@
     <div id="unlock-modal" class="modal"><div class="modal-content" id="unlock-content"></div></div>
     <div id="best-times-modal" class="modal"><div class="modal-content"><h2>Best Times</h2><ol id="best-times-list"></ol><button class="control-btn" id="close-best-times-btn">Close</button></div></div>
 
+    <div id="calendar-modal" class="modal">
+        <div class="modal-content">
+            <div id="calendar-header">
+                <button class="control-btn" id="prev-month-btn">◀</button>
+                <h2 id="calendar-month-year"></h2>
+                <button class="control-btn" id="next-month-btn">▶</button>
+            </div>
+            <div id="calendar-grid"></div>
+            <button class="control-btn" id="close-calendar-btn" style="margin-top: 15px;">Close</button>
+        </div>
+    </div>
+
     
     <script>
         // --- DOM Elements ---
@@ -251,8 +271,10 @@
         const titleAnimationContainer = document.getElementById('title-animation-container');
         const titleButtons = document.getElementById('title-buttons');
         const newGameBtn = document.getElementById('new-game-btn');
+        const dailyPuzzleBtn = document.getElementById('daily-puzzle-btn');
         const seedGameBtn = document.getElementById('seed-game-btn');
         const bestTimesBtn = document.getElementById('best-times-btn');
+        const calendarBtn = document.getElementById('calendar-btn');
         const difficultyScreen = document.getElementById('difficulty-screen');
         const seedScreen = document.getElementById('seed-screen');
         const seedInput = document.getElementById('seed-input');
@@ -279,6 +301,13 @@
         const closeBestTimesBtn = document.getElementById('close-best-times-btn');
         const restartGameBtn = document.getElementById('restart-game-btn');
         const winNewGameBtn = document.getElementById('win-new-game-btn');
+        const calendarModal = document.getElementById('calendar-modal');
+        const calendarMonthYear = document.getElementById('calendar-month-year');
+        const calendarGrid = document.getElementById('calendar-grid');
+        const prevMonthBtn = document.getElementById('prev-month-btn');
+        const nextMonthBtn = document.getElementById('next-month-btn');
+        const closeCalendarBtn = document.getElementById('close-calendar-btn');
+
 
         // --- Game State ---
         let selectedCell = null;
@@ -295,6 +324,9 @@
         let secondsElapsed = 0;
         let currentDifficulty = '';
         let seedForNextGame = null;
+        let isDailyPuzzle = false;
+        let calendarDate = new Date();
+
 
         // --- Player Data & Unlocks ---
         let playerData = {
@@ -560,6 +592,7 @@
             gameOverModal.style.display = 'none';
             winModal.style.display = 'none';
             lives = 3;
+            isDailyPuzzle = false;
             updateLivesDisplay();
             resetTimer();
         }
@@ -576,13 +609,26 @@
 
         newGameBtn.addEventListener('click', () => {
             playSound('click');
+            isDailyPuzzle = false;
             seedForNextGame = null; // Clear any previously stored seed
+            titleButtons.style.display = 'none';
+            difficultyScreen.style.display = 'block';
+        });
+
+        dailyPuzzleBtn.addEventListener('click', () => {
+            playSound('click');
+            isDailyPuzzle = true;
+            const today = new Date();
+            // Format to YYYY-MM-DD to ensure the seed is the same for the whole day
+            const dateString = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+            seedForNextGame = dateString;
             titleButtons.style.display = 'none';
             difficultyScreen.style.display = 'block';
         });
         
         seedGameBtn.addEventListener('click', () => {
             playSound('click');
+            isDailyPuzzle = false;
             titleButtons.style.display = 'none';
             seedScreen.style.display = 'block';
         });
@@ -802,6 +848,18 @@
                 }
             }
         }
+        
+        function recordDailyCompletion() {
+            const today = new Date();
+            const dateString = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+            
+            let completions = JSON.parse(localStorage.getItem('sudokuDailyCompletions')) || [];
+            if (!completions.includes(dateString)) {
+                completions.push(dateString);
+                localStorage.setItem('sudokuDailyCompletions', JSON.stringify(completions));
+            }
+        }
+
 
         function checkCompletion(row, col, num) {
             updateCompletedNumberButtons();
@@ -823,6 +881,10 @@
                 const formattedTime = formatTime(finalTime);
                 winTimeMessage.textContent = `Your time: ${formattedTime}`;
                 saveBestTime(finalTime, currentDifficulty);
+
+                if (isDailyPuzzle) {
+                    recordDailyCompletion();
+                }
 
                 playSound('win');
                 addXP(100);
@@ -906,6 +968,52 @@
             gameOverModal.style.display = 'flex'; 
         }
         function updateLivesDisplay() { livesContainer.textContent = '♥ '.repeat(lives); }
+        
+        // --- Calendar Functions ---
+        function displayCalendar() {
+            calendarGrid.innerHTML = '';
+            const year = calendarDate.getFullYear();
+            const month = calendarDate.getMonth();
+            const today = new Date();
+
+            calendarMonthYear.textContent = `${calendarDate.toLocaleString('default', { month: 'long' })} ${year}`;
+
+            const firstDayOfMonth = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const completions = JSON.parse(localStorage.getItem('sudokuDailyCompletions')) || [];
+
+            const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            weekdays.forEach(day => {
+                const weekdayCell = document.createElement('div');
+                weekdayCell.classList.add('calendar-weekday');
+                weekdayCell.textContent = day;
+                calendarGrid.appendChild(weekdayCell);
+            });
+
+            for (let i = 0; i < firstDayOfMonth; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.classList.add('calendar-day', 'empty');
+                calendarGrid.appendChild(emptyCell);
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayCell = document.createElement('div');
+                dayCell.classList.add('calendar-day');
+                dayCell.textContent = day;
+                
+                const dateString = `${year}-${month + 1}-${day}`;
+                if (completions.includes(dateString)) {
+                    dayCell.innerHTML = `<span>${day}</span><span class="medal">🥇</span>`;
+                }
+                
+                if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                    dayCell.classList.add('today');
+                }
+
+                calendarGrid.appendChild(dayCell);
+            }
+             calendarModal.style.display = 'flex';
+        }
 
         // --- Event Listeners ---
         window.addEventListener('keydown', (e) => {
@@ -938,6 +1046,10 @@
         winNewGameBtn.addEventListener('click', () => { playSound('click'); startNewGameFromWin(); });
         bestTimesBtn.addEventListener('click', () => { playSound('click'); displayBestTimes(); });
         closeBestTimesBtn.addEventListener('click', () => { playSound('click'); bestTimesModal.style.display = 'none'; });
+        calendarBtn.addEventListener('click', () => { playSound('click'); calendarDate = new Date(); displayCalendar(); });
+        prevMonthBtn.addEventListener('click', () => { playSound('click'); calendarDate.setMonth(calendarDate.getMonth() - 1); displayCalendar(); });
+        nextMonthBtn.addEventListener('click', () => { playSound('click'); calendarDate.setMonth(calendarDate.getMonth() + 1); displayCalendar(); });
+        closeCalendarBtn.addEventListener('click', () => { playSound('click'); calendarModal.style.display = 'none'; });
 
 
         // --- XP, Leveling & Unlocks ---
@@ -1239,6 +1351,4 @@
         
         // Initial load
         startTitleAnimation();
-    </script>
-</body>
-</html>
+    </script></body></html>
