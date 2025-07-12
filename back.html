@@ -95,8 +95,16 @@
         #game-buttons { text-align: right; }
         #game-buttons button { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-color); margin-left: 10px; }
         
-        #sudoku-grid { display: grid; grid-template-columns: repeat(9, 1fr); background-color: var(--grid-background); border: 3px solid var(--grid-background); width: 100%; max-width: 450px; aspect-ratio: 1 / 1; margin: 0 auto; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        #sudoku-grid { display: grid; grid-template-columns: repeat(9, 1fr); background-color: var(--grid-background); border: 4px solid var(--grid-background); width: 100%; max-width: 450px; aspect-ratio: 1 / 1; margin: 0 auto; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .sudoku-cell { background-color: var(--cell-background); display: flex; justify-content: center; align-items: center; font-size: clamp(1rem, 4vw, 1.8rem); font-weight: 600; cursor: pointer; border: 1px solid var(--grid-background); transition: background-color 0.3s; position: relative; overflow: hidden; }
+        
+        .sudoku-cell:nth-child(3n):not(:nth-child(9n)) { border-right: 4px solid var(--grid-background); }
+        .sudoku-cell:nth-child(9n) { border-right: none; }
+        .sudoku-cell:nth-of-type(n+19):nth-of-type(-n+27),
+        .sudoku-cell:nth-of-type(n+46):nth-of-type(-n+54) { border-bottom: 4px solid var(--grid-background); }
+        .sudoku-cell:nth-of-type(n+73):nth-of-type(-n+81) { border-bottom: none; }
+        .sudoku-cell:nth-child(9n+1) { border-left: none; }
+        
         .sudoku-cell.given { color: var(--given-text-color); cursor: not-allowed; background-color: #e0eef5; }
 
         #controls { margin-top: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 5px; }
@@ -158,7 +166,7 @@
                 </div>
                 <div id="game-buttons">
                     <button id="options-btn">⚙️</button>
-                    <button id="mute-btn">🔊</button>
+                    <button id="mute-btn">🔇</button>
                     <button id="fullscreen-btn">⛶</button>
                 </div>
             </div>
@@ -211,7 +219,7 @@
         let selectedCell = null;
         let boardState = { puzzle: [], solution: [], playerBoard: [] };
         let lives = 3;
-        let isMuted = false;
+        let isMuted = true;
         let gameTimerInterval = null;
         let secondsElapsed = 0;
         let currentDifficulty = '';
@@ -581,7 +589,7 @@
         
         // --- Options Modal Logic ---
         function buildOptionsModal() {
-            let content = `<h2>Options</h2><div class="options-grid">`;
+            let content = `<h2>Options</h2><div class="options-grid" style="grid-template-columns: 1fr;">`;
             content += `<button class="control-btn" onclick="openCalendar()">View Calendar</button>`;
             content += `</div><br><button class="control-btn" onclick="document.getElementById('options-modal').style.display='none';">Close</button>`;
             document.getElementById('options-content').innerHTML = content;
