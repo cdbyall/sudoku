@@ -633,22 +633,21 @@
             }
         }
 
+        // --- CORRECTED FUNCTION ---
         function checkCompletion(row, col, num) {
             updateCompletedNumberButtons();
             
             // Check for number completion
-            if (!document.querySelector(`.control-btn.disabled[textContent='${num}']`)) {
-                let isNumComplete = true;
-                for(let r=0; r<9; r++) { for(let c=0; c<9; c++) { if(boardState.playerBoard[r][c] === num) { /* count handled by update func */ } } }
-                const btn = Array.from(controls.querySelectorAll('.control-btn')).find(b => parseInt(b.textContent) === num);
-                if (btn && btn.classList.contains('disabled')) {
-                    showCompletionMessage(`All ${num}s Done!`);
-                    const cells = document.querySelectorAll(`.sudoku-cell`);
-                    const numCells = Array.from(cells).filter(c => parseInt(c.textContent) === num);
-                    animateCompletion(numCells);
-                }
+            const btn = Array.from(controls.querySelectorAll('.control-btn')).find(b => parseInt(b.textContent) === num && !b.id);
+            if (btn && btn.classList.contains('disabled') && !btn.classList.contains('animation-done')) {
+                showCompletionMessage(`All ${num}s Done!`);
+                const cells = document.querySelectorAll(`.sudoku-cell`);
+                const numCells = Array.from(cells).filter(c => (c.textContent == num));
+                animateCompletion(numCells);
+                btn.classList.add('animation-done'); // Prevents re-animating the same number set
             }
 
+            // Check for row completion
             const isRowComplete = boardState.playerBoard[row].every(val => val !== 0);
             if (isRowComplete) {
                 showCompletionMessage('Row Complete!');
@@ -657,6 +656,7 @@
                 animateCompletion(rowCells);
             }
 
+            // Check for column completion
             const isColComplete = boardState.playerBoard.every(r => r[col] !== 0);
             if (isColComplete) {
                 showCompletionMessage('Column Complete!');
@@ -665,6 +665,7 @@
                 animateCompletion(colCells);
             }
             
+            // Check for grid completion
             const startRow = Math.floor(row / 3) * 3, startCol = Math.floor(col / 3) * 3;
             let isGridComplete = true;
             for (let r = 0; r < 3; r++) { for (let c = 0; c < 3; c++) { if (boardState.playerBoard[startRow + r][startCol + c] === 0) isGridComplete = false; } }
