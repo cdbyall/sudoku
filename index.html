@@ -23,6 +23,7 @@
             --candidate-color: #888;
             --color-mode-one: #a8e6cf; /* green */
             --color-mode-two: #ffd3b6; /* yellow */
+            --light-up-color: rgba(255, 255, 255, 0.8);
             --font-family: 'Poppins', sans-serif;
         }
 
@@ -36,7 +37,7 @@
             height: 100vh;
             margin: 0;
             overflow: hidden;
-            transition: font-family 0.5s;
+            transition: font-family 0.5s, background-color 0.5s, color 0.5s;
         }
         
         #animated-bg {
@@ -49,22 +50,64 @@
             background: linear-gradient(45deg, #fdf6f6, #f1e7fe, #e7f5fe, #fdf6f6);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
+            overflow: hidden;
         }
 
+        /* --- Animated Backgrounds --- */
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         @keyframes bg-stars { from { background-position: 0 0; } to { background-position: -10000px 5000px; } }
-        @keyframes bg-bubbles { from { background-position: 0 0; } to { background-position: 1000px 1000px; } }
-        @keyframes bg-sunset { 0% { background-position: 0% 82%; } 50% { background-position: 100% 19%; } 100% { background-position: 0% 82%; } }
+        @keyframes gentle-flow { 0% { background-position: 0% 50% } 50% { background-position: 100% 50% } 100% { background-position: 0% 50% } }
+        .firefly { position: absolute; width: 5px; height: 5px; background: #fffae1; border-radius: 50%; box-shadow: 0 0 10px #fffae1, 0 0 20px #fffae1; animation: firefly-float 20s infinite alternate, firefly-blink 2s infinite alternate; }
+        @keyframes firefly-float { from { transform: translate(0, 0); } to { transform: translate(var(--x-end), var(--y-end)); } }
+        @keyframes firefly-blink { 0%, 100% { opacity: 0.1; } 50% { opacity: 1; } }
+        
+        /* --- Completion & Input Animations --- */
+        @keyframes light-up {
+            0% { background-color: var(--cell-background); box-shadow: none; }
+            50% { background-color: var(--light-up-color); box-shadow: 0 0 15px var(--light-up-color); }
+            100% { background-color: var(--cell-background); box-shadow: none; }
+        }
+        .light-up-animation { animation: light-up 0.8s ease-in-out; }
 
+        @keyframes puff { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
+        @keyframes ripple { to { transform: scale(4); opacity: 0; } }
+        .ripple { position: absolute; border-radius: 50%; transform: scale(0); animation: ripple 0.6s linear; background-color: var(--accent-color); }
 
         #game-container { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 500px; padding: 10px; box-sizing: border-box; position: relative; }
-        #title-screen { text-align: center; animation: fadeIn 2s; }
-        #title-screen h1 { font-size: clamp(2rem, 8vw, 3rem); margin-bottom: 20px; animation: slideIn 1s ease-out; color: var(--accent-color); font-weight: 600; }
-        #game-board { width: 100%; }
+        #title-screen { text-align: center; animation: fadeIn 2s; position: relative; width: 100%; height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center;}
+        .floating-number { position: absolute; font-size: 2rem; color: var(--accent-color); opacity: 0.7; animation: float 10s ease-in-out infinite; }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
+        #title-screen h1 { font-size: clamp(2rem, 8vw, 3rem); margin-bottom: 20px; animation: slideIn 1s ease-out; color: var(--accent-color); font-weight: 600; z-index: 10;}
+        
+        #game-board { width: 100%; position: relative; }
+        #completion-message {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            color: var(--text-color);
+            padding: 15px 30px;
+            border-radius: 20px;
+            font-size: 1.5em;
+            font-weight: 600;
+            z-index: 50;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease-in-out;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        #completion-message.show { opacity: 1; }
+
         #top-bar { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 450px; margin: 0 auto 10px; }
         #lives-container { font-size: 1.5rem; color: var(--accent-color); }
         #game-buttons button { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-color); margin-left: 10px; }
-        #sudoku-grid { display: grid; grid-template-columns: repeat(9, 1fr); background-color: var(--grid-background); border: 3px solid var(--grid-background); width: 100%; max-width: 450px; aspect-ratio: 1 / 1; margin: 0 auto; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        #sudoku-grid { display: grid; grid-template-columns: repeat(9, 1fr); background-color: var(--grid-background); border: 3px solid var(--grid-background); width: 100%; max-width: 450px; aspect-ratio: 1 / 1; margin: 0 auto; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: background-color 0.5s; }
+        
+        /* Animated Board Themes */
+        #sudoku-grid.board-rainbow { background: linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3); background-size: 1800% 1800%; animation: rainbow-flow 18s ease infinite; }
+        #sudoku-grid.board-sands { background-image: url('https://www.transparenttextures.com/patterns/sand.png'), linear-gradient(to right, #c2b280, #e6d8ad); animation: gentle-flow 30s ease infinite; }
+        @keyframes rainbow-flow { 0%{background-position:0% 82%} 50%{background-position:100% 19%} 100%{background-position:0% 82%} }
 
         .sudoku-cell {
             background-color: var(--cell-background);
@@ -74,9 +117,10 @@
             font-size: clamp(1rem, 4vw, 1.8rem);
             font-weight: 600;
             cursor: pointer;
-            border: 1px solid #d1eaf7;
-            transition: background-color 0.2s;
+            border: 1px solid var(--grid-background);
+            transition: background-color 0.3s;
             position: relative;
+            overflow: hidden;
         }
         
         .candidate-grid { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; height: 100%; }
@@ -94,13 +138,14 @@
         .sudoku-cell.given { color: var(--given-text-color); cursor: not-allowed; background-color: #e0eef5; }
         .sudoku-cell.correct { color: var(--correct-color); font-weight: bold; }
         .sudoku-cell.error { animation: shake 0.5s; background-color: var(--error-color); }
-        .sudoku-cell.color-mode-one { background-color: var(--color-mode-one); }
-        .sudoku-cell.color-mode-two { background-color: var(--color-mode-two); }
+        .sudoku-cell.color-mode-one { background-color: var(--color-mode-one) !important; }
+        .sudoku-cell.color-mode-two { background-color: var(--color-mode-two) !important; }
 
         #controls { margin-top: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 5px; }
-        .control-btn { background-color: var(--button-bg); color: var(--button-text); border: none; padding: 10px 15px; font-size: 1em; cursor: pointer; border-radius: 20px; font-weight: 600; transition: transform 0.2s, background-color 0.2s; }
+        .control-btn { background-color: var(--button-bg); color: var(--button-text); border: none; padding: 10px 15px; font-size: 1em; cursor: pointer; border-radius: 20px; font-weight: 600; transition: transform 0.2s, background-color 0.2s, filter 0.3s; }
         .control-btn:hover { transform: scale(1.05); }
         .control-btn.active { background-color: var(--accent-color); color: white; }
+        .control-btn.disabled { filter: grayscale(1); opacity: 0.6; pointer-events: none; }
 
         #xp-bar-container { width: 100%; background-color: #e0eef5; border-radius: 10px; margin-top: 20px; overflow: hidden; }
         #xp-bar { width: 0%; height: 20px; background: linear-gradient(90deg, var(--button-bg), var(--accent-color)); border-radius: 10px; text-align: center; line-height: 20px; color: white; font-weight: 600; transition: width 0.5s ease-in-out; }
@@ -120,6 +165,7 @@
     <div id="animated-bg"></div>
     <div id="game-container">
         <div id="title-screen">
+            <div id="title-animation-container"></div>
             <h1>Single Prompt AI Sudoku</h1>
             <button class="control-btn" id="new-game-btn">New Game</button>
         </div>
@@ -132,6 +178,7 @@
         </div>
 
         <div id="game-board" style="display: none;">
+            <div id="completion-message"></div>
             <div id="top-bar">
                 <div id="lives-container">♥ ♥ ♥</div>
                 <div id="game-buttons">
@@ -155,16 +202,18 @@
     
     <script>
         // --- DOM Elements ---
+        const root = document.documentElement;
         const animatedBg = document.getElementById('animated-bg');
-        const gameContainer = document.getElementById('game-container');
         const titleScreen = document.getElementById('title-screen');
+        const titleAnimationContainer = document.getElementById('title-animation-container');
         const newGameBtn = document.getElementById('new-game-btn');
         const difficultyScreen = document.getElementById('difficulty-screen');
         const gameBoard = document.getElementById('game-board');
+        const completionMessage = document.getElementById('completion-message');
         const sudokuGrid = document.getElementById('sudoku-grid');
         const controls = document.getElementById('controls');
-        const xpBar = document.getElementById('xp-bar');
         const livesContainer = document.getElementById('lives-container');
+        const xpBar = document.getElementById('xp-bar');
         const optionsBtn = document.getElementById('options-btn');
         const muteBtn = document.getElementById('mute-btn');
         const fullscreenBtn = document.getElementById('fullscreen-btn');
@@ -183,10 +232,11 @@
         let lives = 3;
         let isMuted = false;
         let isCandidateMode = false;
-        let isAutoCandidateMode = false;
         let isColorMode = false;
         let isRevealMode = false;
         let revealsLeft = 3;
+        let unlockClickCounter = 0;
+        let titleAnimationInterval;
 
         // --- Player Data & Unlocks ---
         let playerData = {
@@ -196,6 +246,8 @@
             unlocked: {
                 backgrounds: ['bg-default'],
                 fonts: ['font-default'],
+                themes: ['theme-default'],
+                boards: ['board-default'],
                 features: []
             }
         };
@@ -203,51 +255,47 @@
         const unlockables = {
             2: { type: 'background', id: 'bg-stars', name: 'Starry Night' },
             3: { type: 'font', id: 'font-kalam', name: 'Kalam' },
-            4: { type: 'background', id: 'bg-bubbles', name: 'Bubbly' },
+            4: { type: 'theme', id: 'theme-forest', name: 'Forest Theme' },
             5: { type: 'feature', id: 'feature-color-mode', name: 'Color Mode' },
-            6: { type: 'background', id: 'bg-sunset', name: 'Sunset' },
-            7: { type: 'font', id: 'font-patrick-hand', name: 'Patrick Hand' },
-            8: { type: 'background', id: 'bg-forest', name: 'Enchanted Forest' },
-            9: { type: 'font', id: 'font-caveat', name: 'Caveat' },
+            6: { type: 'background', id: 'bg-fireflies', name: 'Fireflies' },
+            7: { type: 'board', id: 'board-rainbow', name: 'Rainbow Board' },
+            8: { type: 'theme', id: 'theme-ocean', name: 'Ocean Theme' },
+            9: { type: 'background', id: 'bg-koi', name: 'Koi Pond' },
             10: { type: 'feature', id: 'feature-reveal', name: 'Reveal' },
-            11: { type: 'font', id: 'font-shadows', name: 'Shadows Into Light' },
-            12: { type: 'background', id: 'bg-ocean', name: 'Deep Ocean' },
-            13: { type: 'font', id: 'font-architect', name: 'Architect\'s Daughter' },
-            14: { type: 'background', id: 'bg-fire', name: 'Cozy Fireplace' },
-            15: { type: 'font', id: 'font-roboto-mono', name: 'Roboto Mono' },
-            16: { type: 'background', id: 'bg-retro', name: 'Retro Vibes' },
+            11: { type: 'font', id: 'font-caveat', name: 'Caveat' },
+            12: { type: 'board', id: 'board-sands', name: 'Shifting Sands' },
+            13: { type: 'background', id: 'bg-dust', name: 'Cosmic Dust' },
+            14: { type: 'font', id: 'font-architect', name: 'Architect\'s Daughter' },
+            15: { type: 'theme', id: 'theme-vampire', name: 'Vampire Theme' },
+            16: { type: 'background', id: 'bg-rain', name: 'Cozy Rain' },
             17: { type: 'font', id: 'font-bangers', name: 'Bangers' },
-            18: { type: 'background', id: 'bg-spooky', name: 'Spooky Graveyard' },
-            19: { type: 'font', id: 'font-creepster', name: 'Creepster' },
-            20: { type: 'background', id: 'bg-matrix', name: 'Matrix' },
+            18: { type: 'theme', id: 'theme-8bit', name: '8-Bit Theme' },
+            19: { type: 'background', id: 'bg-zen', name: 'Zen Garden' },
+            20: { type: 'font', id: 'font-creepster', name: 'Creepster' },
         };
 
         const backgroundStyles = {
-            'bg-default': 'linear-gradient(45deg, #fdf6f6, #f1e7fe, #e7f5fe, #fdf6f6)',
-            'bg-stars': 'url(https://www.transparenttextures.com/patterns/stardust.png) #2a2a3e',
-            'bg-bubbles': 'url(https://www.transparenttextures.com/patterns/argyle.png) #a3d8f4',
-            'bg-sunset': 'linear-gradient(to right, #ff7e5f, #feb47b)',
-            'bg-forest': 'linear-gradient(to right, #0f2027, #203a43, #2c5364)',
-            'bg-ocean': 'linear-gradient(to right, #2193b0, #6dd5ed)',
-            'bg-fire': 'linear-gradient(45deg, #ff512f, #f09819)',
-            'bg-retro': 'linear-gradient(90deg, #d53369, #daae51)',
-            'bg-spooky': 'linear-gradient(to top, #09203f, #537895)',
-            'bg-matrix': 'linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url(https://www.transparenttextures.com/patterns/green-fibers.png) #000'
+            'bg-default': { type: 'css', animation: 'gradientBG 15s ease infinite', style: 'linear-gradient(45deg, #fdf6f6, #f1e7fe, #e7f5fe, #fdf6f6)' },
+            'bg-stars': { type: 'css', animation: 'bg-stars 150s linear infinite', style: 'url(https://www.transparenttextures.com/patterns/stardust.png) #2a2a3e' },
+            'bg-fireflies': { type: 'js', function: 'createFireflies' },
+            'bg-koi': { type: 'css', animation: 'gentle-flow 20s ease infinite', style: 'linear-gradient(to right, #1d2b64, #f8cdda)' },
+            'bg-dust': { type: 'css', animation: 'bg-stars 80s linear infinite', style: 'url(https://www.transparenttextures.com/patterns/gplay.png) #1a1a2e' },
+            'bg-rain': { type: 'css', animation: 'gentle-flow 25s ease infinite', style: 'linear-gradient(to bottom, #6dd5ed, #2193b0)' },
+            'bg-zen': { type: 'css', animation: 'gentle-flow 80s linear infinite', style: 'url(https://www.transparenttextures.com/patterns/pinstripe-light.png) #e5e5e5' }
+        };
+
+        const themeStyles = {
+            'theme-default': { '--background-color': '#fdf6f6', '--grid-background': '#a3d8f4', '--cell-background': '#f1f7f8', '--text-color': '#6155a6', '--button-bg': '#ffc2e2', '--accent-color': '#ff9494' },
+            'theme-forest': { '--background-color': '#f0fff0', '--grid-background': '#228B22', '--cell-background': '#98FB98', '--text-color': '#006400', '--button-bg': '#3CB371', '--accent-color': '#8FBC8F' },
+            'theme-ocean': { '--background-color': '#E0FFFF', '--grid-background': '#00BFFF', '--cell-background': '#AFEEEE', '--text-color': '#191970', '--button-bg': '#87CEFA', '--accent-color': '#4682B4' },
+            'theme-sunset': { '--background-color': '#FFF0F5', '--grid-background': '#FF6347', '--cell-background': '#FFA07A', '--text-color': '#8B0000', '--button-bg': '#FF7F50', '--accent-color': '#E9967A' },
+            'theme-vampire': { '--background-color': '#1a1a1a', '--grid-background': '#4b0000', '--cell-background': '#800000', '--text-color': '#ffc0cb', '--button-bg': '#dc143c', '--accent-color': '#ff69b4' },
+            'theme-8bit': { '--background-color': '#000000', '--grid-background': '#00ff00', '--cell-background': '#333333', '--text-color': '#00ff00', '--button-bg': '#ff00ff', '--accent-color': '#ffff00' },
         };
 
         const fontStyles = {
-            'font-default': "'Poppins', sans-serif",
-            'font-kalam': "'Kalam', cursive",
-            'font-patrick-hand': "'Patrick Hand', cursive",
-            'font-caveat': "'Caveat', cursive",
-            'font-shadows': "'Shadows Into Light', cursive",
-            'font-architect': "'Architects Daughter', cursive",
-            'font-roboto-mono': "'Roboto Mono', monospace",
-            'font-bangers': "'Bangers', cursive",
-            'font-creepster': "'Creepster', cursive",
-            'font-nosifier': "'Nosifier', cursive",
+            'font-default': "'Poppins', sans-serif", 'font-kalam': "'Kalam', cursive", 'font-patrick-hand': "'Patrick Hand', cursive", 'font-caveat': "'Caveat', cursive", 'font-shadows': "'Shadows Into Light', cursive", 'font-architect': "'Architects Daughter', cursive", 'font-roboto-mono': "'Roboto Mono', monospace", 'font-bangers': "'Bangers', cursive", 'font-creepster': "'Creepster', cursive", 'font-nosifier': "'Nosifier', cursive",
         };
-
 
         // --- Sound Engine (Tone.js) ---
         const sounds = {
@@ -255,24 +303,24 @@
             error: new Tone.Synth({ oscillator: { type: 'square' }, envelope: { attack: 0.01, decay: 0.3, sustain: 0, release: 0.1 } }).toDestination(),
             click: new Tone.Synth({ oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 } }).toDestination(),
             win: new Tone.Synth({ oscillator: { type: 'sawtooth' }, envelope: { attack: 0.1, decay: 0.5, sustain: 0.2, release: 0.5 } }).toDestination(),
-            levelUp: new Tone.Synth({ oscillator: { type: 'fmsine' }, envelope: { attack: 0.2, decay: 0.5, sustain: 0, release: 1 } }).toDestination()
+            levelUp: new Tone.Synth({ oscillator: { type: 'fmsine' }, envelope: { attack: 0.2, decay: 0.5, sustain: 0, release: 1 } }).toDestination(),
+            pop: new Tone.Synth({ oscillator: { type: 'triangle' }, pitchDecay: 0.05, envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 } }).toDestination(),
         };
 
-        function playSound(sound) {
-            if (!isMuted && Tone.context.state !== 'running') {
-                Tone.start();
-            }
+        function playSound(sound, note = 'C4') {
+            if (!isMuted && Tone.context.state !== 'running') { Tone.start(); }
             if (!isMuted) {
                 if (sound === 'correct') sounds.correct.triggerAttackRelease('C5', '8n');
                 if (sound === 'error') sounds.error.triggerAttackRelease('C3', '8n');
                 if (sound === 'click') sounds.click.triggerAttackRelease('C4', '16n');
                 if (sound === 'win') sounds.win.triggerAttackRelease('C4', '2n');
                 if (sound === 'levelUp') sounds.levelUp.triggerAttackRelease('G5', '4n');
+                if (sound === 'pop') sounds.pop.triggerAttackRelease(note, '16n');
             }
         }
 
         // --- Sudoku Generator ---
-        class SudokuGenerator { /* ... (same as before) ... */ 
+        class SudokuGenerator {
             constructor() { this.board = Array(9).fill(0).map(() => Array(9).fill(0)); }
             isValid(row, col, num) {
                 for (let i = 0; i < 9; i++) { if (this.board[row][i] === num || this.board[i][col] === num) return false; }
@@ -319,9 +367,32 @@
             shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[array[i], array[j]] = [array[j], array[i]]; } }
         }
 
-        // --- Game Setup & UI ---
+        // --- Game Logic & UI ---
+        function startTitleAnimation() {
+            if (titleAnimationInterval) clearInterval(titleAnimationInterval);
+            titleAnimationInterval = setInterval(() => {
+                const num = document.createElement('div');
+                num.className = 'floating-number';
+                num.textContent = Math.floor(Math.random() * 9) + 1;
+                num.style.left = `${Math.random() * 100}%`;
+                num.style.top = `${Math.random() * 100}%`;
+                num.style.animationDuration = `${Math.random() * 5 + 8}s`;
+                titleAnimationContainer.appendChild(num);
+                setTimeout(() => {
+                    num.style.animation = 'puff 1s forwards';
+                    setTimeout(() => num.remove(), 1000);
+                }, 7000);
+            }, 500);
+        }
+
+        function stopTitleAnimation() {
+            clearInterval(titleAnimationInterval);
+            titleAnimationContainer.innerHTML = '';
+        }
+
         function resetGame() {
-            titleScreen.style.display = 'block';
+            titleScreen.style.display = 'flex';
+            startTitleAnimation();
             difficultyScreen.style.display = 'none';
             gameBoard.style.display = 'none';
             gameOverModal.style.display = 'none';
@@ -330,9 +401,19 @@
             updateLivesDisplay();
         }
 
-        newGameBtn.addEventListener('click', () => { playSound('click'); titleScreen.style.display = 'none'; difficultyScreen.style.display = 'block'; });
+        newGameBtn.addEventListener('click', () => {
+            playSound('click');
+            stopTitleAnimation();
+            titleScreen.style.display = 'none';
+            difficultyScreen.style.display = 'block';
+        });
+
         difficultyScreen.addEventListener('click', (e) => {
-            if (e.target.classList.contains('control-btn')) { playSound('click'); const difficulty = e.target.dataset.difficulty; startGame(difficulty); }
+            if (e.target.classList.contains('control-btn')) {
+                playSound('click');
+                const difficulty = e.target.dataset.difficulty;
+                startGame(difficulty);
+            }
         });
 
         function startGame(difficulty) {
@@ -348,6 +429,8 @@
             revealsLeft = 3;
             updateLivesDisplay();
             updateXPBar();
+            updateCompletedNumberButtons();
+            if(isColorMode) updateColorMode();
         }
 
         function createGrid(puzzle) {
@@ -398,6 +481,7 @@
         }
 
         function inputNumber(num) {
+            if (!selectedCell) return;
             playSound('click');
             if (selectedCell && !selectedCell.classList.contains('given') && !selectedCell.classList.contains('correct')) {
                 const row = parseInt(selectedCell.dataset.row);
@@ -414,6 +498,7 @@
                     drawCandidates(selectedCell, cellIndex);
                 } else {
                     if (boardState.solution[row][col] === num) {
+                        createRipple(selectedCell);
                         selectedCell.innerHTML = '';
                         selectedCell.textContent = num;
                         selectedCell.classList.add('correct');
@@ -421,7 +506,8 @@
                         boardState.playerBoard[row][col] = num;
                         playSound('correct');
                         addXP(10);
-                        checkWinCondition();
+                        checkCompletion(row, col, num);
+                        if (isColorMode) updateColorMode();
                     } else {
                         playSound('error');
                         lives--;
@@ -432,6 +518,13 @@
                     }
                 }
             }
+        }
+        
+        function createRipple(cell) {
+            const ripple = document.createElement("span");
+            ripple.classList.add("ripple");
+            cell.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
         }
 
         function drawCandidates(cell, cellIndex) {
@@ -459,6 +552,128 @@
             document.getElementById('candidate-btn').classList.toggle('active', isCandidateMode);
         }
 
+        // --- Completion & Color Mode Logic ---
+        function showCompletionMessage(text) {
+            completionMessage.textContent = text;
+            completionMessage.classList.add('show');
+            setTimeout(() => {
+                completionMessage.classList.remove('show');
+            }, 2000);
+        }
+
+        function animateCompletion(cells) {
+            playSound('pop', 'C5');
+            cells.forEach((cell, index) => {
+                setTimeout(() => {
+                    cell.classList.add('light-up-animation');
+                }, index * 50); // Stagger the animation
+            });
+            setTimeout(() => {
+                cells.forEach(cell => cell.classList.remove('light-up-animation'));
+            }, cells.length * 50 + 800);
+        }
+
+        function updateCompletedNumberButtons() {
+            for (let num = 1; num <= 9; num++) {
+                let count = 0;
+                for (let r = 0; r < 9; r++) {
+                    for (let c = 0; c < 9; c++) {
+                        if (boardState.playerBoard[r][c] === num) {
+                            count++;
+                        }
+                    }
+                }
+                const btn = Array.from(controls.querySelectorAll('.control-btn')).find(b => parseInt(b.textContent) === num);
+                if (btn) {
+                    if (count === 9) {
+                        btn.classList.add('disabled');
+                    } else {
+                        btn.classList.remove('disabled');
+                    }
+                }
+            }
+        }
+
+        function checkCompletion(row, col, num) {
+            updateCompletedNumberButtons();
+            
+            // Check for number completion
+            if (!document.querySelector(`.control-btn.disabled[textContent='${num}']`)) {
+                let isNumComplete = true;
+                for(let r=0; r<9; r++) { for(let c=0; c<9; c++) { if(boardState.playerBoard[r][c] === num) { /* count handled by update func */ } } }
+                const btn = Array.from(controls.querySelectorAll('.control-btn')).find(b => parseInt(b.textContent) === num);
+                if (btn && btn.classList.contains('disabled')) {
+                    showCompletionMessage(`All ${num}s Done!`);
+                    const cells = document.querySelectorAll(`.sudoku-cell`);
+                    const numCells = Array.from(cells).filter(c => parseInt(c.textContent) === num);
+                    animateCompletion(numCells);
+                }
+            }
+
+            const isRowComplete = boardState.playerBoard[row].every(val => val !== 0);
+            if (isRowComplete) {
+                showCompletionMessage('Row Complete!');
+                const rowCells = [];
+                for (let c = 0; c < 9; c++) rowCells.push(getCell(row, c));
+                animateCompletion(rowCells);
+            }
+
+            const isColComplete = boardState.playerBoard.every(r => r[col] !== 0);
+            if (isColComplete) {
+                showCompletionMessage('Column Complete!');
+                const colCells = [];
+                for (let r = 0; r < 9; r++) colCells.push(getCell(r, col));
+                animateCompletion(colCells);
+            }
+            
+            const startRow = Math.floor(row / 3) * 3, startCol = Math.floor(col / 3) * 3;
+            let isGridComplete = true;
+            for (let r = 0; r < 3; r++) { for (let c = 0; c < 3; c++) { if (boardState.playerBoard[startRow + r][startCol + c] === 0) isGridComplete = false; } }
+            if (isGridComplete) {
+                showCompletionMessage('Grid Complete!');
+                const gridCells = [];
+                for (let r = 0; r < 3; r++) { for (let c = 0; c < 3; c++) gridCells.push(getCell(startRow + r, startCol + c)); }
+                animateCompletion(gridCells);
+            }
+            
+            checkWinCondition();
+        }
+        
+        function updateColorMode() {
+            if (!isColorMode) {
+                document.querySelectorAll('.color-mode-one, .color-mode-two').forEach(c => {
+                    c.classList.remove('color-mode-one', 'color-mode-two');
+                });
+                return;
+            }
+
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    const cell = getCell(r, c);
+                    cell.classList.remove('color-mode-one', 'color-mode-two');
+                    if (boardState.playerBoard[r][c] === 0) {
+                        let possible = [];
+                        for (let n = 1; n <= 9; n++) {
+                            if (isValidPlacement(boardState.playerBoard, r, c, n)) {
+                                possible.push(n);
+                            }
+                        }
+                        if (possible.length === 1) cell.classList.add('color-mode-one');
+                        if (possible.length === 2) cell.classList.add('color-mode-two');
+                    }
+                }
+            }
+        }
+        
+        function isValidPlacement(board, row, col, num) {
+            for (let i = 0; i < 9; i++) { if (board[row][i] === num || board[i][col] === num) return false; }
+            const startRow = Math.floor(row / 3) * 3, startCol = Math.floor(col / 3) * 3;
+            for (let i = 0; i < 3; i++) { for (let j = 0; j < 3; j++) { if (board[startRow + i][startCol + j] === num) return false; } }
+            return true;
+        }
+
+        function getCell(row, col) { return sudokuGrid.querySelector(`[data-row='${row}'][data-col='${col}']`); }
+
         function checkWinCondition() {
             for(let r=0; r<9; r++) {
                 for(let c=0; c<9; c++) {
@@ -474,13 +689,32 @@
         function updateLivesDisplay() { livesContainer.textContent = '♥ '.repeat(lives); }
 
         // --- Event Listeners ---
-        window.addEventListener('keydown', (e) => { if (e.key >= '1' && e.key <= '9') inputNumber(parseInt(e.key)); });
-        muteBtn.addEventListener('click', () => { isMuted = !isMuted; muteBtn.textContent = isMuted ? '🔇' : '🔊'; });
+        window.addEventListener('keydown', (e) => {
+            if (gameBoard.style.display !== 'block') return;
+            if (e.key >= '1' && e.key <= '9') {
+                inputNumber(parseInt(e.key));
+            }
+        });
+
+        muteBtn.addEventListener('click', () => { 
+            isMuted = !isMuted; 
+            muteBtn.textContent = isMuted ? '🔇' : '🔊'; 
+            unlockClickCounter++;
+            if (unlockClickCounter === 8) {
+                unlockAll();
+            }
+        });
         fullscreenBtn.addEventListener('click', () => {
+            unlockClickCounter = 0;
             if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => console.error(err)); } 
             else { document.exitFullscreen(); }
         });
-        optionsBtn.addEventListener('click', () => { buildOptionsModal(); optionsModal.style.display = 'flex'; playSound('click'); });
+        optionsBtn.addEventListener('click', () => { 
+            unlockClickCounter = 0;
+            buildOptionsModal(); 
+            optionsModal.style.display = 'flex'; 
+            playSound('click'); 
+        });
         restartGameBtn.addEventListener('click', () => { resetGame(); playSound('click'); });
         winNewGameBtn.addEventListener('click', () => { resetGame(); playSound('click'); });
 
@@ -503,11 +737,26 @@
             if (unlock) {
                 if (unlock.type === 'background') playerData.unlocked.backgrounds.push(unlock.id);
                 if (unlock.type === 'font') playerData.unlocked.fonts.push(unlock.id);
+                if (unlock.type === 'theme') playerData.unlocked.themes.push(unlock.id);
+                if (unlock.type === 'board') playerData.unlocked.boards.push(unlock.id);
                 if (unlock.type === 'feature') playerData.unlocked.features.push(unlock.id);
                 showUnlockModal(unlock);
             } else {
                 showUnlockModal({type: 'level', name: `Level ${playerData.level}`});
             }
+        }
+        
+        function unlockAll() {
+            Object.values(unlockables).forEach(unlock => {
+                if (unlock.type === 'background' && !playerData.unlocked.backgrounds.includes(unlock.id)) playerData.unlocked.backgrounds.push(unlock.id);
+                if (unlock.type === 'font' && !playerData.unlocked.fonts.includes(unlock.id)) playerData.unlocked.fonts.push(unlock.id);
+                if (unlock.type === 'theme' && !playerData.unlocked.themes.includes(unlock.id)) playerData.unlocked.themes.push(unlock.id);
+                if (unlock.type === 'board' && !playerData.unlocked.boards.includes(unlock.id)) playerData.unlocked.boards.push(unlock.id);
+                if (unlock.type === 'feature' && !playerData.unlocked.features.includes(unlock.id)) playerData.unlocked.features.push(unlock.id);
+            });
+            playerData.level = 20;
+            alert('Developer Mode: All items unlocked!');
+            unlockClickCounter = 0;
         }
 
         function showUnlockModal(unlock) {
@@ -515,12 +764,30 @@
             if (unlock.type !== 'level') {
                 message += `<p>You've unlocked: <strong>${unlock.name}</strong>!</p>`;
             }
+            
+            const buttonContainer = document.createElement('div');
+            if (unlock.type === 'background' || unlock.type === 'font' || unlock.type === 'theme' || unlock.type === 'board') {
+                const applyBtn = document.createElement('button');
+                applyBtn.className = 'control-btn';
+                applyBtn.textContent = 'Apply Now';
+                applyBtn.onclick = () => {
+                    if (unlock.type === 'background') applyBackground(unlock.id);
+                    if (unlock.type === 'font') applyFont(unlock.id);
+                    if (unlock.type === 'theme') applyTheme(unlock.id);
+                    if (unlock.type === 'board') applyBoard(unlock.id);
+                    unlockModal.style.display = 'none';
+                };
+                buttonContainer.appendChild(applyBtn);
+            }
+
             const closeBtn = document.createElement('button');
             closeBtn.className = 'control-btn';
             closeBtn.textContent = 'Awesome!';
             closeBtn.onclick = () => { unlockModal.style.display = 'none' };
+            buttonContainer.appendChild(closeBtn);
+            
             unlockContent.innerHTML = message;
-            unlockContent.appendChild(closeBtn);
+            unlockContent.appendChild(buttonContainer);
             unlockModal.style.display = 'flex';
         }
 
@@ -534,22 +801,31 @@
         function buildOptionsModal() {
             let content = `<h2>Options</h2><div class="options-grid">`;
             
-            // Backgrounds
             content += `<h3>Backgrounds</h3>`;
             playerData.unlocked.backgrounds.forEach(bgId => {
-                const bg = Object.entries(unlockables).find(([lvl, val]) => val.id === bgId) || [null, {name: 'Default'}];
-                content += `<button class="control-btn" onclick="applyBackground('${bgId}')">${bg[1].name}</button>`;
+                const bgName = (Object.values(unlockables).find(u => u.id === bgId) || {name: 'Default'}).name;
+                content += `<button class="control-btn" onclick="applyBackground('${bgId}')">${bgName}</button>`;
             });
 
-            // Fonts
+            content += `<h3>Board Styles</h3>`;
+            playerData.unlocked.boards.forEach(boardId => {
+                const boardName = (Object.values(unlockables).find(u => u.id === boardId) || {name: 'Default'}).name;
+                content += `<button class="control-btn" onclick="applyBoard('${boardId}')">${boardName}</button>`;
+            });
+
+            content += `<h3>Color Themes</h3>`;
+            playerData.unlocked.themes.forEach(themeId => {
+                const themeName = (Object.values(unlockables).find(u => u.id === themeId) || {name: 'Default'}).name;
+                content += `<button class="control-btn" onclick="applyTheme('${themeId}')">${themeName}</button>`;
+            });
+
             content += `<h3>Fonts</h3>`;
             playerData.unlocked.fonts.forEach(fontId => {
-                const font = Object.entries(unlockables).find(([lvl, val]) => val.id === fontId) || [null, {name: 'Default'}];
-                content += `<button class="control-btn" onclick="applyFont('${fontId}')">${font[1].name}</button>`;
+                const fontName = (Object.values(unlockables).find(u => u.id === fontId) || {name: 'Default'}).name;
+                content += `<button class="control-btn" onclick="applyFont('${fontId}')">${fontName}</button>`;
             });
 
-            // Features
-             if (playerData.unlocked.features.length > 0) {
+            if (playerData.unlocked.features.length > 0) {
                 content += `<h3>Features</h3>`;
                 if (playerData.unlocked.features.includes('feature-color-mode')) {
                     content += `<button class="control-btn" id="color-mode-btn" onclick="toggleColorMode()">Color Mode: ${isColorMode ? 'ON' : 'OFF'}</button>`;
@@ -559,17 +835,55 @@
                 }
             }
 
-            content += `</div><br><button class="control-btn" onclick="optionsModal.style.display='none'">Close</button>`;
+            content += `</div><br><button class="control-btn" onclick="optionsModal.style.display='none';">Close</button>`;
             optionsContent.innerHTML = content;
+        }
+        
+        function clearJsBackgrounds() {
+            const existing = animatedBg.querySelectorAll('.firefly');
+            existing.forEach(e => e.remove());
+        }
+
+        function createFireflies() {
+            clearJsBackgrounds();
+            animatedBg.style.background = '#0d1a26';
+            for (let i = 0; i < 20; i++) {
+                const firefly = document.createElement('div');
+                firefly.className = 'firefly';
+                firefly.style.left = `${Math.random() * 100}%`;
+                firefly.style.top = `${Math.random() * 100}%`;
+                firefly.style.setProperty('--x-end', `${Math.random() * 200 - 100}px`);
+                firefly.style.setProperty('--y-end', `${Math.random() * 200 - 100}px`);
+                firefly.style.animationDelay = `${Math.random() * 20}s`;
+                animatedBg.appendChild(firefly);
+            }
         }
 
         function applyBackground(bgId) {
-            const style = backgroundStyles[bgId];
-            animatedBg.style.background = style;
-            if (bgId === 'bg-stars') { animatedBg.style.animation = 'bg-stars 150s linear infinite'; }
-            else if (bgId === 'bg-bubbles') { animatedBg.style.animation = 'bg-bubbles 30s linear infinite'; }
-            else if (bgId === 'bg-sunset') { animatedBg.style.animation = 'bg-sunset 15s ease infinite'; }
-            else { animatedBg.style.animation = 'gradientBG 15s ease infinite'; }
+            clearJsBackgrounds();
+            const bg = backgroundStyles[bgId];
+            if (bg.type === 'css') {
+                animatedBg.style.background = bg.style;
+                animatedBg.style.animation = bg.animation;
+            } else if (bg.type === 'js') {
+                window[bg.function]();
+            }
+            playSound('click');
+        }
+
+        function applyBoard(boardId) {
+            sudokuGrid.className = ''; // Reset classes
+            if (boardId !== 'board-default') {
+                sudokuGrid.classList.add(boardId);
+            }
+            playSound('click');
+        }
+
+        function applyTheme(themeId) {
+            const theme = themeStyles[themeId];
+            for (const [key, value] of Object.entries(theme)) {
+                root.style.setProperty(key, value);
+            }
             playSound('click');
         }
 
@@ -581,15 +895,14 @@
         function toggleColorMode() {
             isColorMode = !isColorMode;
             document.getElementById('color-mode-btn').textContent = `Color Mode: ${isColorMode ? 'ON' : 'OFF'}`;
-            // Logic to apply/remove colors will go here
+            updateColorMode();
             playSound('click');
         }
 
         function toggleRevealMode() {
-            if (revealsLeft > 0) {
-                isRevealMode = !isRevealMode;
+            if (revealsLeft > 0 && !isRevealMode) {
+                isRevealMode = true;
                 document.getElementById('reveal-btn').classList.toggle('active', isRevealMode);
-                if (!isRevealMode) selectedCell = null;
             }
         }
 
@@ -602,13 +915,22 @@
             const row = parseInt(cell.dataset.row);
             const col = parseInt(cell.dataset.col);
             const solution = boardState.solution[row][col];
+            
+            const wasCandidateMode = isCandidateMode;
+            isCandidateMode = false;
             inputNumber(solution);
+            isCandidateMode = wasCandidateMode;
+
             revealsLeft--;
             isRevealMode = false;
-            document.getElementById('reveal-btn').classList.remove('active');
-            buildOptionsModal(); // update count
+            if(document.getElementById('reveal-btn')) {
+                document.getElementById('reveal-btn').classList.remove('active');
+                buildOptionsModal();
+            }
         }
-
+        
+        // Initial load
+        startTitleAnimation();
     </script>
 </body>
 </html>
