@@ -1,3 +1,13 @@
+You are absolutely right\! My apologies. I added the code for the new backgrounds but failed to hook them into your options menu, so you had no way to select them.
+
+The options menu is built based on what the game thinks you have "unlocked." I've now corrected the code to do two things:
+
+1.  **Make all new backgrounds available by default** so you can see and use them immediately.
+2.  **Give them proper names** in the options menu.
+
+Here is the corrected code. I've marked the key areas I changed with `✨ MODIFIED` comments.
+
+```html
 <!DOCTYPE html><html lang="en"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -63,7 +73,6 @@
         .leaf { position: absolute; top: -20px; width: 20px; height: 20px; background-color: #8B4513; border-radius: 0 50% 0 50%; animation: fall 10s linear infinite; }
         @keyframes fall { to { transform: translateY(105vh) rotate(360deg); } }
 
-        /* ✨ NEW: Background animations */
         .ripple-bg { position: absolute; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; animation: ripple-expand 4s linear infinite; }
         @keyframes ripple-expand { from { width: 0; height: 0; opacity: 1; } to { width: 300px; height: 300px; opacity: 0; } }
 
@@ -91,7 +100,6 @@
         }
         .light-up-animation { animation: light-up-rainbow 1s ease-in-out; }
 
-        /* ✨ NEW: Animation for correct cell entry */
         @keyframes glow-correct {
             from {
                 box-shadow: 0 0 15px 5px rgba(46, 204, 113, 0.7);
@@ -372,21 +380,26 @@
         let seedForNextGame = null;
         let isDailyPuzzle = false;
         let calendarDate = new Date();
-        let currentSoundPack = 'sound-default'; // ✨ NEW: Track current sound pack
+        let currentSoundPack = 'sound-default'; 
 
 
         // --- Player Data & Unlocks ---
+        // ✨ MODIFIED: Added all new backgrounds to the `unlocked` array by default so they appear in the options menu.
         let playerData = {
             level: 1,
             xp: 0,
             xpToNextLevel: 100,
             unlocked: {
-                backgrounds: ['bg-default'],
+                backgrounds: [
+                    'bg-default', 'bg-stars', 'bg-fireflies', 'bg-rain', 'bg-leaves',
+                    'bg-ripples', 'bg-bubbles', 'bg-snow', 'bg-lanterns', 'bg-swirl',
+                    'bg-sunbeams', 'bg-aurora', 'bg-pastel-rainbow', 'bg-fog', 'bg-ocean-waves'
+                ],
                 fonts: ['font-default'],
                 themes: ['theme-default'],
                 boards: ['board-default'],
                 features: [],
-                sounds: ['sound-default'] // ✨ NEW: Unlocked sounds
+                sounds: ['sound-default']
             }
         };
 
@@ -397,14 +410,52 @@
             5: { type: 'feature', id: 'feature-color-mode', name: 'Color Mode' },
             6: { type: 'background', id: 'bg-fireflies', name: 'Fireflies' },
             7: { type: 'board', id: 'board-rainbow', name: 'Rainbow Board' },
-            8: { type: 'sound', id: 'sound-8bit', name: '8-Bit Sounds' }, // ✨ NEW
+            8: { type: 'sound', id: 'sound-8bit', name: '8-Bit Sounds' },
             9: { type: 'background', id: 'bg-rain', name: 'Gentle Rain' },
             10: { type: 'feature', id: 'feature-reveal', name: 'Reveal' },
             11: { type: 'font', id: 'font-indie-flower', name: 'Indie Flower' },
             12: { type: 'board', id: 'board-sands', name: 'Shifting Sands' },
             13: { type: 'background', id: 'bg-leaves', name: 'Falling Leaves' },
-            14: { type: 'sound', id: 'sound-nature', name: 'Nature Sounds' }, // ✨ NEW
+            14: { type: 'sound', id: 'sound-nature', name: 'Nature Sounds' },
             15: { type: 'theme', id: 'theme-vampire', name: 'Vampire Theme' },
+        };
+        
+        // ✨ MODIFIED: Created a manifest to hold the display names for all items. This makes the options menu work correctly.
+        const itemManifest = {
+            'bg-default': { name: 'Default' },
+            'bg-stars': { name: 'Starry Night' },
+            'bg-fireflies': { name: 'Fireflies' },
+            'bg-rain': { name: 'Gentle Rain' },
+            'bg-leaves': { name: 'Falling Leaves' },
+            'bg-ripples': { name: 'Water Ripples' },
+            'bg-bubbles': { name: 'Bubbles' },
+            'bg-snow': { name: 'Snowfall' },
+            'bg-lanterns': { name: 'Sky Lanterns' },
+            'bg-swirl': { name: 'Cosmic Swirl' },
+            'bg-sunbeams': { name: 'Sunbeams' },
+            'bg-aurora': { name: 'Aurora' },
+            'bg-pastel-rainbow': { name: 'Pastel Rainbow' },
+            'bg-fog': { name: 'Gentle Fog' },
+            'bg-ocean-waves': { name: 'Ocean Waves' },
+
+            'board-default': { name: 'Default' },
+            'board-rainbow': { name: 'Rainbow' },
+            'board-sands': { name: 'Shifting Sands' },
+
+            'theme-default': { name: 'Default' },
+            'theme-forest': { name: 'Forest' },
+            'theme-vampire': { name: 'Vampire' },
+            'theme-ocean': { name: 'Ocean' },
+            'theme-sunset': { name: 'Sunset' },
+            'theme-8bit': { name: '8-Bit' },
+
+            'font-default': { name: 'Default' },
+            'font-kalam': { name: 'Kalam' },
+            'font-indie-flower': { name: 'Indie Flower' },
+
+            'sound-default': { name: 'Default' },
+            'sound-8bit': { name: '8-Bit' },
+            'sound-nature': { name: 'Nature' },
         };
 
         const backgroundStyles = {
@@ -413,7 +464,6 @@
             'bg-fireflies': { type: 'js', function: 'createFireflies' },
             'bg-rain': { type: 'js', function: 'createRain' },
             'bg-leaves': { type: 'js', function: 'createLeaves' },
-            /* ✨ 10 NEW BACKGROUNDS ADDED BELOW ✨ */
             'bg-ripples': { type: 'js', function: 'createRipples' },
             'bg-bubbles': { type: 'js', function: 'createBubbles' },
             'bg-snow': { type: 'js', function: 'createSnow' },
@@ -440,10 +490,9 @@
         };
         
         // --- Sound Engine (Tone.js) ---
-        // ✨ NEW: Sound Packs data structure
         const soundPacks = {
             'sound-default': {
-                type: 'synth' // Use original synth sounds
+                type: 'synth'
             },
             'sound-8bit': {
                 type: 'player',
@@ -467,7 +516,6 @@
             }
         };
 
-        // Original synth sounds
         const synthSounds = {
             correct: new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.1 } }).toDestination(),
             error: new Tone.Synth({ oscillator: { type: 'square' }, envelope: { attack: 0.01, decay: 0.3, sustain: 0, release: 0.1 } }).toDestination(),
@@ -477,25 +525,22 @@
             pop: new Tone.Synth({ oscillator: { type: 'triangle' }, pitchDecay: 0.05, envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 } }).toDestination(),
         };
 
-        // Players for sound packs
         let playerSounds = {};
 
-        // ✨ NEW: Function to load and apply a sound pack
         function applySoundPack(packId) {
-            playSound('click'); // Play click sound from the *old* pack before switching
+            playSound('click'); 
             currentSoundPack = packId;
             const pack = soundPacks[packId];
 
-            // Dispose of old players to free up memory
             Object.values(playerSounds).forEach(player => player.dispose());
             playerSounds = {};
 
             if (pack.type === 'player') {
                 playerSounds = new Tone.Players(pack.urls, () => {
-                    console.log(`${pack.name} loaded.`);
+                    console.log(`${itemManifest[packId]?.name || 'Sound pack'} loaded.`);
                 }).toDestination();
             }
-            buildOptionsModal(); // Rebuild modal to show active pack
+            buildOptionsModal();
         }
 
         function playSound(sound, note = 'C4') {
@@ -505,7 +550,7 @@
             const pack = soundPacks[currentSoundPack];
             if (pack && pack.type === 'player' && playerSounds.has(sound)) {
                 playerSounds.player(sound).start();
-            } else { // Default to synth sounds
+            } else { 
                 if (sound === 'correct') synthSounds.correct.triggerAttackRelease('C5', '8n');
                 else if (sound === 'error') synthSounds.error.triggerAttackRelease('C3', '8n');
                 else if (sound === 'click') synthSounds.click.triggerAttackRelease('C4', '16n');
@@ -550,14 +595,14 @@
             const bestTimes = loadBestTimes();
             const newScore = { time: timeInSeconds, difficulty: difficulty };
             bestTimes.push(newScore);
-            bestTimes.sort((a, b) => a.time - b.time); // Sort by fastest time
+            bestTimes.sort((a, b) => a.time - b.time); 
             const top10 = bestTimes.slice(0, 10);
             localStorage.setItem('sudokuBestTimes', JSON.stringify(top10));
         }
 
         function displayBestTimes() {
             const bestTimes = loadBestTimes();
-            bestTimesList.innerHTML = ''; // Clear previous list
+            bestTimesList.innerHTML = ''; 
             if (bestTimes.length === 0) {
                 bestTimesList.innerHTML = '<li>No best times recorded yet. Play a game!</li>';
             } else {
@@ -585,7 +630,7 @@
             let seed = 0;
             for (let i = 0; i < str.length; i++) {
                 seed = (seed << 5) - seed + str.charCodeAt(i);
-                seed |= 0; // Convert to 32bit integer
+                seed |= 0; 
             }
             return seed;
         }
@@ -702,7 +747,7 @@
         newGameBtn.addEventListener('click', () => {
             playSound('click');
             isDailyPuzzle = false;
-            seedForNextGame = null; // Clear any previously stored seed
+            seedForNextGame = null; 
             titleButtons.style.display = 'none';
             difficultyScreen.style.display = 'block';
         });
@@ -711,7 +756,6 @@
             playSound('click');
             isDailyPuzzle = true;
             const today = new Date();
-            // Format to YYYY-MM-DD to ensure the seed is the same for the whole day
             const dateString = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
             seedForNextGame = dateString;
             titleButtons.style.display = 'none';
@@ -748,7 +792,7 @@
                 }
                 
                 startGame(options);
-                seedForNextGame = null; // Reset for the next game
+                seedForNextGame = null; 
             }
         });
 
@@ -802,17 +846,13 @@
         function handleCellClick(cell) {
             const value = cell.textContent;
 
-            // This check is fragile but works for this use case
-            // because content with candidate notes (e.g., "123") fails the condition.
             if (value && value.length === 1 && value >= '1' && value <= '9') {
                 highlightMatchingNumbers(cell);
-                // If a numbered cell is clicked, we shouldn't have another cell "selected" for input.
                 if (selectedCell) {
                     selectedCell.classList.remove('selected');
                     selectedCell = null;
                 }
             } else {
-                // If the cell is empty or has notes, select it for input.
                 selectCell(cell);
             }
         }
@@ -822,12 +862,11 @@
         }
         
         function highlightMatchingNumbers(targetCell) {
-            clearNumberHighlights(); // Start by clearing any previous highlights.
+            clearNumberHighlights(); 
             const number = targetCell.textContent;
         
-            if (!number) return; // Exit if there's no number to highlight.
+            if (!number) return; 
             
-            // Find every cell and check if its content matches the target number.
             document.querySelectorAll('.sudoku-cell').forEach(cell => {
                 if (cell.textContent === number) {
                     cell.classList.add('highlighted-number');
@@ -837,7 +876,6 @@
 
         function createControls() {
             controls.innerHTML = '';
-            // Number buttons
             for (let i = 1; i <= 9; i++) {
                 const btn = document.createElement('button');
                 btn.classList.add('control-btn');
@@ -845,7 +883,6 @@
                 btn.addEventListener('click', () => inputNumber(i));
                 controls.appendChild(btn);
             }
-            // Candidate (Notes) button
             const candidateBtn = document.createElement('button');
             candidateBtn.classList.add('control-btn');
             candidateBtn.id = 'candidate-btn';
@@ -853,7 +890,6 @@
             candidateBtn.addEventListener('click', toggleCandidateMode);
             controls.appendChild(candidateBtn);
 
-            // MODIFIED: Reveal button is now created here
             if (playerData.unlocked.features.includes('feature-reveal')) {
                 const revealBtn = document.createElement('button');
                 revealBtn.classList.add('control-btn');
@@ -865,7 +901,7 @@
         }
 
         function selectCell(cell) {
-            clearNumberHighlights(); // When selecting a new cell for input, clear number highlights.
+            clearNumberHighlights(); 
             if (selectedCell) { selectedCell.classList.remove('selected'); }
             selectedCell = cell;
             selectedCell.classList.add('selected');
@@ -881,7 +917,7 @@
 
                 if (isCandidateMode) {
                     playSound('click');
-                    selectedCell.innerHTML = ''; // Clear main number
+                    selectedCell.innerHTML = ''; 
                     if (boardState.candidates[cellIndex].has(num)) {
                         boardState.candidates[cellIndex].delete(num);
                     } else {
@@ -890,7 +926,6 @@
                     drawCandidates(selectedCell, cellIndex);
                 } else {
                     if (boardState.solution[row][col] === num) {
-                        // ✨ NEW: Add glow animation on correct input
                         selectedCell.classList.add('glow-animation');
                         setTimeout(() => selectedCell.classList.remove('glow-animation'), 700);
 
@@ -907,7 +942,6 @@
                         checkCompletion(row, col, num);
                         if (isColorMode) updateColorMode();
 
-                        // Deselect the cell
                         selectedCell.classList.remove('selected');
                         selectedCell = null;
                     } else {
@@ -971,7 +1005,7 @@
             cells.forEach((cell, index) => {
                 setTimeout(() => {
                     cell.classList.add('light-up-animation');
-                }, index * 50); // Stagger the animation
+                }, index * 50); 
             });
             setTimeout(() => {
                 cells.forEach(cell => cell.classList.remove('light-up-animation'));
@@ -1223,7 +1257,7 @@
                 if (unlock.type === 'theme') playerData.unlocked.themes.push(unlock.id);
                 if (unlock.type === 'board') playerData.unlocked.boards.push(unlock.id);
                 if (unlock.type === 'feature') playerData.unlocked.features.push(unlock.id);
-                if (unlock.type === 'sound') playerData.unlocked.sounds.push(unlock.id); // ✨ NEW
+                if (unlock.type === 'sound') playerData.unlocked.sounds.push(unlock.id);
                 showUnlockModal(unlock);
             } else {
                 showUnlockModal({type: 'level', name: `Level ${playerData.level}`});
@@ -1237,7 +1271,7 @@
                 if (unlock.type === 'theme' && !playerData.unlocked.themes.includes(unlock.id)) playerData.unlocked.themes.push(unlock.id);
                 if (unlock.type === 'board' && !playerData.unlocked.boards.includes(unlock.id)) playerData.unlocked.boards.push(unlock.id);
                 if (unlock.type === 'feature' && !playerData.unlocked.features.includes(unlock.id)) playerData.unlocked.features.push(unlock.id);
-                if (unlock.type === 'sound' && !playerData.unlocked.sounds.includes(unlock.id)) playerData.unlocked.sounds.push(unlock.id); // ✨ NEW
+                if (unlock.type === 'sound' && !playerData.unlocked.sounds.includes(unlock.id)) playerData.unlocked.sounds.push(unlock.id);
             });
             playerData.level = 30;
             alert('Developer Mode: All items unlocked!');
@@ -1260,7 +1294,7 @@
                     if (unlock.type === 'font') applyFont(unlock.id);
                     if (unlock.type === 'theme') applyTheme(unlock.id);
                     if (unlock.type === 'board') applyBoard(unlock.id);
-                    if (unlock.type === 'sound') applySoundPack(unlock.id); // ✨ NEW
+                    if (unlock.type === 'sound') applySoundPack(unlock.id);
                     unlockModal.style.display = 'none';
                 };
                 buttonContainer.appendChild(applyBtn);
@@ -1284,38 +1318,38 @@
         }
 
         // --- Options & Unlocked Features ---
+        // ✨ MODIFIED: This function now uses the `itemManifest` to get the correct names for all items in the options menu.
         function buildOptionsModal() {
             let content = `<h2>Options</h2><div class="options-grid">`;
             
-            // ✨ NEW: Sound Pack Options
             content += `<h3>Sound Packs</h3>`;
             playerData.unlocked.sounds.forEach(soundId => {
-                const soundName = (soundPacks[soundId] ? soundPacks[soundId].name : 'Default');
+                const soundName = itemManifest[soundId]?.name || 'Unknown';
                 const activeClass = currentSoundPack === soundId ? 'active' : '';
-                content += `<button class="control-btn ${activeClass}" onclick="applySoundPack('${soundId}')">${soundName || 'Default'}</button>`;
+                content += `<button class="control-btn ${activeClass}" onclick="applySoundPack('${soundId}')">${soundName}</button>`;
             });
 
             content += `<h3>Backgrounds</h3>`;
             playerData.unlocked.backgrounds.forEach(bgId => {
-                const bgName = (Object.values(unlockables).find(u => u.id === bgId) || {name: 'Default'}).name;
+                const bgName = itemManifest[bgId]?.name || 'Unknown';
                 content += `<button class="control-btn" onclick="applyBackground('${bgId}')">${bgName}</button>`;
             });
 
             content += `<h3>Board Styles</h3>`;
             playerData.unlocked.boards.forEach(boardId => {
-                const boardName = (Object.values(unlockables).find(u => u.id === boardId) || {name: 'Default'}).name;
+                const boardName = itemManifest[boardId]?.name || 'Unknown';
                 content += `<button class="control-btn" onclick="applyBoard('${boardId}')">${boardName}</button>`;
             });
 
             content += `<h3>Color Themes</h3>`;
             playerData.unlocked.themes.forEach(themeId => {
-                const themeName = (Object.values(unlockables).find(u => u.id === themeId) || {name: 'Default'}).name;
+                const themeName = itemManifest[themeId]?.name || 'Unknown';
                 content += `<button class="control-btn" onclick="applyTheme('${themeId}')">${themeName}</button>`;
             });
 
             content += `<h3>Fonts</h3>`;
             playerData.unlocked.fonts.forEach(fontId => {
-                const fontName = (Object.values(unlockables).find(u => u.id === fontId) || {name: 'Default'}).name;
+                const fontName = itemManifest[fontId]?.name || 'Unknown';
                 content += `<button class="control-btn" onclick="applyFont('${fontId}')">${fontName}</button>`;
             });
 
@@ -1330,7 +1364,6 @@
             optionsContent.innerHTML = content;
         }
         
-        // ✨ NEW: Function to clear JS-based backgrounds
         function clearJsBackgrounds() {
             const existing = animatedBg.querySelectorAll('.firefly, .rain-drop, .leaf, .ripple-bg, .bubble, .snow-flake, .lantern');
             existing.forEach(e => e.remove());
@@ -1379,7 +1412,6 @@
             }
         }
 
-        // ✨ NEW: JS-based background creation functions
         function createRipples() {
             clearJsBackgrounds();
             animatedBg.style.background = '#6155a6';
@@ -1438,13 +1470,13 @@
         }
 
         function applyBackground(bgId) {
-            clearJsBackgrounds(); // ✨ MODIFIED: Clear old JS particles before applying new background
+            clearJsBackgrounds(); 
             const bg = backgroundStyles[bgId];
-            animatedBg.style.animation = 'none'; // Clear previous animation to prevent conflicts
+            animatedBg.style.animation = 'none'; 
             if (bg.type === 'css') {
                 animatedBg.style.background = bg.style;
                 animatedBg.style.animation = bg.animation;
-                animatedBg.style.backgroundSize = '400% 400%'; // Ensure gradient animations work
+                animatedBg.style.backgroundSize = '400% 400%'; 
             } else if (bg.type === 'js') {
                 window[bg.function]();
             }
@@ -1452,7 +1484,7 @@
         }
 
         function applyBoard(boardId) {
-            sudokuGrid.className = ''; // Reset classes
+            sudokuGrid.className = ''; 
             if (boardId !== 'board-default') {
                 sudokuGrid.classList.add(boardId);
             }
@@ -1474,7 +1506,6 @@
         
         function toggleColorMode() {
             isColorMode = !isColorMode;
-            // The button is in a modal, so we have to get it when the modal is open
             const colorModeBtn = document.getElementById('color-mode-btn');
             if (colorModeBtn) {
                 colorModeBtn.textContent = `Color Mode: ${isColorMode ? 'ON' : 'OFF'}`;
@@ -1502,13 +1533,12 @@
             const col = parseInt(selectedCell.dataset.col);
             const solution = boardState.solution[row][col];
             
-            // Temporarily disable candidate mode to ensure the number is placed
             const wasCandidateMode = isCandidateMode;
             isCandidateMode = false;
             
             inputNumber(solution);
 
-            isCandidateMode = wasCandidateMode; // Restore original mode
+            isCandidateMode = wasCandidateMode; 
 
             revealsLeft--;
             const revealBtn = document.getElementById('reveal-btn');
@@ -1522,7 +1552,7 @@
         
         // Initial load
         startTitleAnimation();
-        // Load default sound pack on start
         applySoundPack('sound-default');
     </script>
 </body></html>
+```
