@@ -176,8 +176,29 @@
             color: var(--text-color);
         }
 
-        #controls { margin-top: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 5px; }
-        .control-btn { background-color: var(--button-bg); color: var(--button-text); border: none; padding: 10px 15px; font-size: 1em; cursor: pointer; border-radius: 20px; font-weight: 600; transition: transform 0.2s, background-color 0.2s, filter 0.3s; }
+        #controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: nowrap; /* MODIFIED: Prevents wrapping on small screens */
+            gap: 5px;
+            width: 100%;
+            max-width: 450px; /* Ensures controls don't get too wide on large screens */
+        }
+        .control-btn {
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            padding: 10px; /* MODIFIED: Adjusted padding for better fit */
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 20px;
+            font-weight: 600;
+            transition: transform 0.2s, background-color 0.2s, filter 0.3s;
+            flex: 1 1 auto; /* MODIFIED: Allows buttons to grow and shrink */
+            min-width: 0; /* MODIFIED: Helps flexbox resize buttons properly */
+            text-align: center;
+        }
         .control-btn:hover { transform: scale(1.05); }
         .control-btn.active { background-color: var(--accent-color); color: white; }
         .control-btn.disabled { filter: grayscale(1); opacity: 0.6; pointer-events: none; }
@@ -330,7 +351,7 @@
         let isMuted = false;
         let isCandidateMode = false;
         let isColorMode = false;
-        let isRevealMode = false;
+        // let isRevealMode = false; // REMOVED: No longer needed
         let revealsLeft = 3;
         let unlockClickCounter = 0;
         let titleAnimationInterval;
@@ -721,18 +742,12 @@
             }
         }
         
-        // MODIFIED: This function now correctly handles click logic for highlighting and selection.
         function handleCellClick(cell) {
-            if (isRevealMode) {
-                revealCell(cell);
-                return;
-            }
-        
             const value = cell.textContent;
-        
-            // Check if the cell has a single number. This check is fragile but works for this use case
+
+            // This check is fragile but works for this use case
             // because content with candidate notes (e.g., "123") fails the condition.
-            if (value && value >= '1' && value <= '9') {
+            if (value && value.length === 1 && value >= '1' && value <= '9') {
                 highlightMatchingNumbers(cell);
                 // If a numbered cell is clicked, we shouldn't have another cell "selected" for input.
                 if (selectedCell) {
@@ -745,12 +760,10 @@
             }
         }
         
-        // NEW: Helper function to clear number highlights.
         function clearNumberHighlights() {
             document.querySelectorAll('.highlighted-number').forEach(c => c.classList.remove('highlighted-number'));
         }
         
-        // NEW: Helper function to highlight all matching numbers on the grid.
         function highlightMatchingNumbers(targetCell) {
             clearNumberHighlights(); // Start by clearing any previous highlights.
             const number = targetCell.textContent;
@@ -765,9 +778,9 @@
             });
         }
 
-
         function createControls() {
             controls.innerHTML = '';
+            // Number buttons
             for (let i = 1; i <= 9; i++) {
                 const btn = document.createElement('button');
                 btn.classList.add('control-btn');
@@ -775,12 +788,23 @@
                 btn.addEventListener('click', () => inputNumber(i));
                 controls.appendChild(btn);
             }
+            // Candidate (Notes) button
             const candidateBtn = document.createElement('button');
             candidateBtn.classList.add('control-btn');
             candidateBtn.id = 'candidate-btn';
             candidateBtn.textContent = 'Notes';
             candidateBtn.addEventListener('click', toggleCandidateMode);
             controls.appendChild(candidateBtn);
+
+            // MODIFIED: Reveal button is now created here
+            if (playerData.unlocked.features.includes('feature-reveal')) {
+                const revealBtn = document.createElement('button');
+                revealBtn.classList.add('control-btn');
+                revealBtn.id = 'reveal-btn';
+                revealBtn.textContent = `Reveal (${revealsLeft})`;
+                revealBtn.addEventListener('click', useReveal);
+                controls.appendChild(revealBtn);
+            }
         }
 
         function selectCell(cell) {
@@ -816,7 +840,6 @@
                         playSound('correct');
                         addXP(10);
                         
-                        // MODIFIED: Auto-highlight matching numbers after a correct input
                         highlightMatchingNumbers(selectedCell); 
                         
                         checkCompletion(row, col, num);
@@ -1073,7 +1096,7 @@
 
                 calendarGrid.appendChild(dayCell);
             }
-             calendarModal.style.display = 'flex';
+                 calendarModal.style.display = 'flex';
         }
 
         // --- Event Listeners ---
@@ -1225,9 +1248,7 @@
                 if (playerData.unlocked.features.includes('feature-color-mode')) {
                     content += `<button class="control-btn" id="color-mode-btn" onclick="toggleColorMode()">Color Mode: ${isColorMode ? 'ON' : 'OFF'}</button>`;
                 }
-                 if (playerData.unlocked.features.includes('feature-reveal')) {
-                    content += `<button class="control-btn" id="reveal-btn" onclick="toggleRevealMode()">Reveal (${revealsLeft})</button>`;
-                }
+                // REMOVED: Reveal button is no longer in the modal
             }
 
             content += `</div><br><button class="control-btn" onclick="optionsModal.style.display='none';">Close</button>`;
@@ -1374,39 +1395,50 @@
         
         function toggleColorMode() {
             isColorMode = !isColorMode;
-            document.getElementById('color-mode-btn').textContent = `Color Mode: ${isColorMode ? 'ON' : 'OFF'}`;
+            // The button is in a modal, so we have to get it when the modal is open
+            const colorModeBtn = document.getElementById('color-mode-btn');
+            if (colorModeBtn) {
+                colorModeBtn.textContent = `Color Mode: ${isColorMode ? 'ON' : 'OFF'}`;
+            }
             updateColorMode();
             playSound('click');
         }
 
-        function toggleRevealMode() {
-            if (revealsLeft > 0 && !isRevealMode) {
-                isRevealMode = true;
-                document.getElementById('reveal-btn').classList.toggle('active', isRevealMode);
-            }
-        }
-
-        function revealCell(cell) {
-            if (cell.classList.contains('given') || cell.classList.contains('correct')) {
-                isRevealMode = false;
-                document.getElementById('reveal-btn').classList.remove('active');
+        // MODIFIED: New function to handle the reveal logic
+        function useReveal() {
+            if (revealsLeft <= 0) {
+                alert("You have no reveals left!");
                 return;
             }
-            const row = parseInt(cell.dataset.row);
-            const col = parseInt(cell.dataset.col);
+            if (!selectedCell) {
+                alert("Please select a cell to reveal first.");
+                return;
+            }
+            if (selectedCell.classList.contains('given') || selectedCell.classList.contains('correct')) {
+                alert("This cell is already filled correctly.");
+                return;
+            }
+
+            playSound('click');
+            const row = parseInt(selectedCell.dataset.row);
+            const col = parseInt(selectedCell.dataset.col);
             const solution = boardState.solution[row][col];
             
+            // Temporarily disable candidate mode to ensure the number is placed
             const wasCandidateMode = isCandidateMode;
             isCandidateMode = false;
-            selectCell(cell); // Make sure the cell is selected for input
+            
             inputNumber(solution);
-            isCandidateMode = wasCandidateMode;
+
+            isCandidateMode = wasCandidateMode; // Restore original mode
 
             revealsLeft--;
-            isRevealMode = false;
-            if(document.getElementById('reveal-btn')) {
-                document.getElementById('reveal-btn').classList.remove('active');
-                buildOptionsModal();
+            const revealBtn = document.getElementById('reveal-btn');
+            if (revealBtn) {
+                revealBtn.textContent = `Reveal (${revealsLeft})`;
+                if(revealsLeft <= 0) {
+                    revealBtn.classList.add('disabled');
+                }
             }
         }
         
