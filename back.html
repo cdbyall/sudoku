@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<!DOCTYPE html><html lang="en"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Sudoku</title>
@@ -91,6 +89,19 @@
             100% { box-shadow: 0 0 15px #ff2400; }
         }
         .light-up-animation { animation: light-up-rainbow 1s ease-in-out; }
+
+        /* ✨ NEW: Animation for correct cell entry */
+        @keyframes glow-correct {
+            from {
+                box-shadow: 0 0 15px 5px rgba(46, 204, 113, 0.7);
+            }
+            to {
+                box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
+            }
+        }
+        .glow-animation {
+            animation: glow-correct 0.7s ease-out;
+        }
         
         @keyframes rainbow-highlight-flow { 
             0%{background-position:0% 50%}
@@ -230,9 +241,7 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
-    </style>
-</head>
-<body>
+    </style></head><body>
     <div id="animated-bg"></div>
     <div id="game-container">
         <div id="title-screen">
@@ -351,7 +360,6 @@
         let isMuted = false;
         let isCandidateMode = false;
         let isColorMode = false;
-        // let isRevealMode = false; // REMOVED: No longer needed
         let revealsLeft = 3;
         let unlockClickCounter = 0;
         let titleAnimationInterval;
@@ -361,6 +369,7 @@
         let seedForNextGame = null;
         let isDailyPuzzle = false;
         let calendarDate = new Date();
+        let currentSoundPack = 'sound-default'; // ✨ NEW: Track current sound pack
 
 
         // --- Player Data & Unlocks ---
@@ -373,7 +382,8 @@
                 fonts: ['font-default'],
                 themes: ['theme-default'],
                 boards: ['board-default'],
-                features: []
+                features: [],
+                sounds: ['sound-default'] // ✨ NEW: Unlocked sounds
             }
         };
 
@@ -384,29 +394,14 @@
             5: { type: 'feature', id: 'feature-color-mode', name: 'Color Mode' },
             6: { type: 'background', id: 'bg-fireflies', name: 'Fireflies' },
             7: { type: 'board', id: 'board-rainbow', name: 'Rainbow Board' },
-            8: { type: 'theme', id: 'theme-ocean', name: 'Ocean Theme' },
+            8: { type: 'sound', id: 'sound-8bit', name: '8-Bit Sounds' }, // ✨ NEW
             9: { type: 'background', id: 'bg-rain', name: 'Gentle Rain' },
             10: { type: 'feature', id: 'feature-reveal', name: 'Reveal' },
             11: { type: 'font', id: 'font-indie-flower', name: 'Indie Flower' },
             12: { type: 'board', id: 'board-sands', name: 'Shifting Sands' },
             13: { type: 'background', id: 'bg-leaves', name: 'Falling Leaves' },
-            14: { type: 'font', id: 'font-amatic-sc', name: 'Amatic SC' },
+            14: { type: 'sound', id: 'sound-nature', name: 'Nature Sounds' }, // ✨ NEW
             15: { type: 'theme', id: 'theme-vampire', name: 'Vampire Theme' },
-            16: { type: 'background', id: 'bg-ripples', name: 'Water Ripples' },
-            17: { type: 'font', id: 'font-pacifico', name: 'Pacifico' },
-            18: { type: 'theme', id: 'theme-8bit', name: '8-Bit Theme' },
-            19: { type: 'background', id: 'bg-bubbles', name: 'Bubbles' },
-            20: { type: 'font', id: 'font-dancing-script', name: 'Dancing Script' },
-            21: { type: 'background', id: 'bg-snow', name: 'Gentle Snowfall' },
-            22: { type: 'font', id: 'font-sriracha', name: 'Sriracha' },
-            23: { type: 'background', id: 'bg-lanterns', name: 'Floating Lanterns' },
-            24: { type: 'font', id: 'font-marck-script', name: 'Marck Script' },
-            25: { type: 'background', id: 'bg-swirl', name: 'Cosmic Swirl' },
-            26: { type: 'font', id: 'font-courgette', name: 'Courgette' },
-            27: { type: 'background', id: 'bg-sunbeams', name: 'Sunbeams' },
-            28: { type: 'font', id: 'font-satisfy', name: 'Satisfy' },
-            29: { type: 'background', id: 'bg-aurora', name: 'Northern Lights' },
-            30: { type: 'font', id: 'font-lobster-two', name: 'Lobster Two' },
         };
 
         const backgroundStyles = {
@@ -436,9 +431,37 @@
         const fontStyles = {
             'font-default': "'Poppins', sans-serif", 'font-kalam': "'Kalam', cursive", 'font-patrick-hand': "'Patrick Hand', cursive", 'font-caveat': "'Caveat', cursive", 'font-shadows': "'Shadows Into Light', cursive", 'font-architect': "'Architects Daughter', cursive", 'font-roboto-mono': "'Roboto Mono', monospace", 'font-bangers': "'Bangers', cursive", 'font-creepster': "'Creepster', cursive", 'font-nosifier': "'Nosifier', cursive", 'font-indie-flower': "'Indie Flower', cursive", 'font-amatic-sc': "'Amatic SC', cursive", 'font-pacifico': "'Pacifico', cursive", 'font-dancing-script': "'Dancing Script', cursive", 'font-sriracha': "'Sriracha', cursive", 'font-marck-script': "'Marck Script', cursive", 'font-courgette': "'Courgette', cursive", 'font-satisfy': "'Satisfy', cursive", 'font-lobster-two': "'Lobster Two', cursive", 'font-cookie': "'Cookie', cursive", 'font-great-vibes': "'Great Vibes', cursive", 'font-sacramento': "'Sacramento', cursive", 'font-tangerine': "'Tangerine', cursive", 'font-bad-script': "'Bad Script', cursive", 'font-homemade-apple': "'Homemade Apple', cursive", 'font-rock-salt': "'Rock Salt', cursive", 'font-special-elite': "'Special Elite', cursive", 'font-unkempt': "'Unkempt', cursive", 'font-neucha': "'Neucha', cursive",
         };
-
+        
         // --- Sound Engine (Tone.js) ---
-        const sounds = {
+        // ✨ NEW: Sound Packs data structure
+        const soundPacks = {
+            'sound-default': {
+                type: 'synth' // Use original synth sounds
+            },
+            'sound-8bit': {
+                type: 'player',
+                name: '8-Bit Sounds',
+                urls: {
+                    correct: 'https://cdn.jsdelivr.net/gh/devmastery/sounds/sfx_sounds_powerup2.wav',
+                    error: 'https://cdn.jsdelivr.net/gh/devmastery/sounds/sfx_sounds_error2.wav',
+                    click: 'https://cdn.jsdelivr.net/gh/devmastery/sounds/sfx_sounds_Blip4.wav',
+                    win: 'https://cdn.jsdelivr.net/gh/devmastery/sounds/sfx_music_level7.wav',
+                }
+            },
+            'sound-nature': {
+                type: 'player',
+                name: 'Nature Sounds',
+                urls: {
+                    correct: 'https://cdn.jsdelivr.net/gh/k-bruner/web-dev-helpers/sudoku-sounds/zapsplat_nature_water_droplet_single_in_cave_001_59833.mp3',
+                    error: 'https://cdn.jsdelivr.net/gh/k-bruner/web-dev-helpers/sudoku-sounds/zapsplat_animals_bird_crow_single_caw_002_62342.mp3',
+                    click: 'https://cdn.jsdelivr.net/gh/k-bruner/web-dev-helpers/sudoku-sounds/zapsplat_nature_forest_wood_branch_snap_break_001_12158.mp3',
+                    win: 'https://cdn.jsdelivr.net/gh/k-bruner/web-dev-helpers/sudoku-sounds/zapsplat_nature_wind_chimes_bamboo_light_breeze_short_burst_001_44131.mp3'
+                }
+            }
+        };
+
+        // Original synth sounds
+        const synthSounds = {
             correct: new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.1 } }).toDestination(),
             error: new Tone.Synth({ oscillator: { type: 'square' }, envelope: { attack: 0.01, decay: 0.3, sustain: 0, release: 0.1 } }).toDestination(),
             click: new Tone.Synth({ oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 } }).toDestination(),
@@ -447,17 +470,44 @@
             pop: new Tone.Synth({ oscillator: { type: 'triangle' }, pitchDecay: 0.05, envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 } }).toDestination(),
         };
 
+        // Players for sound packs
+        let playerSounds = {};
+
+        // ✨ NEW: Function to load and apply a sound pack
+        function applySoundPack(packId) {
+            playSound('click'); // Play click sound from the *old* pack before switching
+            currentSoundPack = packId;
+            const pack = soundPacks[packId];
+
+            // Dispose of old players to free up memory
+            Object.values(playerSounds).forEach(player => player.dispose());
+            playerSounds = {};
+
+            if (pack.type === 'player') {
+                playerSounds = new Tone.Players(pack.urls, () => {
+                    console.log(`${pack.name} loaded.`);
+                }).toDestination();
+            }
+            buildOptionsModal(); // Rebuild modal to show active pack
+        }
+
         function playSound(sound, note = 'C4') {
-            if (!isMuted && Tone.context.state !== 'running') { Tone.start(); }
-            if (!isMuted) {
-                if (sound === 'correct') sounds.correct.triggerAttackRelease('C5', '8n');
-                if (sound === 'error') sounds.error.triggerAttackRelease('C3', '8n');
-                if (sound === 'click') sounds.click.triggerAttackRelease('C4', '16n');
-                if (sound === 'win') sounds.win.triggerAttackRelease('C4', '2n');
-                if (sound === 'levelUp') sounds.levelUp.triggerAttackRelease('G5', '4n');
-                if (sound === 'pop') sounds.pop.triggerAttackRelease(note, '16n');
+            if (isMuted) return;
+            if (Tone.context.state !== 'running') { Tone.start().catch(e => console.error("Tone.start() failed", e)); }
+            
+            const pack = soundPacks[currentSoundPack];
+            if (pack && pack.type === 'player' && playerSounds.has(sound)) {
+                playerSounds.player(sound).start();
+            } else { // Default to synth sounds
+                if (sound === 'correct') synthSounds.correct.triggerAttackRelease('C5', '8n');
+                else if (sound === 'error') synthSounds.error.triggerAttackRelease('C3', '8n');
+                else if (sound === 'click') synthSounds.click.triggerAttackRelease('C4', '16n');
+                else if (sound === 'win') synthSounds.win.triggerAttackRelease('C4', '2n');
+                else if (sound === 'levelUp') synthSounds.levelUp.triggerAttackRelease('G5', '4n');
+                else if (sound === 'pop') synthSounds.pop.triggerAttackRelease(note, '16n');
             }
         }
+
 
         // --- Timer & Best Time Functions ---
         function formatTime(totalSeconds) {
@@ -816,13 +866,14 @@
 
         function inputNumber(num) {
             if (!selectedCell) return;
-            playSound('click');
+            
             if (selectedCell && !selectedCell.classList.contains('given') && !selectedCell.classList.contains('correct')) {
                 const row = parseInt(selectedCell.dataset.row);
                 const col = parseInt(selectedCell.dataset.col);
                 const cellIndex = row * 9 + col;
 
                 if (isCandidateMode) {
+                    playSound('click');
                     selectedCell.innerHTML = ''; // Clear main number
                     if (boardState.candidates[cellIndex].has(num)) {
                         boardState.candidates[cellIndex].delete(num);
@@ -832,6 +883,10 @@
                     drawCandidates(selectedCell, cellIndex);
                 } else {
                     if (boardState.solution[row][col] === num) {
+                        // ✨ NEW: Add glow animation on correct input
+                        selectedCell.classList.add('glow-animation');
+                        setTimeout(() => selectedCell.classList.remove('glow-animation'), 700);
+
                         createRipple(selectedCell);
                         selectedCell.innerHTML = '';
                         selectedCell.textContent = num;
@@ -857,6 +912,8 @@
                         if (lives <= 0) { handleGameOver(); }
                     }
                 }
+            } else {
+                 playSound('click');
             }
         }
         
@@ -888,6 +945,7 @@
         }
 
         function toggleCandidateMode() {
+            playSound('click');
             isCandidateMode = !isCandidateMode;
             document.getElementById('candidate-btn').classList.toggle('active', isCandidateMode);
         }
@@ -1158,6 +1216,7 @@
                 if (unlock.type === 'theme') playerData.unlocked.themes.push(unlock.id);
                 if (unlock.type === 'board') playerData.unlocked.boards.push(unlock.id);
                 if (unlock.type === 'feature') playerData.unlocked.features.push(unlock.id);
+                if (unlock.type === 'sound') playerData.unlocked.sounds.push(unlock.id); // ✨ NEW
                 showUnlockModal(unlock);
             } else {
                 showUnlockModal({type: 'level', name: `Level ${playerData.level}`});
@@ -1171,6 +1230,7 @@
                 if (unlock.type === 'theme' && !playerData.unlocked.themes.includes(unlock.id)) playerData.unlocked.themes.push(unlock.id);
                 if (unlock.type === 'board' && !playerData.unlocked.boards.includes(unlock.id)) playerData.unlocked.boards.push(unlock.id);
                 if (unlock.type === 'feature' && !playerData.unlocked.features.includes(unlock.id)) playerData.unlocked.features.push(unlock.id);
+                if (unlock.type === 'sound' && !playerData.unlocked.sounds.includes(unlock.id)) playerData.unlocked.sounds.push(unlock.id); // ✨ NEW
             });
             playerData.level = 30;
             alert('Developer Mode: All items unlocked!');
@@ -1184,7 +1244,7 @@
             }
             
             const buttonContainer = document.createElement('div');
-            if (unlock.type === 'background' || unlock.type === 'font' || unlock.type === 'theme' || unlock.type === 'board') {
+            if (unlock.type === 'background' || unlock.type === 'font' || unlock.type === 'theme' || unlock.type === 'board' || unlock.type === 'sound') {
                 const applyBtn = document.createElement('button');
                 applyBtn.className = 'control-btn';
                 applyBtn.textContent = 'Apply Now';
@@ -1193,6 +1253,7 @@
                     if (unlock.type === 'font') applyFont(unlock.id);
                     if (unlock.type === 'theme') applyTheme(unlock.id);
                     if (unlock.type === 'board') applyBoard(unlock.id);
+                    if (unlock.type === 'sound') applySoundPack(unlock.id); // ✨ NEW
                     unlockModal.style.display = 'none';
                 };
                 buttonContainer.appendChild(applyBtn);
@@ -1219,6 +1280,14 @@
         function buildOptionsModal() {
             let content = `<h2>Options</h2><div class="options-grid">`;
             
+            // ✨ NEW: Sound Pack Options
+            content += `<h3>Sound Packs</h3>`;
+            playerData.unlocked.sounds.forEach(soundId => {
+                const soundName = (soundPacks[soundId] ? soundPacks[soundId].name : 'Default');
+                const activeClass = currentSoundPack === soundId ? 'active' : '';
+                content += `<button class="control-btn ${activeClass}" onclick="applySoundPack('${soundId}')">${soundName || 'Default'}</button>`;
+            });
+
             content += `<h3>Backgrounds</h3>`;
             playerData.unlocked.backgrounds.forEach(bgId => {
                 const bgName = (Object.values(unlockables).find(u => u.id === bgId) || {name: 'Default'}).name;
@@ -1248,7 +1317,6 @@
                 if (playerData.unlocked.features.includes('feature-color-mode')) {
                     content += `<button class="control-btn" id="color-mode-btn" onclick="toggleColorMode()">Color Mode: ${isColorMode ? 'ON' : 'OFF'}</button>`;
                 }
-                // REMOVED: Reveal button is no longer in the modal
             }
 
             content += `</div><br><button class="control-btn" onclick="optionsModal.style.display='none';">Close</button>`;
@@ -1404,7 +1472,6 @@
             playSound('click');
         }
 
-        // MODIFIED: New function to handle the reveal logic
         function useReveal() {
             if (revealsLeft <= 0) {
                 alert("You have no reveals left!");
@@ -1444,6 +1511,7 @@
         
         // Initial load
         startTitleAnimation();
+        // Load default sound pack on start
+        applySoundPack('sound-default');
     </script>
-</body>
-</html>
+</body></html>
