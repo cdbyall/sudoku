@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Sudoku</title>
@@ -374,17 +376,13 @@
 
 
         // --- Player Data & Unlocks ---
-        // ✨ MODIFIED: Added all new backgrounds to the `unlocked` array by default so they appear in the options menu.
+        // ✨ MODIFIED: Player now starts with only the default background unlocked.
         let playerData = {
             level: 1,
             xp: 0,
             xpToNextLevel: 100,
             unlocked: {
-                backgrounds: [
-                    'bg-default', 'bg-stars', 'bg-fireflies', 'bg-rain', 'bg-leaves',
-                    'bg-ripples', 'bg-bubbles', 'bg-snow', 'bg-lanterns', 'bg-swirl',
-                    'bg-sunbeams', 'bg-aurora', 'bg-pastel-rainbow', 'bg-fog', 'bg-ocean-waves'
-                ],
+                backgrounds: ['bg-default'],
                 fonts: ['font-default'],
                 themes: ['theme-default'],
                 boards: ['board-default'],
@@ -393,21 +391,32 @@
             }
         };
 
+        // ✨ MODIFIED: Reworked the entire leveling system to unlock backgrounds on even levels.
         const unlockables = {
             2: { type: 'background', id: 'bg-stars', name: 'Starry Night' },
             3: { type: 'font', id: 'font-kalam', name: 'Kalam' },
-            4: { type: 'theme', id: 'theme-forest', name: 'Forest Theme' },
-            5: { type: 'feature', id: 'feature-color-mode', name: 'Color Mode' },
-            6: { type: 'background', id: 'bg-fireflies', name: 'Fireflies' },
-            7: { type: 'board', id: 'board-rainbow', name: 'Rainbow Board' },
-            8: { type: 'sound', id: 'sound-8bit', name: '8-Bit Sounds' },
-            9: { type: 'background', id: 'bg-rain', name: 'Gentle Rain' },
-            10: { type: 'feature', id: 'feature-reveal', name: 'Reveal' },
-            11: { type: 'font', id: 'font-indie-flower', name: 'Indie Flower' },
-            12: { type: 'board', id: 'board-sands', name: 'Shifting Sands' },
-            13: { type: 'background', id: 'bg-leaves', name: 'Falling Leaves' },
-            14: { type: 'sound', id: 'sound-nature', name: 'Nature Sounds' },
-            15: { type: 'theme', id: 'theme-vampire', name: 'Vampire Theme' },
+            4: { type: 'background', id: 'bg-fireflies', name: 'Fireflies' },
+            5: { type: 'theme', id: 'theme-forest', name: 'Forest Theme' },
+            6: { type: 'background', id: 'bg-rain', name: 'Gentle Rain' },
+            7: { type: 'feature', id: 'feature-color-mode', name: 'Color Mode' },
+            8: { type: 'background', id: 'bg-leaves', name: 'Falling Leaves' },
+            9: { type: 'board', id: 'board-rainbow', name: 'Rainbow Board' },
+            10: { type: 'background', id: 'bg-ripples', name: 'Water Ripples' },
+            11: { type: 'sound', id: 'sound-8bit', name: '8-Bit Sounds' },
+            12: { type: 'background', id: 'bg-bubbles', name: 'Bubbles' },
+            13: { type: 'feature', id: 'feature-reveal', name: 'Reveal' },
+            14: { type: 'background', id: 'bg-snow', name: 'Snowfall' },
+            15: { type: 'font', id: 'font-indie-flower', name: 'Indie Flower' },
+            16: { type: 'background', id: 'bg-lanterns', name: 'Sky Lanterns' },
+            17: { type: 'board', id: 'board-sands', name: 'Shifting Sands' },
+            18: { type: 'background', id: 'bg-swirl', name: 'Cosmic Swirl' },
+            19: { type: 'sound', id: 'sound-nature', name: 'Nature Sounds' },
+            20: { type: 'background', id: 'bg-sunbeams', name: 'Sunbeams' },
+            21: { type: 'theme', id: 'theme-vampire', name: 'Vampire Theme' },
+            22: { type: 'background', id: 'bg-aurora', name: 'Aurora' },
+            24: { type: 'background', id: 'bg-pastel-rainbow', name: 'Pastel Rainbow' },
+            26: { type: 'background', id: 'bg-fog', name: 'Gentle Fog' },
+            28: { type: 'background', id: 'bg-ocean-waves', name: 'Ocean Waves' }
         };
         
         // ✨ MODIFIED: Created a manifest to hold the display names for all items. This makes the options menu work correctly.
@@ -1544,5 +1553,5 @@
         startTitleAnimation();
         applySoundPack('sound-default');
     </script>
-</body></html>
-```
+</body>
+</html>
