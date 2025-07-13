@@ -6,7 +6,7 @@
     <title>AI Sudoku</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Kalam:wght@400;700&family=Patrick+Hand&family=Caveat&family=Shadows+Into+Light&family=Architects+Daughter&family=Roboto+Mono&family=Bangers&family=Creepster&family=Nosifier&family=Indie+Flower&family=Amatic+SC:wght@700&family=Pacifico&family=Dancing+Script:wght@700&family=Sriracha&family=Marck+Script&family=Courgette&family=Satisfy&family=Lobster+Two:ital@1&family=Cookie&family=Great+Vibes&family=Sacramento&family=Tangerine:wght@700&family=Bad+Script&family=Homemade+Apple&family=Rock+Salt&family=Special+Elite&family=Unkempt&family=Neucha&family=Lato&family=Montserrat&family=Oswald&family=Raleway&family=Merriweather&family=Playfair+Display&family=Ubuntu&family=Noto+Sans&family=Open+Sans&family=Source+Code+Pro&family=Rubik&family=Work+Sans&family=Permanent+Marker&family=Kaushan+Script&family=Press+Start+2P&family=Bebas+Neue&family=Lobster&family=Anton&family=Fjalla+One&family=Gloria+Hallelujah&family=Comfortaa&family=Cinzel&family=Josefin+Sans&family=Arimo&family=Orbitron&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Kalam:wght@400;700&family=Patrick+Hand&family=Caveat&family=Shadows+Into+Light&family=Architects+Daughter&family=Roboto+Mono&family=Bangers&family=Creepster&family=Nosifier&family=Indie+Flower&family=Amatic+SC:wght@700&family=Pacifico&family=Dancing+Script:wght@700&family=Sriracha&family=Marck+Script&family=Courgette&family=Satisfy&family=Lobster+Two:ital@1&family=Cookie&family=Great+Vibes&family=Sacramento&family=Tangerine:wght@700&family=Bad+Script&family=Homemade+Apple&family=Rock+Salt&family=Special+Elite&family=Unkempt&family=Neucha&family=Lato&family=Montserrat&family=Oswald&family=Raleway&family=Merriweather&family=Playfair+Display&family=Ubuntu&family=Noto+Sans&family=Open+Sans&family=Source+Code+Pro&family=Rubik&family=Work+Sans&family=Permanent+Marker&family=Kaushan+Script&family=Press+Start+2P&family=Bebas+Neue&family=Lobster&family=Anton&family=Fjalla+One&family=Gloria+Hallelujah&family=Comfortaa&family=Cinzel&family=Josefin+Sans&family=Arimo&family=Orbitron&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
     <style>
         :root {
@@ -165,6 +165,12 @@
             overflow: hidden;
         }
         
+        /* ✨ ADDED: Easy See Mode for larger, bolder numbers */
+        #sudoku-grid.easy-see-mode .sudoku-cell {
+            font-size: clamp(1.5rem, 8vw, 3.5rem);
+            font-weight: bold;
+        }
+
         .candidate-grid { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; height: 100%; }
         .candidate-cell { font-size: 0.6rem; color: var(--candidate-color); text-align: center; }
 
@@ -266,6 +272,14 @@
             <button class="control-btn" data-difficulty="hard">Hard</button>
         </div>
 
+        <div id="view-mode-screen" style="display: none; text-align: center;">
+            <h2>Select View Mode</h2>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                 <button class="control-btn" data-view="normal">Normal</button>
+                 <button class="control-btn" data-view="easy-see">Easy See</button>
+            </div>
+        </div>
+
         <div id="seed-screen" style="display: none; text-align: center;">
             <h2>Enter a Seed Word</h2>
             <input type="text" id="seed-input" placeholder="e.g., gemini" style="padding: 10px; font-size: 1em; border-radius: 20px; border: 1px solid #ccc; width: 60%; margin-bottom: 10px; text-align: center;">
@@ -323,6 +337,7 @@
         const bestTimesBtn = document.getElementById('best-times-btn');
         const calendarBtn = document.getElementById('calendar-btn');
         const difficultyScreen = document.getElementById('difficulty-screen');
+        const viewModeScreen = document.getElementById('view-mode-screen'); // ✨ ADDED
         const seedScreen = document.getElementById('seed-screen');
         const seedInput = document.getElementById('seed-input');
         const startFromSeedBtn = document.getElementById('start-from-seed-btn');
@@ -363,6 +378,7 @@
         let isMuted = false;
         let isCandidateMode = false;
         let isColorMode = false;
+        let isEasySeeMode = false; // ✨ ADDED
         let revealsLeft = 3;
         let unlockClickCounter = 0;
         let titleAnimationInterval;
@@ -796,6 +812,7 @@
             titleScreen.style.display = 'flex';
             titleButtons.style.display = 'flex';
             difficultyScreen.style.display = 'none';
+            viewModeScreen.style.display = 'none'; // ✨ ADDED
             seedScreen.style.display = 'none';
             startTitleAnimation();
             gameBoard.style.display = 'none';
@@ -803,6 +820,8 @@
             winModal.style.display = 'none';
             lives = 3;
             isDailyPuzzle = false;
+            isEasySeeMode = false; // ✨ ADDED
+            sudokuGrid.classList.remove('easy-see-mode'); // ✨ ADDED
             updateLivesDisplay();
             resetTimer();
         }
@@ -854,20 +873,36 @@
             difficultyScreen.style.display = 'block';
         });
 
+        // ✨ MODIFIED: This listener now shows the view mode screen next.
         difficultyScreen.addEventListener('click', (e) => {
             if (e.target.classList.contains('control-btn')) {
                 playSound('click');
-                const difficulty = e.target.dataset.difficulty;
+                currentDifficulty = e.target.dataset.difficulty;
                 
-                const options = { difficulty: difficulty };
+                difficultyScreen.style.display = 'none';
+                viewModeScreen.style.display = 'block';
+            }
+        });
+
+        // ✨ ADDED: Listener for the new view mode screen.
+        viewModeScreen.addEventListener('click', (e) => {
+             if (e.target.classList.contains('control-btn')) {
+                playSound('click');
+                const viewMode = e.target.dataset.view;
+                isEasySeeMode = (viewMode === 'easy-see');
+
+                viewModeScreen.style.display = 'none';
+
+                const options = { difficulty: currentDifficulty };
                 if (seedForNextGame) {
                     options.seed = stringToSeed(seedForNextGame.toLowerCase());
                 }
                 
                 startGame(options);
                 seedForNextGame = null; 
-            }
+             }
         });
+
 
         function startGame(options) {
             stopTitleAnimation();
@@ -875,6 +910,13 @@
             difficultyScreen.style.display = 'none';
             seedScreen.style.display = 'none';
             gameBoard.style.display = 'block';
+
+            // ✨ ADDED: Apply the CSS class for Easy See mode if enabled.
+            if (isEasySeeMode) {
+                sudokuGrid.classList.add('easy-see-mode');
+            } else {
+                sudokuGrid.classList.remove('easy-see-mode');
+            }
 
             const difficulty = options.difficulty;
             const seed = options.seed || new Date().getTime(); 
@@ -1268,7 +1310,7 @@
 
                 calendarGrid.appendChild(dayCell);
             }
-                calendarModal.style.display = 'flex';
+                  calendarModal.style.display = 'flex';
         }
 
         // --- Event Listeners ---
