@@ -6,7 +6,7 @@
     <title>AI Sudoku</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Kalam:wght@400;700&family=Patrick+Hand&family=Caveat&family=Shadows+Into+Light&family=Architects+Daughter&family=Roboto+Mono&family=Bangers&family=Creepster&family=Nosifier&family=Indie+Flower&family=Amatic+SC:wght@700&family=Pacifico&family=Dancing+Script:wght@700&family=Sriracha&family=Marck+Script&family=Courgette&family=Satisfy&family=Lobster+Two:ital@1&family=Cookie&family=Great+Vibes&family=Sacramento&family=Tangerine:wght@700&family=Bad+Script&family=Homemade+Apple&family=Rock+Salt&family=Special+Elite&family=Unkempt&family=Neucha&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Kalam:wght@400;700&family=Patrick+Hand&family=Caveat&family=Shadows+Into+Light&family=Architects+Daughter&family=Roboto+Mono&family=Bangers&family=Creepster&family=Nosifier&family=Indie+Flower&family=Amatic+SC:wght@700&family=Pacifico&family=Dancing+Script:wght@700&family=Sriracha&family=Marck+Script&family=Courgette&family=Satisfy&family=Lobster+Two:ital@1&family=Cookie&family=Great+Vibes&family=Sacramento&family=Tangerine:wght@700&family=Bad+Script&family=Homemade+Apple&family=Rock+Salt&family=Special+Elite&family=Unkempt&family=Neucha&family=Lato&family=Montserrat&family=Oswald&family=Raleway&family=Merriweather&family=Playfair+Display&family=Ubuntu&family=Noto+Sans&family=Open+Sans&family=Source+Code+Pro&family=Rubik&family=Work+Sans&family=Permanent+Marker&family=Kaushan+Script&family=Press+Start+2P&family=Bebas+Neue&family=Lobster&family=Anton&family=Fjalla+One&family=Gloria+Hallelujah&family=Comfortaa&family=Cinzel&family=Josefin+Sans&family=Arimo&family=Orbitron&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
     <style>
         :root {
@@ -376,7 +376,6 @@
 
 
         // --- Player Data & Unlocks ---
-        // ✨ MODIFIED: Player now starts with only the default background unlocked.
         let playerData = {
             level: 1,
             xp: 0,
@@ -391,35 +390,61 @@
             }
         };
 
-        // ✨ MODIFIED: Reworked the entire leveling system to unlock backgrounds on even levels.
+        // ✨ MODIFIED: Added all new fonts to the unlockables list, expanding the total levels.
         const unlockables = {
             2: { type: 'background', id: 'bg-stars', name: 'Starry Night' },
-            3: { type: 'font', id: 'font-kalam', name: 'Kalam' },
+            3: { type: 'font', id: 'font-lato', name: 'Lato' },
             4: { type: 'background', id: 'bg-fireflies', name: 'Fireflies' },
             5: { type: 'theme', id: 'theme-forest', name: 'Forest Theme' },
             6: { type: 'background', id: 'bg-rain', name: 'Gentle Rain' },
-            7: { type: 'feature', id: 'feature-color-mode', name: 'Color Mode' },
-            8: { type: 'background', id: 'bg-leaves', name: 'Falling Leaves' },
-            9: { type: 'board', id: 'board-rainbow', name: 'Rainbow Board' },
-            10: { type: 'background', id: 'bg-ripples', name: 'Water Ripples' },
-            11: { type: 'sound', id: 'sound-8bit', name: '8-Bit Sounds' },
-            12: { type: 'background', id: 'bg-bubbles', name: 'Bubbles' },
-            13: { type: 'feature', id: 'feature-reveal', name: 'Reveal' },
-            14: { type: 'background', id: 'bg-snow', name: 'Snowfall' },
-            15: { type: 'font', id: 'font-indie-flower', name: 'Indie Flower' },
-            16: { type: 'background', id: 'bg-lanterns', name: 'Sky Lanterns' },
-            17: { type: 'board', id: 'board-sands', name: 'Shifting Sands' },
-            18: { type: 'background', id: 'bg-swirl', name: 'Cosmic Swirl' },
-            19: { type: 'sound', id: 'sound-nature', name: 'Nature Sounds' },
-            20: { type: 'background', id: 'bg-sunbeams', name: 'Sunbeams' },
-            21: { type: 'theme', id: 'theme-vampire', name: 'Vampire Theme' },
-            22: { type: 'background', id: 'bg-aurora', name: 'Aurora' },
-            24: { type: 'background', id: 'bg-pastel-rainbow', name: 'Pastel Rainbow' },
-            26: { type: 'background', id: 'bg-fog', name: 'Gentle Fog' },
-            28: { type: 'background', id: 'bg-ocean-waves', name: 'Ocean Waves' }
+            7: { type: 'font', id: 'font-montserrat', name: 'Montserrat' },
+            8: { type: 'feature', id: 'feature-color-mode', name: 'Color Mode' },
+            9: { type: 'background', id: 'bg-leaves', name: 'Falling Leaves' },
+            10: { type: 'board', id: 'board-rainbow', name: 'Rainbow Board' },
+            11: { type: 'font', id: 'font-oswald', name: 'Oswald' },
+            12: { type: 'background', id: 'bg-ripples', name: 'Water Ripples' },
+            13: { type: 'sound', id: 'sound-8bit', name: '8-Bit Sounds' },
+            14: { type: 'background', id: 'bg-bubbles', name: 'Bubbles' },
+            15: { type: 'feature', id: 'feature-reveal', name: 'Reveal' },
+            16: { type: 'font', id: 'font-raleway', name: 'Raleway' },
+            17: { type: 'background', id: 'bg-snow', name: 'Snowfall' },
+            18: { type: 'font', id: 'font-merriweather', name: 'Merriweather' },
+            19: { type: 'background', id: 'bg-lanterns', name: 'Sky Lanterns' },
+            20: { type: 'board', id: 'board-sands', name: 'Shifting Sands' },
+            21: { type: 'font', id: 'font-playfair-display', name: 'Playfair Display' },
+            22: { type: 'background', id: 'bg-swirl', name: 'Cosmic Swirl' },
+            23: { type: 'sound', id: 'sound-nature', name: 'Nature Sounds' },
+            24: { type: 'font', id: 'font-ubuntu', name: 'Ubuntu' },
+            25: { type: 'background', id: 'bg-sunbeams', name: 'Sunbeams' },
+            26: { type: 'theme', id: 'theme-vampire', name: 'Vampire Theme' },
+            27: { type: 'font', id: 'font-noto-sans', name: 'Noto Sans' },
+            28: { type: 'background', id: 'bg-aurora', name: 'Aurora' },
+            29: { type: 'font', id: 'font-open-sans', name: 'Open Sans' },
+            30: { type: 'background', id: 'bg-pastel-rainbow', name: 'Pastel Rainbow' },
+            31: { type: 'font', id: 'font-source-code-pro', name: 'Source Code Pro' },
+            32: { type: 'background', id: 'bg-fog', name: 'Gentle Fog' },
+            33: { type: 'font', id: 'font-rubik', name: 'Rubik' },
+            34: { type: 'background', id: 'bg-ocean-waves', name: 'Ocean Waves' },
+            35: { type: 'font', id: 'font-work-sans', name: 'Work Sans' },
+            36: { type: 'theme', id: 'theme-ocean', name: 'Ocean Theme' },
+            37: { type: 'font', id: 'font-permanent-marker', name: 'Permanent Marker' },
+            38: { type: 'font', id: 'font-kaushan-script', name: 'Kaushan Script' },
+            39: { type: 'font', id: 'font-press-start-2p', name: 'Press Start 2P' },
+            40: { type: 'theme', id: 'theme-sunset', name: 'Sunset Theme' },
+            41: { type: 'font', id: 'font-bebas-neue', name: 'Bebas Neue' },
+            42: { type: 'font', id: 'font-lobster', name: 'Lobster' },
+            43: { type: 'font', id: 'font-anton', name: 'Anton' },
+            44: { type: 'theme', id: 'theme-8bit', name: '8-Bit Theme' },
+            45: { type: 'font', id: 'font-fjalla-one', name: 'Fjalla One' },
+            46: { type: 'font', id: 'font-gloria-hallelujah', name: 'Gloria Hallelujah' },
+            47: { type: 'font', id: 'font-comfortaa', name: 'Comfortaa' },
+            48: { type: 'font', id: 'font-cinzel', name: 'Cinzel' },
+            49: { type: 'font', id: 'font-josefin-sans', name: 'Josefin Sans' },
+            50: { type: 'font', id: 'font-arimo', name: 'Arimo' },
+            51: { type: 'font', id: 'font-orbitron', name: 'Orbitron' }
         };
         
-        // ✨ MODIFIED: Created a manifest to hold the display names for all items. This makes the options menu work correctly.
+        // ✨ MODIFIED: Added all new fonts to the item manifest for display in the options menu.
         const itemManifest = {
             'bg-default': { name: 'Default' },
             'bg-stars': { name: 'Starry Night' },
@@ -451,6 +476,31 @@
             'font-default': { name: 'Default' },
             'font-kalam': { name: 'Kalam' },
             'font-indie-flower': { name: 'Indie Flower' },
+            'font-lato': { name: 'Lato' },
+            'font-montserrat': { name: 'Montserrat' },
+            'font-oswald': { name: 'Oswald' },
+            'font-raleway': { name: 'Raleway' },
+            'font-merriweather': { name: 'Merriweather' },
+            'font-playfair-display': { name: 'Playfair Display' },
+            'font-ubuntu': { name: 'Ubuntu' },
+            'font-noto-sans': { name: 'Noto Sans' },
+            'font-open-sans': { name: 'Open Sans' },
+            'font-source-code-pro': { name: 'Source Code Pro' },
+            'font-rubik': { name: 'Rubik' },
+            'font-work-sans': { name: 'Work Sans' },
+            'font-permanent-marker': { name: 'Permanent Marker' },
+            'font-kaushan-script': { name: 'Kaushan Script' },
+            'font-press-start-2p': { name: 'Press Start 2P' },
+            'font-bebas-neue': { name: 'Bebas Neue' },
+            'font-lobster': { name: 'Lobster' },
+            'font-anton': { name: 'Anton' },
+            'font-fjalla-one': { name: 'Fjalla One' },
+            'font-gloria-hallelujah': { name: 'Gloria Hallelujah' },
+            'font-comfortaa': { name: 'Comfortaa' },
+            'font-cinzel': { name: 'Cinzel' },
+            'font-josefin-sans': { name: 'Josefin Sans' },
+            'font-arimo': { name: 'Arimo' },
+            'font-orbitron': { name: 'Orbitron' },
 
             'sound-default': { name: 'Default' },
             'sound-8bit': { name: '8-Bit' },
@@ -484,8 +534,34 @@
             'theme-8bit': { '--background-color': '#000000', '--grid-background': '#00ff00', '--cell-background': '#333333', '--text-color': '#00ff00', '--button-bg': '#ff00ff', '--accent-color': '#ffff00' },
         };
 
+        // ✨ MODIFIED: Added all new fonts to the fontStyles object for applying them via CSS.
         const fontStyles = {
             'font-default': "'Poppins', sans-serif", 'font-kalam': "'Kalam', cursive", 'font-patrick-hand': "'Patrick Hand', cursive", 'font-caveat': "'Caveat', cursive", 'font-shadows': "'Shadows Into Light', cursive", 'font-architect': "'Architects Daughter', cursive", 'font-roboto-mono': "'Roboto Mono', monospace", 'font-bangers': "'Bangers', cursive", 'font-creepster': "'Creepster', cursive", 'font-nosifier': "'Nosifier', cursive", 'font-indie-flower': "'Indie Flower', cursive", 'font-amatic-sc': "'Amatic SC', cursive", 'font-pacifico': "'Pacifico', cursive", 'font-dancing-script': "'Dancing Script', cursive", 'font-sriracha': "'Sriracha', cursive", 'font-marck-script': "'Marck Script', cursive", 'font-courgette': "'Courgette', cursive", 'font-satisfy': "'Satisfy', cursive", 'font-lobster-two': "'Lobster Two', cursive", 'font-cookie': "'Cookie', cursive", 'font-great-vibes': "'Great Vibes', cursive", 'font-sacramento': "'Sacramento', cursive", 'font-tangerine': "'Tangerine', cursive", 'font-bad-script': "'Bad Script', cursive", 'font-homemade-apple': "'Homemade Apple', cursive", 'font-rock-salt': "'Rock Salt', cursive", 'font-special-elite': "'Special Elite', cursive", 'font-unkempt': "'Unkempt', cursive", 'font-neucha': "'Neucha', cursive",
+            'font-lato': "'Lato', sans-serif",
+            'font-montserrat': "'Montserrat', sans-serif",
+            'font-oswald': "'Oswald', sans-serif",
+            'font-raleway': "'Raleway', sans-serif",
+            'font-merriweather': "'Merriweather', serif",
+            'font-playfair-display': "'Playfair Display', serif",
+            'font-ubuntu': "'Ubuntu', sans-serif",
+            'font-noto-sans': "'Noto Sans', sans-serif",
+            'font-open-sans': "'Open Sans', sans-serif",
+            'font-source-code-pro': "'Source Code Pro', monospace",
+            'font-rubik': "'Rubik', sans-serif",
+            'font-work-sans': "'Work Sans', sans-serif",
+            'font-permanent-marker': "'Permanent Marker', cursive",
+            'font-kaushan-script': "'Kaushan Script', cursive",
+            'font-press-start-2p': "'Press Start 2P', cursive",
+            'font-bebas-neue': "'Bebas Neue', cursive",
+            'font-lobster': "'Lobster', cursive",
+            'font-anton': "'Anton', sans-serif",
+            'font-fjalla-one': "'Fjalla One', sans-serif",
+            'font-gloria-hallelujah': "'Gloria Hallelujah', cursive",
+            'font-comfortaa': "'Comfortaa', cursive",
+            'font-cinzel': "'Cinzel', serif",
+            'font-josefin-sans': "'Josefin Sans', sans-serif",
+            'font-arimo': "'Arimo', sans-serif",
+            'font-orbitron': "'Orbitron', sans-serif",
         };
         
         // --- Sound Engine (Tone.js) ---
@@ -618,10 +694,10 @@
         // --- Seed Functions ---
         function mulberry32(a) {
             return function() {
-                var t = a += 0x6D2B79F5;
-                t = Math.imul(t ^ t >>> 15, t | 1);
-                t ^= t + Math.imul(t ^ t >>> 7, t | 61);
-                return ((t ^ t >>> 14) >>> 0) / 4294967296;
+              var t = a += 0x6D2B79F5;
+              t = Math.imul(t ^ t >>> 15, t | 1);
+              t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+              return ((t ^ t >>> 14) >>> 0) / 4294967296;
             }
         }
 
@@ -1272,7 +1348,7 @@
                 if (unlock.type === 'feature' && !playerData.unlocked.features.includes(unlock.id)) playerData.unlocked.features.push(unlock.id);
                 if (unlock.type === 'sound' && !playerData.unlocked.sounds.includes(unlock.id)) playerData.unlocked.sounds.push(unlock.id);
             });
-            playerData.level = 30;
+            playerData.level = 52;
             alert('Developer Mode: All items unlocked!');
             unlockClickCounter = 0;
         }
@@ -1317,7 +1393,6 @@
         }
 
         // --- Options & Unlocked Features ---
-        // ✨ MODIFIED: This function now uses the `itemManifest` to get the correct names for all items in the options menu.
         function buildOptionsModal() {
             let content = `<h2>Options</h2><div class="options-grid">`;
             
