@@ -390,7 +390,6 @@
             }
         };
 
-        // ✨ MODIFIED: Added all new fonts to the unlockables list, expanding the total levels.
         const unlockables = {
             2: { type: 'background', id: 'bg-stars', name: 'Starry Night' },
             3: { type: 'font', id: 'font-lato', name: 'Lato' },
@@ -444,7 +443,6 @@
             51: { type: 'font', id: 'font-orbitron', name: 'Orbitron' }
         };
         
-        // ✨ MODIFIED: Added all new fonts to the item manifest for display in the options menu.
         const itemManifest = {
             'bg-default': { name: 'Default' },
             'bg-stars': { name: 'Starry Night' },
@@ -507,22 +505,23 @@
             'sound-nature': { name: 'Nature' },
         };
 
+        // ✨ MODIFIED: Added a 'size' property to each background style to fix the texture issue.
         const backgroundStyles = {
-            'bg-default': { type: 'css', animation: 'gradientBG 15s ease infinite', style: 'linear-gradient(45deg, #fdf6f6, #f1e7fe, #e7f5fe, #fdf6f6)' },
-            'bg-stars': { type: 'css', animation: 'bg-stars 150s linear infinite', style: 'url(https://www.transparenttextures.com/patterns/stardust.png) #2a2a3e' },
-            'bg-fireflies': { type: 'js', function: 'createFireflies' },
-            'bg-rain': { type: 'js', function: 'createRain' },
-            'bg-leaves': { type: 'js', function: 'createLeaves' },
-            'bg-ripples': { type: 'js', function: 'createRipples' },
-            'bg-bubbles': { type: 'js', function: 'createBubbles' },
-            'bg-snow': { type: 'js', function: 'createSnow' },
-            'bg-lanterns': { type: 'js', function: 'createLanterns' },
-            'bg-swirl': { type: 'css', animation: 'swirl 60s linear infinite', style: 'radial-gradient(ellipse at center, #2e3192 0%, #1b2949 100%)' },
-            'bg-sunbeams': { type: 'css', animation: 'gradientBG 20s ease infinite', style: 'radial-gradient(ellipse at top, #f9d423 0%, #ff4e50 100%)' },
-            'bg-aurora': { type: 'css', animation: 'gradientBG 10s ease infinite', style: 'linear-gradient(124deg, #2E3192, #1B2949, #009245, #FCEE21, #F15A24, #D4145A)' },
-            'bg-pastel-rainbow': { type: 'css', animation: 'gradientBG 18s ease infinite', style: 'linear-gradient(124deg, #ffc3a0, #ffafbd, #d4a5a5, #89a5ea, #6991c7, #a8e6cf)' },
-            'bg-fog': { type: 'css', animation: 'gradientBG 30s ease infinite', style: 'linear-gradient(to top, #dfe9f3 0%, white 100%)' },
-            'bg-ocean-waves': { type: 'css', animation: 'gradientBG 10s ease infinite', style: 'linear-gradient(-45deg, #43cea2, #185a9d, #43cea2, #185a9d)'},
+            'bg-default': { type: 'css', animation: 'gradientBG 15s ease infinite', style: 'linear-gradient(45deg, #fdf6f6, #f1e7fe, #e7f5fe, #fdf6f6)', size: '400% 400%' },
+            'bg-stars': { type: 'css', animation: 'bg-stars 150s linear infinite', style: 'url(https://www.transparenttextures.com/patterns/stardust.png) #2a2a3e', size: 'auto' },
+            'bg-fireflies': { type: 'js', function: 'createFireflies', size: 'auto' },
+            'bg-rain': { type: 'js', function: 'createRain', size: 'auto' },
+            'bg-leaves': { type: 'js', function: 'createLeaves', size: 'auto' },
+            'bg-ripples': { type: 'js', function: 'createRipples', size: 'auto' },
+            'bg-bubbles': { type: 'js', function: 'createBubbles', size: 'auto' },
+            'bg-snow': { type: 'js', function: 'createSnow', size: 'auto' },
+            'bg-lanterns': { type: 'js', function: 'createLanterns', size: 'auto' },
+            'bg-swirl': { type: 'css', animation: 'swirl 60s linear infinite', style: 'radial-gradient(ellipse at center, #2e3192 0%, #1b2949 100%)', size: 'auto' },
+            'bg-sunbeams': { type: 'css', animation: 'gradientBG 20s ease infinite', style: 'radial-gradient(ellipse at top, #f9d423 0%, #ff4e50 100%)', size: '400% 400%' },
+            'bg-aurora': { type: 'css', animation: 'gradientBG 10s ease infinite', style: 'linear-gradient(124deg, #2E3192, #1B2949, #009245, #FCEE21, #F15A24, #D4145A)', size: '400% 400%' },
+            'bg-pastel-rainbow': { type: 'css', animation: 'gradientBG 18s ease infinite', style: 'linear-gradient(124deg, #ffc3a0, #ffafbd, #d4a5a5, #89a5ea, #6991c7, #a8e6cf)', size: '400% 400%' },
+            'bg-fog': { type: 'css', animation: 'gradientBG 30s ease infinite', style: 'linear-gradient(to top, #dfe9f3 0%, white 100%)', size: '400% 400%' },
+            'bg-ocean-waves': { type: 'css', animation: 'gradientBG 10s ease infinite', style: 'linear-gradient(-45deg, #43cea2, #185a9d, #43cea2, #185a9d)', size: '400% 400%'},
         };
 
         const themeStyles = {
@@ -534,7 +533,6 @@
             'theme-8bit': { '--background-color': '#000000', '--grid-background': '#00ff00', '--cell-background': '#333333', '--text-color': '#00ff00', '--button-bg': '#ff00ff', '--accent-color': '#ffff00' },
         };
 
-        // ✨ MODIFIED: Added all new fonts to the fontStyles object for applying them via CSS.
         const fontStyles = {
             'font-default': "'Poppins', sans-serif", 'font-kalam': "'Kalam', cursive", 'font-patrick-hand': "'Patrick Hand', cursive", 'font-caveat': "'Caveat', cursive", 'font-shadows': "'Shadows Into Light', cursive", 'font-architect': "'Architects Daughter', cursive", 'font-roboto-mono': "'Roboto Mono', monospace", 'font-bangers': "'Bangers', cursive", 'font-creepster': "'Creepster', cursive", 'font-nosifier': "'Nosifier', cursive", 'font-indie-flower': "'Indie Flower', cursive", 'font-amatic-sc': "'Amatic SC', cursive", 'font-pacifico': "'Pacifico', cursive", 'font-dancing-script': "'Dancing Script', cursive", 'font-sriracha': "'Sriracha', cursive", 'font-marck-script': "'Marck Script', cursive", 'font-courgette': "'Courgette', cursive", 'font-satisfy': "'Satisfy', cursive", 'font-lobster-two': "'Lobster Two', cursive", 'font-cookie': "'Cookie', cursive", 'font-great-vibes': "'Great Vibes', cursive", 'font-sacramento': "'Sacramento', cursive", 'font-tangerine': "'Tangerine', cursive", 'font-bad-script': "'Bad Script', cursive", 'font-homemade-apple': "'Homemade Apple', cursive", 'font-rock-salt': "'Rock Salt', cursive", 'font-special-elite': "'Special Elite', cursive", 'font-unkempt': "'Unkempt', cursive", 'font-neucha': "'Neucha', cursive",
             'font-lato': "'Lato', sans-serif",
@@ -1543,14 +1541,17 @@
             }
         }
 
+        // ✨ MODIFIED: The function now correctly applies the 'background-size' property for each background.
         function applyBackground(bgId) {
             clearJsBackgrounds(); 
             const bg = backgroundStyles[bgId];
             animatedBg.style.animation = 'none'; 
+
+            animatedBg.style.backgroundSize = bg.size || 'auto';
+
             if (bg.type === 'css') {
                 animatedBg.style.background = bg.style;
                 animatedBg.style.animation = bg.animation;
-                animatedBg.style.backgroundSize = '400% 400%'; 
             } else if (bg.type === 'js') {
                 window[bg.function]();
             }
