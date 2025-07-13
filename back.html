@@ -63,6 +63,7 @@
         .leaf { position: absolute; top: -20px; width: 20px; height: 20px; background-color: #8B4513; border-radius: 0 50% 0 50%; animation: fall 10s linear infinite; }
         @keyframes fall { to { transform: translateY(105vh) rotate(360deg); } }
 
+        /* ✨ NEW: Background animations */
         .ripple-bg { position: absolute; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; animation: ripple-expand 4s linear infinite; }
         @keyframes ripple-expand { from { width: 0; height: 0; opacity: 1; } to { width: 300px; height: 300px; opacity: 0; } }
 
@@ -241,7 +242,9 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
-    </style></head><body>
+    </style>
+</head>
+<body>
     <div id="animated-bg"></div>
     <div id="game-container">
         <div id="title-screen">
@@ -410,6 +413,7 @@
             'bg-fireflies': { type: 'js', function: 'createFireflies' },
             'bg-rain': { type: 'js', function: 'createRain' },
             'bg-leaves': { type: 'js', function: 'createLeaves' },
+            /* ✨ 10 NEW BACKGROUNDS ADDED BELOW ✨ */
             'bg-ripples': { type: 'js', function: 'createRipples' },
             'bg-bubbles': { type: 'js', function: 'createBubbles' },
             'bg-snow': { type: 'js', function: 'createSnow' },
@@ -417,6 +421,9 @@
             'bg-swirl': { type: 'css', animation: 'swirl 60s linear infinite', style: 'radial-gradient(ellipse at center, #2e3192 0%, #1b2949 100%)' },
             'bg-sunbeams': { type: 'css', animation: 'gradientBG 20s ease infinite', style: 'radial-gradient(ellipse at top, #f9d423 0%, #ff4e50 100%)' },
             'bg-aurora': { type: 'css', animation: 'gradientBG 10s ease infinite', style: 'linear-gradient(124deg, #2E3192, #1B2949, #009245, #FCEE21, #F15A24, #D4145A)' },
+            'bg-pastel-rainbow': { type: 'css', animation: 'gradientBG 18s ease infinite', style: 'linear-gradient(124deg, #ffc3a0, #ffafbd, #d4a5a5, #89a5ea, #6991c7, #a8e6cf)' },
+            'bg-fog': { type: 'css', animation: 'gradientBG 30s ease infinite', style: 'linear-gradient(to top, #dfe9f3 0%, white 100%)' },
+            'bg-ocean-waves': { type: 'css', animation: 'gradientBG 10s ease infinite', style: 'linear-gradient(-45deg, #43cea2, #185a9d, #43cea2, #185a9d)'},
         };
 
         const themeStyles = {
@@ -913,7 +920,7 @@
                     }
                 }
             } else {
-                 playSound('click');
+                playSound('click');
             }
         }
         
@@ -1154,7 +1161,7 @@
 
                 calendarGrid.appendChild(dayCell);
             }
-                 calendarModal.style.display = 'flex';
+                calendarModal.style.display = 'flex';
         }
 
         // --- Event Listeners ---
@@ -1323,6 +1330,7 @@
             optionsContent.innerHTML = content;
         }
         
+        // ✨ NEW: Function to clear JS-based backgrounds
         function clearJsBackgrounds() {
             const existing = animatedBg.querySelectorAll('.firefly, .rain-drop, .leaf, .ripple-bg, .bubble, .snow-flake, .lantern');
             existing.forEach(e => e.remove());
@@ -1371,6 +1379,7 @@
             }
         }
 
+        // ✨ NEW: JS-based background creation functions
         function createRipples() {
             clearJsBackgrounds();
             animatedBg.style.background = '#6155a6';
@@ -1429,11 +1438,13 @@
         }
 
         function applyBackground(bgId) {
-            clearJsBackgrounds();
+            clearJsBackgrounds(); // ✨ MODIFIED: Clear old JS particles before applying new background
             const bg = backgroundStyles[bgId];
+            animatedBg.style.animation = 'none'; // Clear previous animation to prevent conflicts
             if (bg.type === 'css') {
                 animatedBg.style.background = bg.style;
                 animatedBg.style.animation = bg.animation;
+                animatedBg.style.backgroundSize = '400% 400%'; // Ensure gradient animations work
             } else if (bg.type === 'js') {
                 window[bg.function]();
             }
