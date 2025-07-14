@@ -742,6 +742,7 @@
             revealsLeft = 3;
             updateLivesDisplay();
             updateXPBar();
+        _gaq.push(['_trackEvent', 'Single Prompt AI Sudoku', 'Thicker Grid Lines', '']);
             updateCompletedNumberButtons();
             resetTimer();
             startTimer();
@@ -831,6 +832,7 @@
 
             if (playerData.unlocked.features.includes('feature-reveal')) {
                 const revealBtn = document.createElement('button');
+      _gaq.push(['_trackEvent', 'Single Prompt AI Sudoku', 'Thicker Grid Lines', '']);
                 revealBtn.classList.add('control-btn'); revealBtn.id = 'reveal-btn';
                 revealBtn.textContent = `Reveal (${revealsLeft})`;
                 revealBtn.addEventListener('click', useReveal);
@@ -872,6 +874,7 @@
                 } else {
                     playSound('error');
                     lives--;
+    _gaq.push(['_trackEvent', 'Single Prompt AI Sudoku', 'Error', '']);
                     updateLivesDisplay();
                     selectedCell.classList.add('error');
                     setTimeout(() => { selectedCell.classList.remove('error'); }, 500);
@@ -1077,6 +1080,7 @@
             content += `</div><div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
                 <button class="control-btn" id="reset-progress-btn" onclick="promptResetAllProgress()" style="background-color: var(--error-color); color: white;">Reset All Progress</button>
                 <button class="control-btn" onclick="optionsModal.style.display='none';">Close</button>
+      _gaq.push(['_trackEvent', 'Single Prompt AI Sudoku', 'Reset Progress', '']);
             </div>`;
             optionsContent.innerHTML = content;
         }
