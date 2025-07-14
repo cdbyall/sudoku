@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Sudoku</title>
+    <title>Smooth Moves Sudoku</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Kalam:wght@400;700&family=Patrick+Hand&family=Caveat&family=Shadows+Into+Light&family=Architects+Daughter&family=Roboto+Mono&family=Bangers&family=Creepster&family=Nosifier&family=Indie+Flower&family=Amatic+SC:wght@700&family=Pacifico&family=Dancing+Script:wght@700&family=Sriracha&family=Marck+Script&family=Courgette&family=Satisfy&family=Lobster+Two:ital@1&family=Cookie&family=Great+Vibes&family=Sacramento&family=Tangerine:wght@700&family=Bad+Script&family=Homemade+Apple&family=Rock+Salt&family=Special+Elite&family=Unkempt&family=Neucha&family=Lato&family=Montserrat&family=Oswald&family=Raleway&family=Merriweather&family=Playfair+Display&family=Ubuntu&family=Noto+Sans&family=Open+Sans&family=Source+Code+Pro&family=Rubik&family=Work+Sans&family=Permanent+Marker&family=Kaushan+Script&family=Press+Start+2P&family=Bebas+Neue&family=Lobster&family=Anton&family=Fjalla+One&family=Gloria+Hallelujah&family=Comfortaa&family=Cinzel&family=Josefin+Sans&family=Arimo&family=Orbitron&display=swap" rel="stylesheet">
@@ -423,26 +423,7 @@
             } else {
                  setMusicVolume(0.3);
             }
-            const savedActiveGame = localStorage.getItem('sudokuActiveGame');
-            if (savedActiveGame) {
-                try {
-                    const gameData = JSON.parse(savedActiveGame);
-                    if (gameData && gameData.boardState && gameData.boardState.puzzle && gameData.boardState.puzzle.length > 0) {
-                        const continueBtn = document.createElement('button');
-                        continueBtn.id = 'continue-game-btn';
-                        continueBtn.className = 'control-btn';
-                        continueBtn.textContent = 'Continue Game';
-                        continueBtn.onclick = () => resumeGame(gameData);
-                        titleButtons.insertBefore(continueBtn, newGameBtn);
-                    } else {
-                        localStorage.removeItem('sudokuActiveGame');
-                    }
-                } catch (e) {
-                    console.error("Failed to parse saved game, removing it.", e);
-                    localStorage.removeItem('sudokuActiveGame');
-                }
-            }
-            updateXPBar();
+                      updateXPBar();
         }
         function resumeGame(savedGame) {
             playSound('click');
