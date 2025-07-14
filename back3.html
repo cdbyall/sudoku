@@ -125,7 +125,7 @@
         #game-board { width: 100%; position: relative; }
         #completion-message {
             position: absolute;
-            top: -60px; /* Position above the board */
+            top: -60px;
             left: 50%;
             transform: translateX(-50%);
             background-color: rgba(255, 255, 255, 0.9);
@@ -139,7 +139,7 @@
             pointer-events: none;
             transition: opacity 0.5s ease-in-out, top 0.5s ease-in-out;
         }
-        #completion-message.show { opacity: 1; top: -40px; } /* Adjust final position to be clearly above */
+        #completion-message.show { opacity: 1; top: -40px; }
 
         #top-bar { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 450px; margin: 0 auto 10px; }
         #lives-container { font-size: 1.5rem; color: var(--accent-color); }
@@ -233,7 +233,6 @@
         #xp-bar { width: 0%; height: 20px; background: linear-gradient(90deg, var(--button-bg), var(--accent-color)); border-radius: 10px; text-align: center; line-height: 20px; color: white; font-weight: 600; transition: width 0.5s ease-in-out; }
         
         .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center; }
-        /* ✨ ADDED: Higher z-index for music modal to appear on top */
         #music-unlock-modal { z-index: 101; }
         .modal-content { background-color: var(--background-color); padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.2); max-height: 80vh; overflow-y: auto; }
         #music-unlock-content .modal-buttons { display: flex; justify-content: center; gap: 10px; margin-top: 15px; }
@@ -297,7 +296,7 @@
     </style>
 </head>
 <body>
-        <audio id="music-player"></audio>
+    <audio id="music-player"></audio>
 
     <div id="animated-bg"></div>
     <div id="game-container">
@@ -341,7 +340,7 @@
                 <div id="timer-display">00:00</div>
                 <div id="game-buttons">
                     <button id="options-btn">⚙️</button>
-                                        <button id="music-btn">🎵</button>
+                    <button id="music-btn">🎵</button>
                     <button id="mute-btn">🔊</button>
                     <button id="fullscreen-btn">⛶</button>
                 </div>
@@ -356,7 +355,7 @@
     
     <div id="achievement-notification"></div>
 
-        <div id="music-unlock-modal" class="modal">
+    <div id="music-unlock-modal" class="modal">
       <div class="modal-content" id="music-unlock-content"></div>
     </div>
 
@@ -438,7 +437,6 @@
         const achievementsList = document.getElementById('achievements-list');
         const closeAchievementsBtn = document.getElementById('close-achievements-btn');
         const totalAchievementPoints = document.getElementById('total-achievement-points');
-        // ✨ ADDED: Music player elements
         const musicPlayer = document.getElementById('music-player');
         const musicBtn = document.getElementById('music-btn');
         const musicUnlockModal = document.getElementById('music-unlock-modal');
@@ -465,7 +463,6 @@
         let currentSoundPack = 'sound-default'; 
         let currentSettings = {};
         let mistakesMade = 0;
-        // ✨ ADDED: Music player state
         let isMusicPlaying = false;
         let currentTrackIndex = 0;
 
@@ -482,13 +479,11 @@
                 boards: ['board-default'],
                 features: [],
                 sounds: ['sound-default'],
-                // ✨ ADDED: Unlocked music tracks
                 music: [],
             },
             achievements: { unlocked: [], totalPoints: 0, stats: { gamesWon: 0, perfectGames: 0, notesUsed: false } }
         };
 
-        // --- ✨ ADDED: Music Track Data ---
         const musicTracks = [
             { url: 'https://raw.githubusercontent.com/cdbyall/sudoku/main/music/01.mp3', name: 'Peaceful Morning' },
             { url: 'https://raw.githubusercontent.com/cdbyall/sudoku/main/music/02.mp3', name: 'Gentle Waves' },
@@ -502,8 +497,6 @@
             { url: 'https://raw.githubusercontent.com/cdbyall/sudoku/main/music/10.mp3', name: 'Restful Twilight' },
         ];
 
-
-        // --- Achievement Data ---
         const achievements = {
             'firstSteps': { name: "First Steps", desc: "Complete your first puzzle.", points: 25, icon: '👟', unlocked: false },
             'quickThinker': { name: "Quick Thinker", desc: "Solve an easy puzzle in under 5 minutes.", points: 50, icon: '⚡️', unlocked: false },
@@ -593,7 +586,6 @@
             'font-default': "'Poppins', sans-serif", 'font-kalam': "'Kalam', cursive", 'font-patrick-hand': "'Patrick Hand', cursive", 'font-caveat': "'Caveat', cursive", 'font-shadows': "'Shadows Into Light', cursive", 'font-architect': "'Architects Daughter', cursive", 'font-roboto-mono': "'Roboto Mono', monospace", 'font-bangers': "'Bangers', cursive", 'font-creepster': "'Creepster', cursive", 'font-nosifier': "'Nosifier', cursive", 'font-indie-flower': "'Indie Flower', cursive", 'font-amatic-sc': "'Amatic SC', cursive", 'font-pacifico': "'Pacifico', cursive", 'font-dancing-script': "'Dancing Script', cursive", 'font-sriracha': "'Sriracha', cursive", 'font-marck-script': "'Marck Script', cursive", 'font-courgette': "'Courgette', cursive", 'font-satisfy': "'Satisfy', cursive", 'font-lobster-two': "'Lobster Two', cursive", 'font-cookie': "'Cookie', cursive", 'font-great-vibes': "'Great Vibes', cursive", 'font-sacramento': "'Sacramento', cursive", 'font-tangerine': "'Tangerine', cursive", 'font-bad-script': "'Bad Script', cursive", 'font-homemade-apple': "'Homemade Apple', cursive", 'font-rock-salt': "'Rock Salt', cursive", 'font-special-elite': "'Special Elite', cursive", 'font-unkempt': "'Unkempt', cursive", 'font-neucha': "'Neucha', cursive", 'font-lato': "'Lato', sans-serif", 'font-montserrat': "'Montserrat', sans-serif", 'font-oswald': "'Oswald', sans-serif", 'font-raleway': "'Raleway', sans-serif", 'font-merriweather': "'Merriweather', serif", 'font-playfair-display': "'Playfair Display', serif", 'font-ubuntu': "'Ubuntu', sans-serif", 'font-noto-sans': "'Noto Sans', sans-serif", 'font-open-sans': "'Open Sans', sans-serif", 'font-source-code-pro': "'Source Code Pro', monospace", 'font-rubik': "'Rubik', sans-serif", 'font-work-sans': "'Work Sans', sans-serif", 'font-permanent-marker': "'Permanent Marker', cursive", 'font-kaushan-script': "'Kaushan Script', cursive", 'font-press-start-2p': "'Press Start 2P', cursive", 'font-bebas-neue': "'Bebas Neue', cursive", 'font-lobster': "'Lobster', cursive", 'font-anton': "'Anton', sans-serif", 'font-fjalla-one': "'Fjalla One', sans-serif", 'font-gloria-hallelujah': "'Gloria Hallelujah', cursive", 'font-comfortaa': "'Comfortaa', cursive", 'font-cinzel': "'Cinzel', serif", 'font-josefin-sans': "'Josefin Sans', sans-serif", 'font-arimo': "'Arimo', sans-serif", 'font-orbitron': "'Orbitron', sans-serif",
         };
         
-        // --- Sound Engine (Tone.js) ---
         const soundPacks = {
             'sound-default': { type: 'synth' }, 'sound-8bit': { type: 'player', name: '8-Bit Sounds', urls: { correct: 'https://cdn.jsdelivr.net/gh/devmastery/sounds/sfx_sounds_powerup2.wav', error: 'https://cdn.jsdelivr.net/gh/devmastery/sounds/sfx_sounds_error2.wav', click: 'https://cdn.jsdelivr.net/gh/devmastery/sounds/sfx_sounds_Blip4.wav', win: 'https://cdn.jsdelivr.net/gh/devmastery/sounds/sfx_music_level7.wav', } }, 'sound-nature': { type: 'player', name: 'Nature Sounds', urls: { correct: 'https://cdn.jsdelivr.net/gh/k-bruner/web-dev-helpers/sudoku-sounds/zapsplat_nature_water_droplet_single_in_cave_001_59833.mp3', error: 'https://cdn.jsdelivr.net/gh/k-bruner/web-dev-helpers/sudoku-sounds/zapsplat_animals_bird_crow_single_caw_002_62342.mp3', click: 'https://cdn.jsdelivr.net/gh/k-bruner/web-dev-helpers/sudoku-sounds/zapsplat_nature_forest_wood_branch_snap_break_001_12158.mp3', win: 'https://cdn.jsdelivr.net/gh/k-bruner/web-dev-helpers/sudoku-sounds/zapsplat_nature_wind_chimes_bamboo_light_breeze_short_burst_001_44131.mp3' } }
         };
@@ -648,7 +640,6 @@
             }
         }
 
-        // --- ✨ ADDED: Music Player Functions ---
         function toggleMusicPlay() {
             if (Tone.context.state !== 'running') {
                 Tone.start().catch(e => console.error("Tone.start() failed", e));
@@ -695,7 +686,6 @@
         }
 
 
-        // --- Timer & Best Time Functions ---
         function formatTime(totalSeconds) {
             const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
             const seconds = (totalSeconds % 60).toString().padStart(2, '0');
@@ -743,7 +733,6 @@
             bestTimesModal.style.display = 'flex';
         }
 
-        // --- Data Persistence ---
         function saveData() {
             currentSettings.isMuted = isMuted;
             currentSettings.soundPack = currentSoundPack;
@@ -768,17 +757,30 @@
             };
             localStorage.setItem('sudokuActiveGame', JSON.stringify(activeGame));
         }
-
+        
+        // ✨ FIXED: This function is now more robust to prevent errors with old save files.
         function loadData() {
             const savedData = JSON.parse(localStorage.getItem('sudokuUserData'));
             if (savedData) {
-                playerData = {...playerData, ...savedData.playerData};
-                if (!playerData.achievements) { 
-                     playerData.achievements = { unlocked: [], totalPoints: 0, stats: { gamesWon: 0, perfectGames: 0, notesUsed: false } };
-                }
-                if (!playerData.unlocked.music) {
-                	 playerData.unlocked.music = [];
-                }
+                // Perform a "deep merge" to safely combine default and saved data
+                const savedPlayerData = savedData.playerData || {};
+                playerData = {
+                    ...playerData,
+                    ...savedPlayerData,
+                    unlocked: {
+                        ...playerData.unlocked,
+                        ...(savedPlayerData.unlocked || {})
+                    },
+                    achievements: {
+                        ...playerData.achievements,
+                        ...(savedPlayerData.achievements || {}),
+                        stats: {
+                            ...playerData.achievements.stats,
+                            ...((savedPlayerData.achievements && savedPlayerData.achievements.stats) || {})
+                        }
+                    }
+                };
+
                 playerData.achievements.unlocked.forEach(id => {
                     if(achievements[id]) achievements[id].unlocked = true;
                 });
@@ -786,7 +788,7 @@
                 currentSettings = savedData.settings || {};
                 isMuted = currentSettings.isMuted || false;
                 muteBtn.textContent = isMuted ? '🔇' : '🔊';
-                musicPlayer.muted = isMuted; // Sync music player mute state
+                musicPlayer.muted = isMuted;
                 applyTheme(currentSettings.theme || 'theme-default', true);
                 applyFont(currentSettings.font || 'font-default', true);
                 applyBackground(currentSettings.background || 'bg-default', true);
@@ -794,12 +796,11 @@
                 applySoundPack(currentSettings.soundPack || 'sound-default');
             }
 
-            // Initialize music playlist
+            // Initialize music playlist if it's empty
             if (playerData.unlocked.music.length === 0) {
-            	playerData.unlocked.music.push(musicTracks[0].url);
+                playerData.unlocked.music.push(musicTracks[0].url);
             }
             musicPlayer.src = playerData.unlocked.music[currentTrackIndex];
-
 
             const savedActiveGame = localStorage.getItem('sudokuActiveGame');
             if (savedActiveGame) {
@@ -974,7 +975,7 @@
                     } else {
                         const cellIndex = row * 9 + col;
                         boardState.candidates[cellIndex] = new Set(boardState.candidates[cellIndex]);
-                        if (boardState.candidates[cellIndex].size > 0) {
+                        if (boardState.candidates[cellIndex] && boardState.candidates[cellIndex].size > 0) {
                             drawCandidates(cell, cellIndex);
                         }
                     }
@@ -1080,7 +1081,9 @@
             let candidateGrid = cell.querySelector('.candidate-grid');
             if (!candidateGrid) { candidateGrid = document.createElement('div'); candidateGrid.className = 'candidate-grid'; for (let i = 1; i <= 9; i++) { const candidateCell = document.createElement('div'); candidateCell.className = 'candidate-cell'; candidateCell.dataset.num = i; candidateGrid.appendChild(candidateCell); } cell.appendChild(candidateGrid); }
             const candidates = boardState.candidates[cellIndex];
-            candidateGrid.querySelectorAll('.candidate-cell').forEach(c => { const num = parseInt(c.dataset.num); c.textContent = candidates.has(num) ? num : ''; });
+            if(candidates) {
+                candidateGrid.querySelectorAll('.candidate-cell').forEach(c => { const num = parseInt(c.dataset.num); c.textContent = candidates.has(num) ? num : ''; });
+            }
         }
 
         function toggleCandidateMode() { playSound('click'); isCandidateMode = !isCandidateMode; document.getElementById('candidate-btn').classList.toggle('active', isCandidateMode); }
@@ -1140,7 +1143,6 @@
                 addXP(100);
                 checkWinAchievements();
 
-                // ✨ ADDED: Music Unlock Logic on Win
                 const gamesWon = playerData.achievements.stats.gamesWon;
                 const unlockedMusicCount = playerData.unlocked.music.length;
                 if (gamesWon === unlockedMusicCount && unlockedMusicCount < musicTracks.length) {
@@ -1208,10 +1210,8 @@
         window.addEventListener('keydown', (e) => { if (gameBoard.style.display === 'block' && e.key >= '1' && e.key <= '9') { inputNumber(parseInt(e.key)); } });
         window.addEventListener('beforeunload', saveActiveGame);
 
-        // ✨ MODIFIED: Mute button now also controls music
         muteBtn.addEventListener('click', () => { isMuted = !isMuted; muteBtn.textContent = isMuted ? '🔇' : '🔊'; musicPlayer.muted = isMuted; unlockClickCounter++; if (unlockClickCounter === 8) { unlockAll(); } saveData(); });
         
-        // ✨ ADDED: Music player event listeners
         musicBtn.addEventListener('click', toggleMusicPlay);
         musicPlayer.addEventListener('ended', playNextTrackInPlaylist);
 
