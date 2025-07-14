@@ -53,6 +53,7 @@
 
         /* --- Animated Backgrounds --- */
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        /* ✨ ADDED: New animation for vertical gradients like fog */
         @keyframes verticalGradientBG { 0% { background-position: 50% 0%; } 50% { background-position: 50% 100%; } 100% { background-position: 50% 0%; } }
         @keyframes bg-stars { from { background-position: 0 0; } to { background-position: -10000px 5000px; } }
         
@@ -181,6 +182,7 @@
         .candidate-grid { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; height: 100%; }
         .candidate-cell { font-size: 0.6rem; color: var(--candidate-color); text-align: center; }
 
+        /* --- ✨ MODIFIED: Changed color of thick grid lines to be more prominent --- */
         .sudoku-cell:nth-child(3n):not(:nth-child(9n)) { border-right: 3px solid var(--text-color); }
         .sudoku-cell:nth-child(9n) { border-right: none; }
         .sudoku-cell:nth-of-type(n+19):nth-of-type(-n+27),
@@ -253,8 +255,42 @@
         .calendar-day .medal { font-size: 1.2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.5; z-index: -1; }
         .calendar-day.today { font-weight: bold; border: 2px solid var(--accent-color); }
 
+        /* --- ✨ Achievement System Styles --- */
+        #achievement-notification {
+            position: fixed;
+            top: 20px;
+            right: -400px;
+            width: 300px;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 200;
+            transition: right 0.5s ease-in-out;
+            border-left: 5px solid #ffd700;
+        }
+        #achievement-notification.show { right: 20px; }
+        #achievement-notification h4 { margin: 0 0 5px 0; font-size: 1.2em; }
+        #achievement-notification p { margin: 0; font-size: 0.9em; }
+        #achievement-notification .points { font-weight: bold; color: #ffd700; }
+
+        #achievements-modal .modal-content { width: 90%; max-width: 500px; }
+        #achievements-list { list-style-type: none; padding: 0; margin-top: 15px; }
+        .achievement-item { display: flex; align-items: center; padding: 10px; border-bottom: 1px solid var(--grid-background); }
+        .achievement-item:last-child { border-bottom: none; }
+        .achievement-item.unlocked { color: var(--text-color); }
+        .achievement-item.locked { color: #aaa; filter: grayscale(1); }
+        .achievement-icon { font-size: 2.5em; margin-right: 15px; }
+        .achievement-details { text-align: left; flex-grow: 1; }
+        .achievement-details h4 { margin: 0; }
+        .achievement-details p { margin: 5px 0 0 0; font-size: 0.9em; }
+        .achievement-points { font-size: 1.2em; font-weight: bold; color: var(--accent-color); }
+        .achievement-item.locked .achievement-points { color: #aaa; }
+
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { translateY(0); opacity: 1; } }
         @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
     </style>
 </head>
@@ -312,6 +348,8 @@
             </div>
         </div>
     </div>
+    
+    <div id="achievement-notification"></div>
 
     <div id="options-modal" class="modal"><div class="modal-content" id="options-content"></div></div>
     <div id="game-over-modal" class="modal"><div class="modal-content"><h2>Game Over</h2><p>You've run out of lives!</p><button class="control-btn" id="restart-game-btn">Play Again</button></div></div>
@@ -328,6 +366,15 @@
             </div>
             <div id="calendar-grid"></div>
             <button class="control-btn" id="close-calendar-btn" style="margin-top: 15px;">Close</button>
+        </div>
+    </div>
+    
+    <div id="achievements-modal" class="modal">
+        <div class="modal-content">
+            <h2>🏆 Achievements 🏆</h2>
+            <p>Total Points: <span id="total-achievement-points">0</span> / 1000</p>
+            <div id="achievements-list"></div>
+            <button class="control-btn" id="close-achievements-btn" style="margin-top: 15px;">Close</button>
         </div>
     </div>
 
@@ -377,6 +424,12 @@
         const prevMonthBtn = document.getElementById('prev-month-btn');
         const nextMonthBtn = document.getElementById('next-month-btn');
         const closeCalendarBtn = document.getElementById('close-calendar-btn');
+        // ✨ ADDED: Achievement System Elements
+        const achievementNotification = document.getElementById('achievement-notification');
+        const achievementsModal = document.getElementById('achievements-modal');
+        const achievementsList = document.getElementById('achievements-list');
+        const closeAchievementsBtn = document.getElementById('close-achievements-btn');
+        const totalAchievementPoints = document.getElementById('total-achievement-points');
 
 
         // --- Game State ---
@@ -398,7 +451,7 @@
         let calendarDate = new Date();
         let currentSoundPack = 'sound-default'; 
         let currentSettings = {};
-        let musicPlayer = { audio: null, currentSongId: null, isPlaying: false };
+        let mistakesMade = 0;
 
 
         // --- Player Data & Unlocks ---
@@ -406,7 +459,6 @@
             level: 1,
             xp: 0,
             xpToNextLevel: 100,
-            puzzlesCompleted: 0,
             unlocked: {
                 backgrounds: ['bg-default'],
                 fonts: ['font-default'],
@@ -414,24 +466,47 @@
                 boards: ['board-default'],
                 features: [],
                 sounds: ['sound-default'],
-                songs: []
-            }
+                music: [] // ✨ ADDED: Music unlocks array
+            },
+            // ✨ ADDED: Achievement tracking
+            achievements: { unlocked: [], totalPoints: 0, stats: { gamesWon: 0, perfectGames: 0, notesUsed: false } }
         };
+        
+        // --- ✨ ADDED: Music Data and State ---
+        const musicTracks = {
+            'music-01': { name: "Grid Garden", url: 'https://media.githubusercontent.com/media/cdbyall/sudoku/main/music/01.mp3', unlock: { type: 'win', value: 1 } },
+            'music-02': { name: "Nine Squares of Zen", url: 'https://media.githubusercontent.com/media/cdbyall/sudoku/main/music/02.mp3', unlock: { type: 'win', value: 2 } },
+            'music-03': { name: "Sudoku Serenity", url: 'https://media.githubusercontent.com/media/cdbyall/sudoku/main/music/03.mp3', unlock: { type: 'win', value: 3 } },
+            'music-04': { name: "Focused Flow", url: 'https://media.githubusercontent.com/media/cdbyall/sudoku/main/music/04.mp3', unlock: { type: 'win', value: 4 } },
+            'music-05': { name: "Mindful Matrix", url: 'https://media.githubusercontent.com/media/cdbyall/sudoku/main/music/05.mp3', unlock: { type: 'win', value: 5 } },
+            'music-06': { name: "Cellular Calm", url: 'https://media.githubusercontent.com/media/cdbyall/sudoku/main/music/06.mp3', unlock: { type: 'level', value: 10 } },
+            'music-07': { name: "Logic Lullaby", url: 'https://media.githubusercontent.com/media/cdbyall/sudoku/main/music/07.mp3', unlock: { type: 'level', value: 12 } },
+            'music-08': { name: "Puzzle Peace", url: 'https://media.githubusercontent.com/media/cdbyall/sudoku/main/music/08.mp3', unlock: { type: 'level', value: 14 } },
+            'music-09': { name: "Number Nirvana", url: 'https://media.githubusercontent.com/media/cdbyall/sudoku/main/music/09.mp3', unlock: { type: 'level', value: 16 } },
+            'music-10': { name: "Completion Chorus", url: 'https://media.githubusercontent.com/media/cdbyall/sudoku/main/music/10.mp3', unlock: { type: 'level', value: 18 } },
+        };
+        let musicPlayers = {};
+        let currentMusicPlayer = null;
+        let currentTrackId = null;
 
-        // ✨ ADDED: Manifest and unlock levels for new music
-        const songManifest = {
-            'song-01': { title: 'First Grid', src: 'https://github.com/cdbyall/sudoku/blob/main/music/01.mp3?raw=true' },
-            'song-02': { title: 'Zen Garden', src: 'https://github.com/cdbyall/sudoku/blob/main/music/02.mp3?raw=true' },
-            'song-03': { title: 'Focused Flow', src: 'https://github.com/cdbyall/sudoku/blob/main/music/03.mp3?raw=true' },
-            'song-04': { title: 'Nine Squares', src: 'https://github.com/cdbyall/sudoku/blob/main/music/04.mp3?raw=true' },
-            'song-05': { title: 'Quiet Contemplation', src: 'https://github.com/cdbyall/sudoku/blob/main/music/05.mp3?raw=true' },
-            'song-06': { title: 'Sudoku Serenity', src: 'https://github.com/cdbyall/sudoku/blob/main/music/06.mp3?raw=true' },
-            'song-07': { title: 'Row by Row', src: 'https://github.com/cdbyall/sudoku/blob/main/music/07.mp3?raw=true' },
-            'song-08': { title: 'Digital Calm', src: 'https://github.com/cdbyall/sudoku/blob/main/music/08.mp3?raw=true' },
-            'song-09': { title: 'The Last Number', src: 'https://github.com/cdbyall/sudoku/blob/main/music/09.mp3?raw=true' },
-            'song-10': { title: 'Puzzle Complete', src: 'https://github.com/cdbyall/sudoku/blob/main/music/10.mp3?raw=true' },
+        // --- ✨ Achievement Data ---
+        const achievements = {
+            // Easy
+            'firstSteps': { name: "First Steps", desc: "Complete your first puzzle.", points: 25, icon: '👟', unlocked: false },
+            'quickThinker': { name: "Quick Thinker", desc: "Solve an easy puzzle in under 5 minutes.", points: 50, icon: '⚡️', unlocked: false },
+            'noteTaker': { name: "Note Taker", desc: "Use the notes feature for the first time.", points: 25, icon: '📝', unlocked: false },
+            'perfectionist': { name: "Perfectionist", desc: "Complete any puzzle with no mistakes.", points: 75, icon: '👌', unlocked: false },
+            // Medium
+            'persistent': { name: "Persistent", desc: "Complete 10 puzzles in total.", points: 100, icon: '💪', unlocked: false },
+            'weekender': { name: "Weekender", desc: "Complete 7 daily puzzles.", points: 100, icon: '🗓️', unlocked: false },
+            'brainiac': { name: "Brainiac", desc: "Solve a hard puzzle.", points: 125, icon: '🧠', unlocked: false },
+            // Hard
+            'dedicated': { name: "Dedicated", desc: "Complete a daily puzzle for a whole month.", points: 200, icon: '📅', unlocked: false },
+            'sudokuMaster': { name: "Sudoku Master", desc: "Solve 10 hard puzzles with no mistakes.", points: 200, icon: '👑', unlocked: false },
+            // Secret
+            'curiosity': { name: "Curiosity", desc: "???", points: 50, icon: '❓', secret: true, unlocked: false },
+            'timeTraveler': { name: "Time Traveler", desc: "???", points: 50, icon: '⏳', secret: true, unlocked: false }
         };
-        const songUnlockLevels = { 10: 'song-06', 12: 'song-07', 14: 'song-08', 16: 'song-09', 18: 'song-10' };
 
         const unlockables = {
             2: { type: 'background', id: 'bg-stars', name: 'Starry Night' },
@@ -442,11 +517,16 @@
             7: { type: 'font', id: 'font-montserrat', name: 'Montserrat' },
             8: { type: 'feature', id: 'feature-color-mode', name: 'Color Mode' },
             9: { type: 'background', id: 'bg-leaves', name: 'Falling Leaves' },
-            11: { type: 'font', id: 'font-oswald', name: 'Oswald' }, // Level 10 is a song
-            13: { type: 'sound', id: 'sound-8bit', name: '8-Bit Sounds' }, // Level 12 is a song
-            15: { type: 'feature', id: 'feature-reveal', name: 'Reveal' }, // Level 14 is a song
-            17: { type: 'background', id: 'bg-snow', name: 'Snowfall' }, // Level 16 is a song
-            19: { type: 'background', id: 'bg-lanterns', name: 'Sky Lanterns' },// Level 18 is a song
+            10: { type: 'board', id: 'board-rainbow', name: 'Rainbow Board' },
+            11: { type: 'font', id: 'font-oswald', name: 'Oswald' },
+            12: { type: 'background', id: 'bg-ripples', name: 'Water Ripples' },
+            13: { type: 'sound', id: 'sound-8bit', name: '8-Bit Sounds' },
+            14: { type: 'background', id: 'bg-bubbles', name: 'Bubbles' },
+            15: { type: 'feature', id: 'feature-reveal', name: 'Reveal' },
+            16: { type: 'font', id: 'font-raleway', name: 'Raleway' },
+            17: { type: 'background', id: 'bg-snow', name: 'Snowfall' },
+            18: { type: 'font', id: 'font-merriweather', name: 'Merriweather' },
+            19: { type: 'background', id: 'bg-lanterns', name: 'Sky Lanterns' },
             20: { type: 'board', id: 'board-sands', name: 'Shifting Sands' },
             21: { type: 'font', id: 'font-playfair-display', name: 'Playfair Display' },
             22: { type: 'background', id: 'bg-swirl', name: 'Cosmic Swirl' },
@@ -491,6 +571,7 @@
 
         const backgroundStyles = {
             'bg-default': { type: 'css', animation: 'gradientBG 15s ease infinite', style: 'linear-gradient(45deg, #fdf6f6, #f1e7fe, #e7f5fe, #fdf6f6)', size: '400% 400%' }, 'bg-stars': { type: 'css', animation: 'bg-stars 150s linear infinite', style: 'url(https://www.transparenttextures.com/patterns/stardust.png) #2a2a3e', size: 'auto' }, 'bg-fireflies': { type: 'js', function: 'createFireflies', size: 'auto' }, 'bg-rain': { type: 'js', function: 'createRain', size: 'auto' }, 'bg-leaves': { type: 'js', function: 'createLeaves', size: 'auto' }, 'bg-ripples': { type: 'js', function: 'createRipples', size: 'auto' }, 'bg-bubbles': { type: 'js', function: 'createBubbles', size: 'auto' }, 'bg-snow': { type: 'js', function: 'createSnow', size: 'auto' }, 'bg-lanterns': { type: 'js', function: 'createLanterns', size: 'auto' }, 'bg-swirl': { type: 'css', animation: 'swirl 60s linear infinite', style: 'radial-gradient(ellipse at center, #2e3192 0%, #1b2949 100%)', size: 'auto' }, 'bg-sunbeams': { type: 'css', animation: 'gradientBG 20s ease infinite', style: 'radial-gradient(ellipse at top, #f9d423 0%, #ff4e50 100%)', size: '400% 400%' }, 'bg-aurora': { type: 'css', animation: 'gradientBG 10s ease infinite', style: 'linear-gradient(124deg, #2E3192, #1B2949, #009245, #FCEE21, #F15A24, #D4145A)', size: '400% 400%' }, 'bg-pastel-rainbow': { type: 'css', animation: 'gradientBG 18s ease infinite', style: 'linear-gradient(124deg, #ffc3a0, #ffafbd, #d4a5a5, #89a5ea, #6991c7, #a8e6cf)', size: '400% 400%' }, 
+            /* ✨ FIXED: Changed bg-fog to use a vertical animation that is now visible */
             'bg-fog': { type: 'css', animation: 'verticalGradientBG 25s ease infinite', style: 'linear-gradient(to top, #dfe9f3 0%, white 100%)', size: '100% 400%' }, 
             'bg-ocean-waves': { type: 'css', animation: 'gradientBG 10s ease infinite', style: 'linear-gradient(-45deg, #43cea2, #185a9d, #43cea2, #185a9d)', size: '400% 400%'},
         };
@@ -503,43 +584,6 @@
             'font-default': "'Poppins', sans-serif", 'font-kalam': "'Kalam', cursive", 'font-patrick-hand': "'Patrick Hand', cursive", 'font-caveat': "'Caveat', cursive", 'font-shadows': "'Shadows Into Light', cursive", 'font-architect': "'Architects Daughter', cursive", 'font-roboto-mono': "'Roboto Mono', monospace", 'font-bangers': "'Bangers', cursive", 'font-creepster': "'Creepster', cursive", 'font-nosifier': "'Nosifier', cursive", 'font-indie-flower': "'Indie Flower', cursive", 'font-amatic-sc': "'Amatic SC', cursive", 'font-pacifico': "'Pacifico', cursive", 'font-dancing-script': "'Dancing Script', cursive", 'font-sriracha': "'Sriracha', cursive", 'font-marck-script': "'Marck Script', cursive", 'font-courgette': "'Courgette', cursive", 'font-satisfy': "'Satisfy', cursive", 'font-lobster-two': "'Lobster Two', cursive", 'font-cookie': "'Cookie', cursive", 'font-great-vibes': "'Great Vibes', cursive", 'font-sacramento': "'Sacramento', cursive", 'font-tangerine': "'Tangerine', cursive", 'font-bad-script': "'Bad Script', cursive", 'font-homemade-apple': "'Homemade Apple', cursive", 'font-rock-salt': "'Rock Salt', cursive", 'font-special-elite': "'Special Elite', cursive", 'font-unkempt': "'Unkempt', cursive", 'font-neucha': "'Neucha', cursive", 'font-lato': "'Lato', sans-serif", 'font-montserrat': "'Montserrat', sans-serif", 'font-oswald': "'Oswald', sans-serif", 'font-raleway': "'Raleway', sans-serif", 'font-merriweather': "'Merriweather', serif", 'font-playfair-display': "'Playfair Display', serif", 'font-ubuntu': "'Ubuntu', sans-serif", 'font-noto-sans': "'Noto Sans', sans-serif", 'font-open-sans': "'Open Sans', sans-serif", 'font-source-code-pro': "'Source Code Pro', monospace", 'font-rubik': "'Rubik', sans-serif", 'font-work-sans': "'Work Sans', sans-serif", 'font-permanent-marker': "'Permanent Marker', cursive", 'font-kaushan-script': "'Kaushan Script', cursive", 'font-press-start-2p': "'Press Start 2P', cursive", 'font-bebas-neue': "'Bebas Neue', cursive", 'font-lobster': "'Lobster', cursive", 'font-anton': "'Anton', sans-serif", 'font-fjalla-one': "'Fjalla One', sans-serif", 'font-gloria-hallelujah': "'Gloria Hallelujah', cursive", 'font-comfortaa': "'Comfortaa', cursive", 'font-cinzel': "'Cinzel', serif", 'font-josefin-sans': "'Josefin Sans', sans-serif", 'font-arimo': "'Arimo', sans-serif", 'font-orbitron': "'Orbitron', sans-serif",
         };
         
-        // --- Music Player ---
-        function initializeMusicPlayer() {
-            const audioEl = document.createElement('audio');
-            audioEl.id = 'background-music';
-            audioEl.loop = true;
-            document.body.appendChild(audioEl);
-            musicPlayer.audio = audioEl;
-            musicPlayer.audio.muted = isMuted;
-        }
-
-        function playMusic(songId) {
-            if (!songId || !songManifest[songId] || !musicPlayer.audio) return;
-            if (Tone.context.state !== 'running') { Tone.start().catch(e => console.error("Tone.start() failed", e)); }
-
-            musicPlayer.audio.src = songManifest[songId].src;
-            const playPromise = musicPlayer.audio.play();
-            if (playPromise !== undefined) {
-                playPromise.then(_ => {
-                    musicPlayer.currentSongId = songId;
-                    musicPlayer.isPlaying = true;
-                    buildOptionsModal();
-                    saveData();
-                }).catch(error => {
-                    console.error("Music auto-play was prevented. User interaction is required.", error);
-                });
-            }
-        }
-
-        function stopMusic() {
-            if (!musicPlayer.audio) return;
-            musicPlayer.audio.pause();
-            musicPlayer.currentSongId = null;
-            musicPlayer.isPlaying = false;
-            buildOptionsModal();
-            saveData();
-        }
-
         // --- Sound Engine (Tone.js) ---
         const soundPacks = {
             'sound-default': { type: 'synth' }, 'sound-8bit': { type: 'player', name: '8-Bit Sounds', urls: { correct: 'https://cdn.jsdelivr.net/gh/devmastery/sounds/sfx_sounds_powerup2.wav', error: 'https://cdn.jsdelivr.net/gh/devmastery/sounds/sfx_sounds_error2.wav', click: 'https://cdn.jsdelivr.net/gh/devmastery/sounds/sfx_sounds_Blip4.wav', win: 'https://cdn.jsdelivr.net/gh/devmastery/sounds/sfx_music_level7.wav', } }, 'sound-nature': { type: 'player', name: 'Nature Sounds', urls: { correct: 'https://cdn.jsdelivr.net/gh/k-bruner/web-dev-helpers/sudoku-sounds/zapsplat_nature_water_droplet_single_in_cave_001_59833.mp3', error: 'https://cdn.jsdelivr.net/gh/k-bruner/web-dev-helpers/sudoku-sounds/zapsplat_animals_bird_crow_single_caw_002_62342.mp3', click: 'https://cdn.jsdelivr.net/gh/k-bruner/web-dev-helpers/sudoku-sounds/zapsplat_nature_forest_wood_branch_snap_break_001_12158.mp3', win: 'https://cdn.jsdelivr.net/gh/k-bruner/web-dev-helpers/sudoku-sounds/zapsplat_nature_wind_chimes_bamboo_light_breeze_short_burst_001_44131.mp3' } }
@@ -547,6 +591,8 @@
 
         const synthSounds = {
             correct: new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.1 } }).toDestination(), error: new Tone.Synth({ oscillator: { type: 'square' }, envelope: { attack: 0.01, decay: 0.3, sustain: 0, release: 0.1 } }).toDestination(), click: new Tone.Synth({ oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 } }).toDestination(), win: new Tone.Synth({ oscillator: { type: 'sawtooth' }, envelope: { attack: 0.1, decay: 0.5, sustain: 0.2, release: 0.5 } }).toDestination(), levelUp: new Tone.Synth({ oscillator: { type: 'fmsine' }, envelope: { attack: 0.2, decay: 0.5, sustain: 0, release: 1 } }).toDestination(), pop: new Tone.Synth({ oscillator: { type: 'triangle' }, pitchDecay: 0.05, envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 } }).toDestination(),
+            // ✨ ADDED: Sound for achievement unlock
+            achievement: new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.05, decay: 0.4, sustain: 0.1, release: 0.8 } }).toDestination()
         };
 
         let playerSounds = {};
@@ -567,6 +613,16 @@
             saveData();
             buildOptionsModal();
         }
+        
+        // ✨ ADDED: Jingle for achievements
+        function playAchievementJingle() {
+            if(isMuted) return;
+            const now = Tone.now();
+            synthSounds.achievement.triggerAttackRelease('C5', '8n', now);
+            synthSounds.achievement.triggerAttackRelease('E5', '8n', now + 0.1);
+            synthSounds.achievement.triggerAttackRelease('G5', '8n', now + 0.2);
+            synthSounds.achievement.triggerAttackRelease('C6', '4n', now + 0.3);
+        }
 
         function playSound(sound, note = 'C4') {
             if (isMuted) return;
@@ -584,6 +640,41 @@
                 else if (sound === 'pop') synthSounds.pop.triggerAttackRelease(note, '16n');
             }
         }
+        
+        // --- ✨ ADDED: Music player functions ---
+        function initializeMusicPlayers() {
+            Object.values(musicPlayers).forEach(player => player.dispose());
+            musicPlayers = {};
+            playerData.unlocked.music.forEach(trackId => {
+                if (musicTracks[trackId]) {
+                    musicPlayers[trackId] = new Tone.Player({
+                        url: musicTracks[trackId].url,
+                        loop: true,
+                        autostart: false
+                    }).toDestination();
+                }
+            });
+        }
+
+        function playMusic(trackId) {
+            if (Tone.context.state !== 'running') { Tone.start(); }
+            stopMusic();
+            if (musicPlayers[trackId]) {
+                currentMusicPlayer = musicPlayers[trackId];
+                currentMusicPlayer.start();
+                currentTrackId = trackId;
+                buildOptionsModal(); // Rebuild to show active track
+            }
+        }
+
+        function stopMusic() {
+            if (currentMusicPlayer) {
+                currentMusicPlayer.stop();
+                currentMusicPlayer = null;
+                currentTrackId = null;
+                buildOptionsModal(); // Rebuild to show no active track
+            }
+        }
 
 
         // --- Timer & Best Time Functions ---
@@ -598,6 +689,8 @@
             gameTimerInterval = setInterval(() => {
                 secondsElapsed++;
                 timerDisplay.textContent = formatTime(secondsElapsed);
+                // Secret Achievement Check
+                if(secondsElapsed >= 3600) unlockAchievement('timeTraveler');
             }, 1000);
         }
 
@@ -641,11 +734,6 @@
             currentSettings.theme = document.body.dataset.theme || 'theme-default';
             currentSettings.font = document.body.dataset.font || 'font-default';
             currentSettings.board = sudokuGrid.dataset.board || 'board-default';
-            if (musicPlayer) {
-                currentSettings.music = {
-                    currentSongId: musicPlayer.currentSongId
-                };
-            }
 
             const dataToSave = {
                 playerData: playerData,
@@ -659,7 +747,7 @@
         function saveActiveGame() {
             if (gameBoard.style.display !== 'block') return;
             const activeGame = {
-                boardState, lives, secondsElapsed, currentDifficulty, isDailyPuzzle, isEasySeeMode, revealsLeft,
+                boardState, lives, secondsElapsed, currentDifficulty, isDailyPuzzle, isEasySeeMode, revealsLeft, mistakesMade
             };
             localStorage.setItem('sudokuActiveGame', JSON.stringify(activeGame));
         }
@@ -667,25 +755,38 @@
         function loadData() {
             const savedData = JSON.parse(localStorage.getItem('sudokuUserData'));
             if (savedData) {
-                playerData = savedData.playerData || playerData;
+                // Merge saved data with defaults to prevent errors if structure changes
+                playerData = {...playerData, ...savedData.playerData};
+                if (!playerData.achievements) { // Add achievements object if it doesn't exist from old save
+                     playerData.achievements = { unlocked: [], totalPoints: 0, stats: { gamesWon: 0, perfectGames: 0, notesUsed: false } };
+                }
+                // ✨ ADDED: Ensure music array exists for old saves
+                if (!playerData.unlocked.music) {
+                    playerData.unlocked.music = [];
+                }
+                playerData.achievements.unlocked.forEach(id => {
+                    if(achievements[id]) achievements[id].unlocked = true;
+                });
+
                 currentSettings = savedData.settings || {};
                 isMuted = currentSettings.isMuted || false;
                 muteBtn.textContent = isMuted ? '🔇' : '🔊';
-                if (musicPlayer.audio) musicPlayer.audio.muted = isMuted;
-                applyTheme(currentSettings.theme || 'theme-default');
-                applyFont(currentSettings.font || 'font-default');
-                applyBackground(currentSettings.background || 'bg-default');
-                applyBoard(currentSettings.board || 'board-default');
+                Tone.Destination.mute = isMuted;
+                applyTheme(currentSettings.theme || 'theme-default', true);
+                applyFont(currentSettings.font || 'font-default', true);
+                applyBackground(currentSettings.background || 'bg-default', true);
+                applyBoard(currentSettings.board || 'board-default', true);
                 applySoundPack(currentSettings.soundPack || 'sound-default');
-                if (currentSettings.music && currentSettings.music.currentSongId) {
-                    playMusic(currentSettings.music.currentSongId);
-                }
             }
+            
+            initializeMusicPlayers(); // ✨ ADDED: Initialize music players on load
 
+            // --- ✨ MODIFIED: Added robust check for valid saved game data ---
             const savedActiveGame = localStorage.getItem('sudokuActiveGame');
             if (savedActiveGame) {
                 try {
                     const gameData = JSON.parse(savedActiveGame);
+                    // A valid game will have a boardState object with a puzzle array that is not empty.
                     if (gameData && gameData.boardState && gameData.boardState.puzzle && gameData.boardState.puzzle.length > 0) {
                         const continueBtn = document.createElement('button');
                         continueBtn.id = 'continue-game-btn';
@@ -694,9 +795,11 @@
                         continueBtn.onclick = () => resumeGame(gameData);
                         titleButtons.insertBefore(continueBtn, newGameBtn);
                     } else {
+                        // The saved game is invalid or empty, remove it.
                         localStorage.removeItem('sudokuActiveGame');
                     }
                 } catch (e) {
+                    // If parsing fails, the data is corrupt. Remove it.
                     console.error("Failed to parse saved game, removing it.", e);
                     localStorage.removeItem('sudokuActiveGame');
                 }
@@ -717,6 +820,7 @@
             isDailyPuzzle = savedGame.isDailyPuzzle;
             isEasySeeMode = savedGame.isEasySeeMode;
             revealsLeft = savedGame.revealsLeft;
+            mistakesMade = savedGame.mistakesMade || 0;
 
             if (isEasySeeMode) sudokuGrid.classList.add('easy-see-mode');
             else sudokuGrid.classList.remove('easy-see-mode');
@@ -759,11 +863,13 @@
             gameOverModal.style.display = 'none';
             winModal.style.display = 'none';
             lives = 3;
+            mistakesMade = 0;
             isDailyPuzzle = false;
             isEasySeeMode = false;
             sudokuGrid.classList.remove('easy-see-mode');
             updateLivesDisplay();
             resetTimer();
+            // Re-check for continue button in case user returns to title screen
             const continueBtn = document.getElementById('continue-game-btn');
             if (!localStorage.getItem('sudokuActiveGame') && continueBtn) {
                 continueBtn.remove();
@@ -802,6 +908,7 @@
             createGrid(boardState.puzzle);
             createControls();
             lives = 3;
+            mistakesMade = 0;
             revealsLeft = 3;
             updateLivesDisplay();
             updateXPBar();
@@ -848,9 +955,11 @@
                         cell.classList.add('given');
                     } else if (playerValue !== 0) {
                         cell.textContent = playerValue;
-                        cell.classList.add('correct');
+                        cell.classList.add('correct'); // All saved player values are correct
                     } else {
+                        // Draw candidates if the cell is empty
                         const cellIndex = row * 9 + col;
+                        // The saved candidates object is plain, needs to be converted back to a Set
                         boardState.candidates[cellIndex] = new Set(boardState.candidates[cellIndex]);
                         if (boardState.candidates[cellIndex].size > 0) {
                             drawCandidates(cell, cellIndex);
@@ -863,12 +972,21 @@
             }
         }
         
+        // ✨ FIXED: This function now correctly handles cells with notes.
         function handleCellClick(cell) {
-            const value = cell.textContent;
-            if (value && value.length === 1 && value >= '1' && value <= '9') {
+            // Check if the cell contains a candidate grid. If it does, it should always be selectable.
+            const hasCandidateGrid = cell.querySelector('.candidate-grid');
+            const isGivenOrCorrect = cell.classList.contains('given') || cell.classList.contains('correct');
+
+            if (isGivenOrCorrect && !hasCandidateGrid) {
+                // If it's a final number (given or correct) and not a cell with notes, just highlight.
                 highlightMatchingNumbers(cell);
-                if (selectedCell) { selectedCell.classList.remove('selected'); selectedCell = null; }
+                if (selectedCell) {
+                    selectedCell.classList.remove('selected');
+                    selectedCell = null;
+                }
             } else {
+                // If it's an empty cell, a cell with notes, or any other selectable state, select it.
                 selectCell(cell);
             }
         }
@@ -914,6 +1032,11 @@
                 if (boardState.candidates[cellIndex].has(num)) boardState.candidates[cellIndex].delete(num);
                 else boardState.candidates[cellIndex].add(num);
                 drawCandidates(selectedCell, cellIndex);
+                // Achievement Check
+                if (!playerData.achievements.stats.notesUsed) {
+                    playerData.achievements.stats.notesUsed = true;
+                    unlockAchievement('noteTaker');
+                }
             } else {
                 if (boardState.solution[row][col] === num) {
                     selectedCell.classList.add('glow-animation');
@@ -933,6 +1056,7 @@
                 } else {
                     playSound('error');
                     lives--;
+                    mistakesMade++;
                     updateLivesDisplay();
                     selectedCell.classList.add('error');
                     setTimeout(() => { selectedCell.classList.remove('error'); }, 500);
@@ -977,6 +1101,41 @@
                 localStorage.setItem('sudokuDailyCompletions', JSON.stringify(completions));
                 saveData();
             }
+            // Achievement Checks
+            if (completions.length >= 7) unlockAchievement('weekender');
+            if (completions.length >= 30) unlockAchievement('dedicated');
+        }
+        
+        // ✨ MODIFIED: Added all achievement checks on win
+        function checkWinAchievements() {
+            playerData.achievements.stats.gamesWon = (playerData.achievements.stats.gamesWon || 0) + 1;
+            
+            // First Steps
+            unlockAchievement('firstSteps');
+            
+            // Quick Thinker
+            if(currentDifficulty === 'easy' && secondsElapsed < 300) {
+                unlockAchievement('quickThinker');
+            }
+            
+            // Perfectionist
+            if(mistakesMade === 0) {
+                unlockAchievement('perfectionist');
+                playerData.achievements.stats.perfectGames = (playerData.achievements.stats.perfectGames || 0) + 1;
+                if(currentDifficulty === 'hard' && playerData.achievements.stats.perfectGames >= 10) {
+                    unlockAchievement('sudokuMaster');
+                }
+            }
+            
+            // Persistent
+            if(playerData.achievements.stats.gamesWon >= 10) {
+                unlockAchievement('persistent');
+            }
+            
+            // Brainiac
+            if(currentDifficulty === 'hard') {
+                unlockAchievement('brainiac');
+            }
         }
 
         function checkCompletion(row, col, num) {
@@ -990,11 +1149,12 @@
                 saveBestTime(finalTime, currentDifficulty);
                 if (isDailyPuzzle) { recordDailyCompletion(); }
                 playSound('win');
-                playerData.puzzlesCompleted++;
-                checkForPuzzleCountUnlock(); // This must happen before addXP
                 addXP(100);
+                checkWinAchievements(); // Check achievements
                 winModal.style.display = 'flex';
+                checkMusicUnlocks(); // ✨ ADDED: Check for music unlocks after showing win modal
                 localStorage.removeItem('sudokuActiveGame');
+                saveData();
                 return;
             }
 
@@ -1051,7 +1211,18 @@
         window.addEventListener('keydown', (e) => { if (gameBoard.style.display === 'block' && e.key >= '1' && e.key <= '9') { inputNumber(parseInt(e.key)); } });
         window.addEventListener('beforeunload', saveActiveGame);
 
-        muteBtn.addEventListener('click', () => { isMuted = !isMuted; muteBtn.textContent = isMuted ? '🔇' : '🔊'; if (musicPlayer.audio) musicPlayer.audio.muted = isMuted; unlockClickCounter++; if (unlockClickCounter === 8) { unlockAll(); } saveData(); });
+        muteBtn.addEventListener('click', () => {
+            isMuted = !isMuted;
+            muteBtn.textContent = isMuted ? '🔇' : '🔊';
+            if (Tone.context.state === 'running') {
+                Tone.Destination.mute = isMuted;
+            }
+            unlockClickCounter++;
+            if (unlockClickCounter === 8) {
+                unlockAll();
+            }
+            saveData();
+        });
         fullscreenBtn.addEventListener('click', () => { unlockClickCounter = 0; if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => console.error(err)); } else { document.exitFullscreen(); } });
         optionsBtn.addEventListener('click', () => { unlockClickCounter = 0; buildOptionsModal(); optionsModal.style.display = 'flex'; playSound('click'); });
         restartGameBtn.addEventListener('click', () => { resetGame(); playSound('click'); });
@@ -1059,74 +1230,101 @@
         bestTimesBtn.addEventListener('click', () => { playSound('click'); displayBestTimes(); });
         closeBestTimesBtn.addEventListener('click', () => { playSound('click'); bestTimesModal.style.display = 'none'; });
         calendarBtn.addEventListener('click', () => { playSound('click'); calendarDate = new Date(); displayCalendar(); });
-        prevMonthBtn.addEventListener('click', () => { playSound('click'); calendarDate.setMonth(calendarDate.getMonth() - 1); displayCalendar(); });
+        prevMonthBtn.addEventListener('click', () => { playSound('click'); calendarDate.setMonth(calendarDate.getMonth() - 1); unlockAchievement('curiosity'); displayCalendar(); });
         nextMonthBtn.addEventListener('click', () => { playSound('click'); calendarDate.setMonth(calendarDate.getMonth() + 1); displayCalendar(); });
         closeCalendarBtn.addEventListener('click', () => { playSound('click'); calendarModal.style.display = 'none'; });
+        closeAchievementsBtn.addEventListener('click', () => { playSound('click'); achievementsModal.style.display = 'none'; });
 
         // --- XP, Leveling & Unlocks ---
-        function checkForPuzzleCountUnlock() {
-            const completed = playerData.puzzlesCompleted;
-            if (completed >= 1 && completed <= 5) {
-                const newSongId = `song-0${completed}`;
-                if (!playerData.unlocked.songs.includes(newSongId)) {
-                    playerData.unlocked.songs.push(newSongId);
-                    showUnlockModal({ type: 'song', id: newSongId, name: songManifest[newSongId].title });
-                    saveData();
-                }
-            }
-        }
-
         function addXP(amount) { playerData.xp += amount; if (playerData.xp >= playerData.xpToNextLevel) { levelUp(); } updateXPBar(); saveData(); }
         function levelUp() {
             playerData.level++; playerData.xp -= playerData.xpToNextLevel; playerData.xpToNextLevel = Math.floor(playerData.xpToNextLevel * 1.2); playSound('levelUp');
-            let itemUnlock = unlockables[playerData.level];
-            let songUnlockId = songUnlockLevels[playerData.level];
-            let songUnlock = null;
-            if (songUnlockId && !playerData.unlocked.songs.includes(songUnlockId)) {
-                playerData.unlocked.songs.push(songUnlockId);
-                songUnlock = { type: 'song', id: songUnlockId, name: songManifest[songUnlockId].title };
-            }
-            if (itemUnlock) {
-                if (itemUnlock.type === 'background') playerData.unlocked.backgrounds.push(itemUnlock.id);
-                if (itemUnlock.type === 'font') playerData.unlocked.fonts.push(itemUnlock.id);
-                if (itemUnlock.type === 'theme') playerData.unlocked.themes.push(itemUnlock.id);
-                if (itemUnlock.type === 'board') playerData.unlocked.boards.push(itemUnlock.id);
-                if (itemUnlock.type === 'feature') playerData.unlocked.features.push(itemUnlock.id);
-                if (itemUnlock.type === 'sound') playerData.unlocked.sounds.push(itemUnlock.id);
-                showUnlockModal(itemUnlock);
-            } else if (songUnlock) {
-                showUnlockModal(songUnlock);
+            const unlock = unlockables[playerData.level];
+            if (unlock) {
+                if (unlock.type === 'background') playerData.unlocked.backgrounds.push(unlock.id);
+                if (unlock.type === 'font') playerData.unlocked.fonts.push(unlock.id);
+                if (unlock.type === 'theme') playerData.unlocked.themes.push(unlock.id);
+                if (unlock.type === 'board') playerData.unlocked.boards.push(unlock.id);
+                if (unlock.type === 'feature') playerData.unlocked.features.push(unlock.id);
+                if (unlock.type === 'sound') playerData.unlocked.sounds.push(unlock.id);
+                showUnlockModal(unlock);
             } else {
                 showUnlockModal({type: 'level', name: `Level ${playerData.level}`});
             }
             saveData();
         }
         
-        function unlockAll() { Object.values(unlockables).forEach(unlock => { if (unlock.type === 'background' && !playerData.unlocked.backgrounds.includes(unlock.id)) playerData.unlocked.backgrounds.push(unlock.id); if (unlock.type === 'font' && !playerData.unlocked.fonts.includes(unlock.id)) playerData.unlocked.fonts.push(unlock.id); if (unlock.type === 'theme' && !playerData.unlocked.themes.includes(unlock.id)) playerData.unlocked.themes.push(unlock.id); if (unlock.type === 'board' && !playerData.unlocked.boards.includes(unlock.id)) playerData.unlocked.boards.push(unlock.id); if (unlock.type === 'feature' && !playerData.unlocked.features.includes(unlock.id)) playerData.unlocked.features.push(unlock.id); if (unlock.type === 'sound' && !playerData.unlocked.sounds.includes(unlock.id)) playerData.unlocked.sounds.push(unlock.id); }); Object.keys(songManifest).forEach(songId => { if (!playerData.unlocked.songs.includes(songId)) playerData.unlocked.songs.push(songId); }); playerData.level = 52; alert('Developer Mode: All items unlocked!'); unlockClickCounter = 0; saveData(); }
+        // ✨ ADDED: Music unlock check
+        function checkMusicUnlocks() {
+            for (const trackId in musicTracks) {
+                if (playerData.unlocked.music.includes(trackId)) {
+                    continue;
+                }
+                
+                const track = musicTracks[trackId];
+                let isUnlocked = false;
+                if (track.unlock.type === 'win' && playerData.achievements.stats.gamesWon >= track.unlock.value) {
+                    isUnlocked = true;
+                } else if (track.unlock.type === 'level' && playerData.level >= track.unlock.value) {
+                    isUnlocked = true;
+                }
+                
+                if (isUnlocked) {
+                    playerData.unlocked.music.push(trackId);
+                    initializeMusicPlayers(); // Re-init to add the new player
+                    saveData();
+                    setTimeout(() => showMusicUnlockPrompt(trackId), 500); // Delay slightly after win modal
+                    break; // Only show one unlock prompt at a time
+                }
+            }
+        }
+
+        function unlockAll() { Object.values(unlockables).forEach(unlock => { if (unlock.type === 'background' && !playerData.unlocked.backgrounds.includes(unlock.id)) playerData.unlocked.backgrounds.push(unlock.id); if (unlock.type === 'font' && !playerData.unlocked.fonts.includes(unlock.id)) playerData.unlocked.fonts.push(unlock.id); if (unlock.type === 'theme' && !playerData.unlocked.themes.includes(unlock.id)) playerData.unlocked.themes.push(unlock.id); if (unlock.type === 'board' && !playerData.unlocked.boards.includes(unlock.id)) playerData.unlocked.boards.push(unlock.id); if (unlock.type === 'feature' && !playerData.unlocked.features.includes(unlock.id)) playerData.unlocked.features.push(unlock.id); if (unlock.type === 'sound' && !playerData.unlocked.sounds.includes(unlock.id)) playerData.unlocked.sounds.push(unlock.id); }); playerData.level = 52; alert('Developer Mode: All items unlocked!'); unlockClickCounter = 0; saveData(); }
 
         function showUnlockModal(unlock) {
             let message = `<h2>Level Up! You are now Level ${playerData.level}!</h2>`;
-            if (unlock.type !== 'level') {
-                message += `<p>You've unlocked: <strong>${unlock.name}</strong>!</p>`;
-            }
+            if (unlock.type !== 'level') message += `<p>You've unlocked: <strong>${unlock.name}</strong>!</p>`;
             const buttonContainer = document.createElement('div');
-            if (['background', 'font', 'theme', 'board', 'sound', 'song'].includes(unlock.type)) {
+            if (['background', 'font', 'theme', 'board', 'sound'].includes(unlock.type)) {
                 const applyBtn = document.createElement('button');
                 applyBtn.className = 'control-btn';
-                applyBtn.textContent = unlock.type === 'song' ? 'Play Now' : 'Apply Now';
+                applyBtn.textContent = 'Apply Now';
                 applyBtn.onclick = () => {
-                    if (unlock.type === 'background') applyBackground(unlock.id); 
-                    if (unlock.type === 'font') applyFont(unlock.id); 
-                    if (unlock.type === 'theme') applyTheme(unlock.id); 
-                    if (unlock.type === 'board') applyBoard(unlock.id); 
-                    if (unlock.type === 'sound') applySoundPack(unlock.id);
-                    if (unlock.type === 'song') playMusic(unlock.id);
+                    if (unlock.type === 'background') applyBackground(unlock.id); if (unlock.type === 'font') applyFont(unlock.id); if (unlock.type === 'theme') applyTheme(unlock.id); if (unlock.type === 'board') applyBoard(unlock.id); if (unlock.type === 'sound') applySoundPack(unlock.id);
                     unlockModal.style.display = 'none';
                 };
                 buttonContainer.appendChild(applyBtn);
             }
             const closeBtn = document.createElement('button'); closeBtn.className = 'control-btn'; closeBtn.textContent = 'Awesome!'; closeBtn.onclick = () => { unlockModal.style.display = 'none' }; buttonContainer.appendChild(closeBtn);
             unlockContent.innerHTML = message; unlockContent.appendChild(buttonContainer); unlockModal.style.display = 'flex';
+        }
+        
+        // ✨ ADDED: Music unlock prompt
+        function showMusicUnlockPrompt(trackId) {
+            const musicTrack = musicTracks[trackId];
+            let message = `<h2>🎵 New Song Unlocked!</h2><p>You've unlocked the track: <strong>${musicTrack.name}</strong>!</p><p>Would you like to play it now?</p>`;
+            const buttonContainer = document.createElement('div');
+            buttonContainer.style.display = 'flex';
+            buttonContainer.style.gap = '10px';
+            
+            const playBtn = document.createElement('button');
+            playBtn.className = 'control-btn';
+            playBtn.textContent = 'Play Now';
+            playBtn.onclick = () => {
+                playMusic(trackId);
+                unlockModal.style.display = 'none';
+            };
+            buttonContainer.appendChild(playBtn);
+            
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'control-btn';
+            closeBtn.textContent = 'Later';
+            closeBtn.onclick = () => { unlockModal.style.display = 'none' };
+            buttonContainer.appendChild(closeBtn);
+            
+            unlockContent.innerHTML = message;
+            unlockContent.appendChild(buttonContainer);
+            unlockModal.style.display = 'flex';
         }
 
         function updateXPBar() { const percentage = Math.min((playerData.xp / playerData.xpToNextLevel) * 100, 100); xpBar.style.width = `${percentage}%`; xpBar.textContent = `Level ${playerData.level}`; }
@@ -1137,6 +1335,7 @@
             resetGame();
         }
 
+        // --- ✨ ADDED: Functions to handle resetting all player progress ---
         function resetAllProgress() {
             playSound('error');
             localStorage.removeItem('sudokuUserData');
@@ -1147,35 +1346,98 @@
 
         function promptResetAllProgress() {
             playSound('click');
-            if (confirm("Are you sure you want to reset ALL your progress? This includes your level, unlocks, and best times.")) {
+            if (confirm("Are you sure you want to reset ALL your progress? This includes your level, unlocks, achievements, and best times.")) {
                 if (confirm("This action is permanent and cannot be undone. Are you absolutely sure?")) {
                     resetAllProgress();
                 }
             }
         }
+        
+        // --- ✨ ADDED: Achievement System Logic ---
+        function showAchievementNotification(id) {
+            const ach = achievements[id];
+            achievementNotification.innerHTML = `
+                <h4>🏆 Achievement Unlocked!</h4>
+                <p>${ach.name} (+<span class="points">${ach.points}</span> points)</p>
+            `;
+            achievementNotification.classList.add('show');
+            playAchievementJingle();
+            setTimeout(() => {
+                achievementNotification.classList.remove('show');
+            }, 4000);
+        }
+
+        function unlockAchievement(id) {
+            if (playerData.achievements.unlocked.includes(id)) {
+                return; // Already unlocked
+            }
+
+            playerData.achievements.unlocked.push(id);
+            playerData.achievements.totalPoints += achievements[id].points;
+            achievements[id].unlocked = true;
+            
+            showAchievementNotification(id);
+            saveData();
+        }
+
+        function displayAchievements() {
+            achievementsList.innerHTML = '';
+            totalAchievementPoints.textContent = playerData.achievements.totalPoints;
+
+            Object.keys(achievements).forEach(id => {
+                const ach = achievements[id];
+                const isUnlocked = playerData.achievements.unlocked.includes(id);
+
+                const item = document.createElement('div');
+                item.className = `achievement-item ${isUnlocked ? 'unlocked' : 'locked'}`;
+                
+                let description = ach.desc;
+                if (ach.secret && !isUnlocked) {
+                    description = 'Unlock this secret achievement to see its description.';
+                }
+
+                item.innerHTML = `
+                    <div class="achievement-icon">${ach.icon}</div>
+                    <div class="achievement-details">
+                        <h4>${ach.name}</h4>
+                        <p>${description}</p>
+                    </div>
+                    <div class="achievement-points">+${ach.points}</div>
+                `;
+                achievementsList.appendChild(item);
+            });
+            achievementsModal.style.display = 'flex';
+        }
 
         function buildOptionsModal() {
-            let content = `<h2>Options</h2><button class="control-btn" onclick="goToTitleScreen()" style="margin-bottom: 15px; grid-column: 1 / -1;">Title Screen</button><div class="options-grid">`;
-            content += `<h3>Music</h3>`; 
-            if (playerData.unlocked.songs.length > 0) {
-                playerData.unlocked.songs.forEach(songId => {
-                    const songName = songManifest[songId]?.title || 'Unknown Song';
-                    const activeClass = musicPlayer.currentSongId === songId ? 'active' : '';
-                    content += `<button class="control-btn ${activeClass}" onclick="playMusic('${songId}')">${songName}</button>`;
-                });
+            let content = `<h2>Options</h2>
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; grid-column: 1 / -1;">
+                <button class="control-btn" onclick="goToTitleScreen()">Title Screen</button>
+                <button class="control-btn" onclick="displayAchievements()">Achievements</button>
+            </div>
+            <div class="options-grid">`;
+
+            // ✨ ADDED: Music section in options
+            if (playerData.unlocked.music.length > 0) {
+                content += `<h3>🎵 Music</h3>`;
                 content += `<button class="control-btn" onclick="stopMusic()">Stop Music</button>`;
-            } else {
-                content += `<p style="grid-column: 1 / -1; text-align: center;">Complete puzzles to unlock music!</p>`;
+                playerData.unlocked.music.forEach(trackId => {
+                    const trackName = musicTracks[trackId]?.name || 'Unknown Song';
+                    const activeClass = currentTrackId === trackId ? 'active' : '';
+                    content += `<button class="control-btn ${activeClass}" onclick="playMusic('${trackId}')">${trackName}</button>`;
+                });
             }
+            
             content += `<h3>Sound Packs</h3>`; playerData.unlocked.sounds.forEach(soundId => { const soundName = itemManifest[soundId]?.name || 'Unknown'; const activeClass = currentSoundPack === soundId ? 'active' : ''; content += `<button class="control-btn ${activeClass}" onclick="applySoundPack('${soundId}')">${soundName}</button>`; });
             content += `<h3>Backgrounds</h3>`; playerData.unlocked.backgrounds.forEach(bgId => { const bgName = itemManifest[bgId]?.name || 'Unknown'; content += `<button class="control-btn" onclick="applyBackground('${bgId}')">${bgName}</button>`; });
             content += `<h3>Board Styles</h3>`; playerData.unlocked.boards.forEach(boardId => { const boardName = itemManifest[boardId]?.name || 'Unknown'; content += `<button class="control-btn" onclick="applyBoard('${boardId}')">${boardName}</button>`; });
             content += `<h3>Color Themes</h3>`; playerData.unlocked.themes.forEach(themeId => { const themeName = itemManifest[themeId]?.name || 'Unknown'; content += `<button class="control-btn" onclick="applyTheme('${themeId}')">${themeName}</button>`; });
             content += `<h3>Fonts</h3>`; playerData.unlocked.fonts.forEach(fontId => { const fontName = itemManifest[fontId]?.name || 'Unknown'; content += `<button class="control-btn" onclick="applyFont('${fontId}')">${fontName}</button>`; });
             if (playerData.unlocked.features.length > 0) { content += `<h3>Features</h3>`; if (playerData.unlocked.features.includes('feature-color-mode')) { content += `<button class="control-btn" id="color-mode-btn" onclick="toggleColorMode()">Color Mode: ${isColorMode ? 'ON' : 'OFF'}</button>`; } }
+            // ✨ ADDED: "Reset All Progress" button and "Close" button
             content += `</div><div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
                 <button class="control-btn" id="reset-progress-btn" onclick="promptResetAllProgress()" style="background-color: var(--error-color); color: white;">Reset All Progress</button>
-                <button class="control-btn" onclick="optionsModal.style.display='none'; playSound('click');">Close</button>
+                <button class="control-btn" onclick="optionsModal.style.display='none';">Close</button>
             </div>`;
             optionsContent.innerHTML = content;
         }
@@ -1189,10 +1451,10 @@
         function createSnow() { clearJsBackgrounds(); animatedBg.style.background = '#4a6fa5'; for (let i = 0; i < 100; i++) { const flake = document.createElement('div'); flake.className = 'snow-flake'; flake.style.left = `${Math.random() * 100}%`; flake.style.opacity = Math.random(); flake.style.width = `${Math.random() * 5 + 2}px`; flake.style.height = flake.style.width; flake.style.animationDuration = `${Math.random() * 10 + 5}s`; flake.style.animationDelay = `${Math.random() * 10}s`; animatedBg.appendChild(flake); } }
         function createLanterns() { clearJsBackgrounds(); animatedBg.style.background = '#1c1c3c'; for (let i = 0; i < 15; i++) { const lantern = document.createElement('div'); lantern.className = 'lantern'; lantern.style.left = `${Math.random() * 100}%`; lantern.style.animationDuration = `${Math.random() * 20 + 15}s`; lantern.style.animationDelay = `${Math.random() * 15}s`; animatedBg.appendChild(lantern); } }
         
-        function applyBackground(bgId) { playSound('click'); clearJsBackgrounds(); const bg = backgroundStyles[bgId]; animatedBg.style.animation = 'none'; animatedBg.style.backgroundSize = bg.size || 'auto'; if (bg.type === 'css') { animatedBg.style.background = bg.style; animatedBg.style.animation = bg.animation; } else if (bg.type === 'js') { window[bg.function](); } document.body.dataset.background = bgId; saveData(); }
-        function applyBoard(boardId) { playSound('click'); sudokuGrid.className = 'sudoku-grid'; if (isEasySeeMode) sudokuGrid.classList.add('easy-see-mode'); if (boardId !== 'board-default') { sudokuGrid.classList.add(boardId); } sudokuGrid.dataset.board = boardId; saveData(); }
-        function applyTheme(themeId) { playSound('click'); const theme = themeStyles[themeId]; for (const [key, value] of Object.entries(theme)) { root.style.setProperty(key, value); } document.body.dataset.theme = themeId; saveData(); }
-        function applyFont(fontId) { playSound('click'); document.body.style.fontFamily = fontStyles[fontId]; document.body.dataset.font = fontId; saveData(); }
+        function applyBackground(bgId, isInitialLoad = false) { clearJsBackgrounds(); const bg = backgroundStyles[bgId]; animatedBg.style.animation = 'none'; animatedBg.style.backgroundSize = bg.size || 'auto'; if (bg.type === 'css') { animatedBg.style.background = bg.style; animatedBg.style.animation = bg.animation; } else if (bg.type === 'js') { window[bg.function](); } if(!isInitialLoad) playSound('click'); document.body.dataset.background = bgId; saveData(); }
+        function applyBoard(boardId, isInitialLoad = false) { sudokuGrid.className = 'sudoku-grid'; if (isEasySeeMode) sudokuGrid.classList.add('easy-see-mode'); if (boardId !== 'board-default') { sudokuGrid.classList.add(boardId); } if(!isInitialLoad) playSound('click'); sudokuGrid.dataset.board = boardId; saveData(); }
+        function applyTheme(themeId, isInitialLoad = false) { const theme = themeStyles[themeId]; for (const [key, value] of Object.entries(theme)) { root.style.setProperty(key, value); } if(!isInitialLoad) playSound('click'); document.body.dataset.theme = themeId; saveData(); }
+        function applyFont(fontId, isInitialLoad = false) { document.body.style.fontFamily = fontStyles[fontId]; if(!isInitialLoad) playSound('click'); document.body.dataset.font = fontId; saveData(); }
         
         function toggleColorMode() { isColorMode = !isColorMode; const colorModeBtn = document.getElementById('color-mode-btn'); if (colorModeBtn) { colorModeBtn.textContent = `Color Mode: ${isColorMode ? 'ON' : 'OFF'}`; } updateColorMode(); playSound('click'); }
         function useReveal() {
@@ -1209,7 +1471,6 @@
         }
         
         // Initial load
-        initializeMusicPlayer();
         startTitleAnimation();
         loadData();
     </script>
