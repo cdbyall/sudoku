@@ -912,12 +912,21 @@
             }
         }
         
+        // ✨ FIXED: This function now correctly handles cells with notes.
         function handleCellClick(cell) {
-            const value = cell.textContent;
-            if (value && value.length === 1 && value >= '1' && value <= '9') {
+            // Check if the cell contains a candidate grid. If it does, it should always be selectable.
+            const hasCandidateGrid = cell.querySelector('.candidate-grid');
+            const isGivenOrCorrect = cell.classList.contains('given') || cell.classList.contains('correct');
+
+            if (isGivenOrCorrect && !hasCandidateGrid) {
+                // If it's a final number (given or correct) and not a cell with notes, just highlight.
                 highlightMatchingNumbers(cell);
-                if (selectedCell) { selectedCell.classList.remove('selected'); selectedCell = null; }
+                if (selectedCell) {
+                    selectedCell.classList.remove('selected');
+                    selectedCell = null;
+                }
             } else {
+                // If it's an empty cell, a cell with notes, or any other selectable state, select it.
                 selectCell(cell);
             }
         }
