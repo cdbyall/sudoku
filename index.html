@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Sudoku</title>
@@ -35,7 +37,7 @@
             overflow: hidden;
             transition: font-family 0.5s, background-color 0.5s, color 0.5s;
         }
-         
+        
         #animated-bg {
             position: fixed;
             top: 0;
@@ -51,10 +53,9 @@
 
         /* --- Animated Backgrounds --- */
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        /* ✨ ADDED: New animation for vertical gradients like fog */
         @keyframes verticalGradientBG { 0% { background-position: 50% 0%; } 50% { background-position: 50% 100%; } 100% { background-position: 50% 0%; } }
         @keyframes bg-stars { from { background-position: 0 0; } to { background-position: -10000px 5000px; } }
-         
+        
         .firefly { position: absolute; width: 5px; height: 5px; background: #fffae1; border-radius: 50%; box-shadow: 0 0 10px #fffae1, 0 0 20px #fffae1; animation: firefly-float 20s infinite alternate, firefly-blink 2s infinite alternate; }
         @keyframes firefly-float { from { transform: translate(0, 0); } to { transform: translate(var(--x-end), var(--y-end)); } }
         @keyframes firefly-blink { 0%, 100% { opacity: 0.1; } 50% { opacity: 1; } }
@@ -78,38 +79,15 @@
         @keyframes float-up { to { transform: translateY(-1080px); } }
 
         @keyframes swirl { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-         
+        
         /* --- Completion & Input Animations --- */
-        @keyframes light-up-rainbow {
-            0% { box-shadow: 0 0 15px #ff2400; }
-            14% { box-shadow: 0 0 15px #e8b71d; }
-            28% { box-shadow: 0 0 15px #1de840; }
-            42% { box-shadow: 0 0 15px #1ddde8; }
-            57% { box-shadow: 0 0 15px #2b1de8; }
-            71% { box-shadow: 0 0 15px #dd00f3; }
-            85% { box-shadow: 0 0 15px #e81d1d; }
-            100% { box-shadow: 0 0 15px #ff2400; }
-        }
+        @keyframes light-up-rainbow { 0% { box-shadow: 0 0 15px #ff2400; } 14% { box-shadow: 0 0 15px #e8b71d; } 28% { box-shadow: 0 0 15px #1de840; } 42% { box-shadow: 0 0 15px #1ddde8; } 57% { box-shadow: 0 0 15px #2b1de8; } 71% { box-shadow: 0 0 15px #dd00f3; } 85% { box-shadow: 0 0 15px #e81d1d; } 100% { box-shadow: 0 0 15px #ff2400; } }
         .light-up-animation { animation: light-up-rainbow 1s ease-in-out; }
 
-        @keyframes glow-correct {
-            from {
-                box-shadow: 0 0 15px 5px rgba(46, 204, 113, 0.7);
-            }
-            to {
-                box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
-            }
-        }
-        .glow-animation {
-            animation: glow-correct 0.7s ease-out;
-        }
-         
-        @keyframes rainbow-highlight-flow { 
-            0%{background-position:0% 50%}
-            50%{background-position:100% 50%}
-            100%{background-position:0% 50%}
-        }
-
+        @keyframes glow-correct { from { box-shadow: 0 0 15px 5px rgba(46, 204, 113, 0.7); } to { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); } }
+        .glow-animation { animation: glow-correct 0.7s ease-out; }
+        
+        @keyframes rainbow-highlight-flow { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
         @keyframes puff { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
         @keyframes ripple { to { transform: scale(4); opacity: 0; } }
         .ripple { position: absolute; border-radius: 50%; transform: scale(0); animation: ripple 0.6s linear; background-color: var(--accent-color); }
@@ -120,33 +98,17 @@
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
         #title-screen h1 { font-size: clamp(2rem, 8vw, 3rem); margin-bottom: 20px; animation: slideIn 1s ease-out; color: var(--accent-color); font-weight: 600; z-index: 10;}
         #title-buttons { display: flex; flex-direction: column; gap: 10px; }
-         
+        
         #game-board { width: 100%; position: relative; }
-        #completion-message {
-            position: absolute;
-            top: -60px; /* Position above the board */
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(255, 255, 255, 0.9);
-            color: var(--text-color);
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 1.2em;
-            font-weight: 600;
-            z-index: 50;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s ease-in-out, top 0.5s ease-in-out;
-        }
-        #completion-message.show { opacity: 1; top: -40px; } /* Adjust final position to be clearly above */
+        #completion-message { position: absolute; top: -60px; left: 50%; transform: translateX(-50%); background-color: rgba(255, 255, 255, 0.9); color: var(--text-color); padding: 10px 20px; border-radius: 20px; font-size: 1.2em; font-weight: 600; z-index: 50; opacity: 0; pointer-events: none; transition: opacity 0.5s ease-in-out, top 0.5s ease-in-out; }
+        #completion-message.show { opacity: 1; top: -40px; }
 
         #top-bar { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 450px; margin: 0 auto 10px; }
         #lives-container { font-size: 1.5rem; color: var(--accent-color); }
         #timer-display { font-size: 1.2rem; font-weight: 600; color: var(--text-color); }
         #game-buttons button { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-color); margin-left: 10px; }
         #sudoku-grid { display: grid; grid-template-columns: repeat(9, 1fr); background-color: var(--grid-background); border: 3px solid var(--grid-background); width: 100%; max-width: 450px; aspect-ratio: 1 / 1; margin: 0 auto; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: background-color 0.5s, background-image 0.5s; }
-         
-        /* --- Animated & New Board Themes --- */
+        
         #sudoku-grid.board-rainbow { background: linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3); background-size: 1800% 1800%; animation: rainbow-flow 18s ease infinite; }
         #sudoku-grid.board-sands { background-image: url('https://www.transparenttextures.com/patterns/sand.png'), linear-gradient(to right, #c2b280, #e6d8ad); animation: gentle-flow 30s ease-infinite; }
         @keyframes rainbow-flow { 0%{background-position:0% 82%} 50%{background-position:100% 19%} 100%{background-position:0% 82%} }
@@ -157,33 +119,16 @@
         #sudoku-grid.board-galaxy { background: url('https://www.transparenttextures.com/patterns/stardust.png') #000030; }
         #sudoku-grid.board-circuit { background: url('https://www.transparenttextures.com/patterns/circuit-board.png') #003000; }
 
-
-        .sudoku-cell {
-            background-color: var(--cell-background);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: clamp(1rem, 4vw, 1.8rem);
-            font-weight: 600;
-            cursor: pointer;
-            border: 1px solid var(--grid-background);
-            transition: background-color 0.3s, color 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-         
-        #sudoku-grid.easy-see-mode .sudoku-cell {
-            font-size: clamp(1.5rem, 8vw, 3.5rem);
-            font-weight: bold;
-        }
-
+        .sudoku-cell { background-color: var(--cell-background); display: flex; justify-content: center; align-items: center; font-size: clamp(1rem, 4vw, 1.8rem); font-weight: 600; cursor: pointer; border: 1px solid var(--grid-background); transition: background-color 0.3s, color 0.3s; position: relative; overflow: hidden; }
+        #sudoku-grid.easy-see-mode .sudoku-cell { font-size: clamp(1.5rem, 8vw, 3.5rem); font-weight: bold; }
         .candidate-grid { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; height: 100%; }
         .candidate-cell { font-size: 0.6rem; color: var(--candidate-color); text-align: center; }
 
-        .sudoku-cell:nth-child(3n):not(:nth-child(9n)) { border-right: 3px solid var(--grid-background); }
+        .sudoku-cell:nth-child(3n):not(:nth-child(9n)) { border-right: 3px solid var(--text-color); }
         .sudoku-cell:nth-child(9n) { border-right: none; }
         .sudoku-cell:nth-of-type(n+19):nth-of-type(-n+27),
-        .sudoku-cell:nth-of-type(n+46):nth-of-type(-n+54) { border-bottom: 3px solid var(--grid-background); }
+        .sudoku-cell:nth-of-type(n+46):nth-of-type(-n+54) { border-bottom: 3px solid var(--text-color); }
+        
         .sudoku-cell:nth-of-type(n+1):nth-of-type(-n+9) { border-top: none; }
         .sudoku-cell:nth-of-type(n+73):nth-of-type(-n+81) { border-bottom: none; }
         .sudoku-cell:nth-child(9n+1) { border-left: none; }
@@ -193,53 +138,26 @@
         .sudoku-cell.correct { color: var(--correct-color); font-weight: bold; }
         .sudoku-cell.error { animation: shake 0.5s; background-color: var(--error-color); }
         .sudoku-cell.color-mode-one { background-color: var(--color-mode-one) !important; }
-        .sudoku-cell.highlighted-number {
-            background: linear-gradient(135deg, rgba(168, 230, 207, 0.7), rgba(255, 211, 182, 0.7), rgba(163, 216, 244, 0.7));
-            background-size: 400% 400%;
-            animation: rainbow-highlight-flow 4s ease infinite;
-            color: var(--text-color);
-        }
+        .sudoku-cell.highlighted-number { background: linear-gradient(135deg, rgba(168, 230, 207, 0.7), rgba(255, 211, 182, 0.7), rgba(163, 216, 244, 0.7)); background-size: 400% 400%; animation: rainbow-highlight-flow 4s ease infinite; color: var(--text-color); }
 
-        #controls {
-            margin-top: 20px;
-            display: flex;
-            justify-content: center;
-            flex-wrap: nowrap;
-            gap: 5px;
-            width: 100%;
-            max-width: 450px;
-        }
-        .control-btn {
-            background-color: var(--button-bg);
-            color: var(--button-text);
-            border: none;
-            padding: 10px;
-            font-size: 1em;
-            cursor: pointer;
-            border-radius: 20px;
-            font-weight: 600;
-            transition: transform 0.2s, background-color 0.2s, filter 0.3s;
-            flex: 1 1 auto;
-            min-width: 0;
-            text-align: center;
-        }
+        #controls { margin-top: 20px; display: flex; justify-content: center; flex-wrap: nowrap; gap: 5px; width: 100%; max-width: 450px; }
+        .control-btn { background-color: var(--button-bg); color: var(--button-text); border: none; padding: 10px; font-size: 1em; cursor: pointer; border-radius: 20px; font-weight: 600; transition: transform 0.2s, background-color 0.2s, filter 0.3s; flex: 1 1 auto; min-width: 0; text-align: center; }
         .control-btn:hover { transform: scale(1.05); }
         .control-btn.active { background-color: var(--accent-color); color: white; }
         .control-btn.disabled { filter: grayscale(1); opacity: 0.6; pointer-events: none; }
 
         #xp-bar-container { width: 100%; background-color: #e0eef5; border-radius: 10px; margin-top: 20px; overflow: hidden; }
         #xp-bar { width: 0%; height: 20px; background: linear-gradient(90deg, var(--button-bg), var(--accent-color)); border-radius: 10px; text-align: center; line-height: 20px; color: white; font-weight: 600; transition: width 0.5s ease-in-out; }
-         
+        
         .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center; }
         .modal-content { background-color: var(--background-color); padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.2); max-height: 80vh; overflow-y: auto; }
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
         .options-grid h3 { grid-column: 1 / -1; margin-bottom: 0; }
         .options-grid button { width: 100%; }
-         
+        
         #best-times-list { list-style-type: decimal; padding-left: 30px; text-align: left; }
         #best-times-list li { margin-bottom: 8px; font-size: 1.1em; }
-         
-        /* --- Calendar Styles --- */
+        
         #calendar-modal .modal-content { width: 90%; max-width: 450px; }
         #calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         #calendar-header h2 { margin: 0; font-size: 1.5em; }
@@ -251,10 +169,31 @@
         .calendar-day .medal { font-size: 1.2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.5; z-index: -1; }
         .calendar-day.today { font-weight: bold; border: 2px solid var(--accent-color); }
 
+        #achievement-notification { position: fixed; top: 20px; right: -400px; width: 300px; background-color: var(--accent-color); color: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 200; transition: right 0.5s ease-in-out; border-left: 5px solid #ffd700; }
+        #achievement-notification.show { right: 20px; }
+        #achievement-notification h4 { margin: 0 0 5px 0; font-size: 1.2em; }
+        #achievement-notification p { margin: 0; font-size: 0.9em; }
+        #achievement-notification .points { font-weight: bold; color: #ffd700; }
+        #achievements-modal .modal-content { width: 90%; max-width: 500px; }
+        #achievements-list { list-style-type: none; padding: 0; margin-top: 15px; }
+        .achievement-item { display: flex; align-items: center; padding: 10px; border-bottom: 1px solid var(--grid-background); }
+        .achievement-item:last-child { border-bottom: none; }
+        .achievement-item.unlocked { color: var(--text-color); }
+        .achievement-item.locked { color: #aaa; filter: grayscale(1); }
+        .achievement-icon { font-size: 2.5em; margin-right: 15px; }
+        .achievement-details { text-align: left; flex-grow: 1; }
+        .achievement-details h4 { margin: 0; }
+        .achievement-details p { margin: 5px 0 0 0; font-size: 0.9em; }
+        .achievement-points { font-size: 1.2em; font-weight: bold; color: var(--accent-color); }
+        .achievement-item.locked .achievement-points { color: #aaa; }
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { translateY(0); opacity: 1; } }
         @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
-    </style></head><body>
+    </style>
+</head>
+<body>
+    <audio id="background-music"></audio>
     <div id="animated-bg"></div>
     <div id="game-container">
         <div id="title-screen">
@@ -268,14 +207,12 @@
                 <button class="control-btn" id="calendar-btn">Calendar</button>
             </div>
         </div>
-
         <div id="difficulty-screen" style="display: none; text-align: center;">
             <h2>Select Difficulty</h2>
             <button class="control-btn" data-difficulty="easy">Easy</button>
             <button class="control-btn" data-difficulty="medium">Medium</button>
             <button class="control-btn" data-difficulty="hard">Hard</button>
         </div>
-
         <div id="view-mode-screen" style="display: none; text-align: center;">
             <h2>Select View Mode</h2>
             <div style="display: flex; gap: 10px; justify-content: center;">
@@ -283,13 +220,11 @@
                  <button class="control-btn" data-view="easy-see">Easy See</button>
             </div>
         </div>
-
         <div id="seed-screen" style="display: none; text-align: center;">
             <h2>Enter a Seed Word</h2>
             <input type="text" id="seed-input" placeholder="e.g., gemini" style="padding: 10px; font-size: 1em; border-radius: 20px; border: 1px solid #ccc; width: 60%; margin-bottom: 10px; text-align: center;">
             <button class="control-btn" id="start-from-seed-btn">Create Puzzle</button>
         </div>
-
         <div id="game-board" style="display: none;">
             <div id="completion-message"></div>
             <div id="top-bar">
@@ -308,13 +243,13 @@
             </div>
         </div>
     </div>
-
+    
+    <div id="achievement-notification"></div>
     <div id="options-modal" class="modal"><div class="modal-content" id="options-content"></div></div>
     <div id="game-over-modal" class="modal"><div class="modal-content"><h2>Game Over</h2><p>You've run out of lives!</p><button class="control-btn" id="restart-game-btn">Play Again</button></div></div>
     <div id="win-modal" class="modal"><div class="modal-content"><h2>You Win!</h2><p>Puzzle complete! Great job!</p><p id="win-time-message"></p><button class="control-btn" id="win-new-game-btn">New Game</button></div></div>
     <div id="unlock-modal" class="modal"><div class="modal-content" id="unlock-content"></div></div>
     <div id="best-times-modal" class="modal"><div class="modal-content"><h2>Best Times</h2><ol id="best-times-list"></ol><button class="control-btn" id="close-best-times-btn">Close</button></div></div>
-
     <div id="calendar-modal" class="modal">
         <div class="modal-content">
             <div id="calendar-header">
@@ -326,11 +261,19 @@
             <button class="control-btn" id="close-calendar-btn" style="margin-top: 15px;">Close</button>
         </div>
     </div>
+    <div id="achievements-modal" class="modal">
+        <div class="modal-content">
+            <h2>🏆 Achievements 🏆</h2>
+            <p>Total Points: <span id="total-achievement-points">0</span> / 1000</p>
+            <div id="achievements-list"></div>
+            <button class="control-btn" id="close-achievements-btn" style="margin-top: 15px;">Close</button>
+        </div>
+    </div>
 
-     
     <script>
         // --- DOM Elements ---
         const root = document.documentElement;
+        const backgroundMusic = document.getElementById('background-music');
         const animatedBg = document.getElementById('animated-bg');
         const titleScreen = document.getElementById('title-screen');
         const titleAnimationContainer = document.getElementById('title-animation-container');
@@ -373,7 +316,11 @@
         const prevMonthBtn = document.getElementById('prev-month-btn');
         const nextMonthBtn = document.getElementById('next-month-btn');
         const closeCalendarBtn = document.getElementById('close-calendar-btn');
-
+        const achievementNotification = document.getElementById('achievement-notification');
+        const achievementsModal = document.getElementById('achievements-modal');
+        const achievementsList = document.getElementById('achievements-list');
+        const closeAchievementsBtn = document.getElementById('close-achievements-btn');
+        const totalAchievementPoints = document.getElementById('total-achievement-points');
 
         // --- Game State ---
         let selectedCell = null;
@@ -394,250 +341,115 @@
         let calendarDate = new Date();
         let currentSoundPack = 'sound-default'; 
         let currentSettings = {};
-
+        let mistakesMade = 0;
+        let shuffledPlaylist = [];
+        let currentTrackIndex = -1;
 
         // --- Player Data & Unlocks ---
         let playerData = {
             level: 1,
             xp: 0,
             xpToNextLevel: 100,
-            unlocked: {
-                backgrounds: ['bg-default'],
-                fonts: ['font-default'],
-                themes: ['theme-default'],
-                boards: ['board-default'],
-                features: [],
-                sounds: ['sound-default']
-            }
+            unlocked: { backgrounds: ['bg-default'], fonts: ['font-default'], themes: ['theme-default'], boards: ['board-default'], features: [], sounds: ['sound-default'] },
+            achievements: { unlocked: [], totalPoints: 0, stats: { gamesWon: 0, perfectGames: 0, notesUsed: false } }
         };
 
+        const achievements = {
+            'firstSteps': { name: "First Steps", desc: "Complete your first puzzle.", points: 25, icon: '👟', unlocked: false }, 'quickThinker': { name: "Quick Thinker", desc: "Solve an easy puzzle in under 5 minutes.", points: 50, icon: '⚡️', unlocked: false }, 'noteTaker': { name: "Note Taker", desc: "Use the notes feature for the first time.", points: 25, icon: '📝', unlocked: false }, 'perfectionist': { name: "Perfectionist", desc: "Complete any puzzle with no mistakes.", points: 75, icon: '👌', unlocked: false }, 'persistent': { name: "Persistent", desc: "Complete 10 puzzles in total.", points: 100, icon: '💪', unlocked: false }, 'weekender': { name: "Weekender", desc: "Complete 7 daily puzzles.", points: 100, icon: '🗓️', unlocked: false }, 'brainiac': { name: "Brainiac", desc: "Solve a hard puzzle.", points: 125, icon: '🧠', unlocked: false }, 'dedicated': { name: "Dedicated", desc: "Complete a daily puzzle for a whole month.", points: 200, icon: '📅', unlocked: false }, 'sudokuMaster': { name: "Sudoku Master", desc: "Solve 10 hard puzzles with no mistakes.", points: 200, icon: '👑', unlocked: false }, 'curiosity': { name: "Curiosity", desc: "???", points: 50, icon: '❓', secret: true, unlocked: false }, 'timeTraveler': { name: "Time Traveler", desc: "???", points: 50, icon: '⏳', secret: true, unlocked: false }
+        };
         const unlockables = {
-            2: { type: 'background', id: 'bg-stars', name: 'Starry Night' },
-            3: { type: 'font', id: 'font-lato', name: 'Lato' },
-            4: { type: 'background', id: 'bg-fireflies', name: 'Fireflies' },
-            5: { type: 'theme', id: 'theme-forest', name: 'Forest Theme' },
-            6: { type: 'background', id: 'bg-rain', name: 'Gentle Rain' },
-            7: { type: 'font', id: 'font-montserrat', name: 'Montserrat' },
-            8: { type: 'feature', id: 'feature-color-mode', name: 'Color Mode' },
-            9: { type: 'background', id: 'bg-leaves', name: 'Falling Leaves' },
-            10: { type: 'board', id: 'board-rainbow', name: 'Rainbow Board' },
-            11: { type: 'font', id: 'font-oswald', name: 'Oswald' },
-            12: { type: 'background', id: 'bg-ripples', name: 'Water Ripples' },
-            13: { type: 'sound', id: 'sound-8bit', name: '8-Bit Sounds' },
-            14: { type: 'background', id: 'bg-bubbles', name: 'Bubbles' },
-            15: { type: 'feature', id: 'feature-reveal', name: 'Reveal' },
-            16: { type: 'font', id: 'font-raleway', name: 'Raleway' },
-            17: { type: 'background', id: 'bg-snow', name: 'Snowfall' },
-            18: { type: 'font', id: 'font-merriweather', name: 'Merriweather' },
-            19: { type: 'background', id: 'bg-lanterns', name: 'Sky Lanterns' },
-            20: { type: 'board', id: 'board-sands', name: 'Shifting Sands' },
-            21: { type: 'font', id: 'font-playfair-display', name: 'Playfair Display' },
-            22: { type: 'background', id: 'bg-swirl', name: 'Cosmic Swirl' },
-            23: { type: 'sound', id: 'sound-nature', name: 'Nature Sounds' },
-            24: { type: 'font', id: 'font-ubuntu', name: 'Ubuntu' },
-            25: { type: 'background', id: 'bg-sunbeams', name: 'Sunbeams' },
-            26: { type: 'theme', id: 'theme-vampire', name: 'Vampire Theme' },
-            27: { type: 'font', id: 'font-noto-sans', name: 'Noto Sans' },
-            28: { type: 'background', id: 'bg-aurora', name: 'Aurora' },
-            29: { type: 'font', id: 'font-open-sans', name: 'Open Sans' },
-            30: { type: 'board', id: 'board-wood', name: 'Wood Grain' },
-            31: { type: 'font', id: 'font-source-code-pro', name: 'Source Code Pro' },
-            32: { type: 'background', id: 'bg-fog', name: 'Gentle Fog' },
-            33: { type: 'font', id: 'font-rubik', name: 'Rubik' },
-            34: { type: 'background', id: 'bg-ocean-waves', name: 'Ocean Waves' },
-            35: { type: 'font', id: 'font-work-sans', name: 'Work Sans' },
-            36: { type: 'theme', id: 'theme-ocean', name: 'Ocean Theme' },
-            37: { type: 'font', id: 'font-permanent-marker', name: 'Permanent Marker' },
-            38: { type: 'font', id: 'font-kaushan-script', name: 'Kaushan Script' },
-            39: { type: 'font', id: 'font-press-start-2p', name: 'Press Start 2P' },
-            40: { type: 'board', id: 'board-stone', name: 'Stone Wall' },
-            41: { type: 'font', id: 'font-bebas-neue', name: 'Bebas Neue' },
-            42: { type: 'font', id: 'font-lobster', name: 'Lobster' },
-            43: { type: 'font', id: 'font-anton', name: 'Anton' },
-            44: { type: 'theme', id: 'theme-8bit', name: '8-Bit Theme' },
-            45: { type: 'font', id: 'font-fjalla-one', name: 'Fjalla One' },
-            46: { type: 'board', id: 'board-metal', name: 'Polished Metal' },
-            47: { type: 'font', id: 'font-comfortaa', name: 'Comfortaa' },
-            48: { type: 'board', id: 'board-galaxy', name: 'Galaxy' },
-            49: { type: 'font', id: 'font-josefin-sans', name: 'Josefin Sans' },
-            50: { type: 'board', id: 'board-circuit', name: 'Circuit Board' },
-            51: { type: 'font', id: 'font-orbitron', name: 'Orbitron' }
+            2: { type: 'background', id: 'bg-stars', name: 'Starry Night' }, 3: { type: 'font', id: 'font-lato', name: 'Lato' }, 4: { type: 'background', id: 'bg-fireflies', name: 'Fireflies' }, 5: { type: 'theme', id: 'theme-forest', name: 'Forest Theme' }, 6: { type: 'background', id: 'bg-rain', name: 'Gentle Rain' }, 7: { type: 'font', id: 'font-montserrat', name: 'Montserrat' }, 8: { type: 'feature', id: 'feature-color-mode', name: 'Color Mode' }, 9: { type: 'background', id: 'bg-leaves', name: 'Falling Leaves' }, 10: { type: 'board', id: 'board-rainbow', name: 'Rainbow Board' }, 11: { type: 'font', id: 'font-oswald', name: 'Oswald' }, 12: { type: 'background', id: 'bg-ripples', name: 'Water Ripples' }, 13: { type: 'sound', id: 'sound-8bit', name: '8-Bit Sounds' }, 14: { type: 'background', id: 'bg-bubbles', name: 'Bubbles' }, 15: { type: 'feature', id: 'feature-reveal', name: 'Reveal' }, 16: { type: 'font', id: 'font-raleway', name: 'Raleway' }, 17: { type: 'background', id: 'bg-snow', name: 'Snowfall' }, 18: { type: 'font', id: 'font-merriweather', name: 'Merriweather' }, 19: { type: 'background', id: 'bg-lanterns', name: 'Sky Lanterns' }, 20: { type: 'board', id: 'board-sands', name: 'Shifting Sands' }, 21: { type: 'font', id: 'font-playfair-display', name: 'Playfair Display' }, 22: { type: 'background', id: 'bg-swirl', name: 'Cosmic Swirl' }, 23: { type: 'sound', id: 'sound-nature', name: 'Nature Sounds' }, 24: { type: 'font', id: 'font-ubuntu', name: 'Ubuntu' }, 25: { type: 'background', id: 'bg-sunbeams', name: 'Sunbeams' }, 26: { type: 'theme', id: 'theme-vampire', name: 'Vampire Theme' }, 27: { type: 'font', id: 'font-noto-sans', name: 'Noto Sans' }, 28: { type: 'background', id: 'bg-aurora', name: 'Aurora' }, 29: { type: 'font', id: 'font-open-sans', name: 'Open Sans' }, 30: { type: 'board', id: 'board-wood', name: 'Wood Grain' }, 31: { type: 'font', id: 'font-source-code-pro', name: 'Source Code Pro' }, 32: { type: 'background', id: 'bg-fog', name: 'Gentle Fog' }, 33: { type: 'font', id: 'font-rubik', name: 'Rubik' }, 34: { type: 'background', id: 'bg-ocean-waves', name: 'Ocean Waves' }, 35: { type: 'font', id: 'font-work-sans', name: 'Work Sans' }, 36: { type: 'theme', id: 'theme-ocean', name: 'Ocean Theme' }, 37: { type: 'font', id: 'font-permanent-marker', name: 'Permanent Marker' }, 38: { type: 'font', id: 'font-kaushan-script', name: 'Kaushan Script' }, 39: { type: 'font', id: 'font-press-start-2p', name: 'Press Start 2P' }, 40: { type: 'board', id: 'board-stone', name: 'Stone Wall' }, 41: { type: 'font', id: 'font-bebas-neue', name: 'Bebas Neue' }, 42: { type: 'font', id: 'font-lobster', name: 'Lobster' }, 43: { type: 'font', id: 'font-anton', name: 'Anton' }, 44: { type: 'theme', id: 'theme-8bit', name: '8-Bit Theme' }, 45: { type: 'font', id: 'font-fjalla-one', name: 'Fjalla One' }, 46: { type: 'board', id: 'board-metal', name: 'Polished Metal' }, 47: { type: 'font', id: 'font-comfortaa', name: 'Comfortaa' }, 48: { type: 'board', id: 'board-galaxy', name: 'Galaxy' }, 49: { type: 'font', id: 'font-josefin-sans', name: 'Josefin Sans' }, 50: { type: 'board', id: 'board-circuit', name: 'Circuit Board' }, 51: { type: 'font', id: 'font-orbitron', name: 'Orbitron' }
         };
-         
         const itemManifest = {
-            'bg-default': { name: 'Default' }, 'bg-stars': { name: 'Starry Night' }, 'bg-fireflies': { name: 'Fireflies' }, 'bg-rain': { name: 'Gentle Rain' }, 'bg-leaves': { name: 'Falling Leaves' }, 'bg-ripples': { name: 'Water Ripples' }, 'bg-bubbles': { name: 'Bubbles' }, 'bg-snow': { name: 'Snowfall' }, 'bg-lanterns': { name: 'Sky Lanterns' }, 'bg-swirl': { name: 'Cosmic Swirl' }, 'bg-sunbeams': { name: 'Sunbeams' }, 'bg-aurora': { name: 'Aurora' }, 'bg-pastel-rainbow': { name: 'Pastel Rainbow' }, 'bg-fog': { name: 'Gentle Fog' }, 'bg-ocean-waves': { name: 'Ocean Waves' },
-            'board-default': { name: 'Default' }, 'board-rainbow': { name: 'Rainbow' }, 'board-sands': { name: 'Shifting Sands' }, 'board-wood': { name: 'Wood Grain' }, 'board-stone': { name: 'Stone Wall' }, 'board-metal': { name: 'Polished Metal' }, 'board-galaxy': { name: 'Galaxy' }, 'board-circuit': { name: 'Circuit Board' },
-            'theme-default': { name: 'Default' }, 'theme-forest': { name: 'Forest' }, 'theme-vampire': { name: 'Vampire' }, 'theme-ocean': { name: 'Ocean' }, 'theme-sunset': { name: 'Sunset' }, 'theme-8bit': { name: '8-Bit' },
-            'font-default': { name: 'Default' }, 'font-kalam': { name: 'Kalam' }, 'font-indie-flower': { name: 'Indie Flower' }, 'font-lato': { name: 'Lato' }, 'font-montserrat': { name: 'Montserrat' }, 'font-oswald': { name: 'Oswald' }, 'font-raleway': { name: 'Raleway' }, 'font-merriweather': { name: 'Merriweather' }, 'font-playfair-display': { name: 'Playfair Display' }, 'font-ubuntu': { name: 'Ubuntu' }, 'font-noto-sans': { name: 'Noto Sans' }, 'font-open-sans': { name: 'Open Sans' }, 'font-source-code-pro': { name: 'Source Code Pro' }, 'font-rubik': { name: 'Rubik' }, 'font-work-sans': { name: 'Work Sans' }, 'font-permanent-marker': { name: 'Permanent Marker' }, 'font-kaushan-script': { name: 'Kaushan Script' }, 'font-press-start-2p': { name: 'Press Start 2P' }, 'font-bebas-neue': { name: 'Bebas Neue' }, 'font-lobster': { name: 'Lobster' }, 'font-anton': { name: 'Anton' }, 'font-fjalla-one': { name: 'Fjalla One' }, 'font-gloria-hallelujah': { name: 'Gloria Hallelujah' }, 'font-comfortaa': { name: 'Comfortaa' }, 'font-cinzel': { name: 'Cinzel' }, 'font-josefin-sans': { name: 'Josefin Sans' }, 'font-arimo': { name: 'Arimo' }, 'font-orbitron': { name: 'Orbitron' },
-            'sound-default': { name: 'Default' }, 'sound-8bit': { name: '8-Bit' }, 'sound-nature': { name: 'Nature' },
+            'bg-default': { name: 'Default' }, 'bg-stars': { name: 'Starry Night' }, 'bg-fireflies': { name: 'Fireflies' }, 'bg-rain': { name: 'Gentle Rain' }, 'bg-leaves': { name: 'Falling Leaves' }, 'bg-ripples': { name: 'Water Ripples' }, 'bg-bubbles': { name: 'Bubbles' }, 'bg-snow': { name: 'Snowfall' }, 'bg-lanterns': { name: 'Sky Lanterns' }, 'bg-swirl': { name: 'Cosmic Swirl' }, 'bg-sunbeams': { name: 'Sunbeams' }, 'bg-aurora': { name: 'Aurora' }, 'bg-pastel-rainbow': { name: 'Pastel Rainbow' }, 'bg-fog': { name: 'Gentle Fog' }, 'bg-ocean-waves': { name: 'Ocean Waves' }, 'board-default': { name: 'Default' }, 'board-rainbow': { name: 'Rainbow' }, 'board-sands': { name: 'Shifting Sands' }, 'board-wood': { name: 'Wood Grain' }, 'board-stone': { name: 'Stone Wall' }, 'board-metal': { name: 'Polished Metal' }, 'board-galaxy': { name: 'Galaxy' }, 'board-circuit': { name: 'Circuit Board' }, 'theme-default': { name: 'Default' }, 'theme-forest': { name: 'Forest' }, 'theme-vampire': { name: 'Vampire' }, 'theme-ocean': { name: 'Ocean' }, 'theme-sunset': { name: 'Sunset' }, 'theme-8bit': { name: '8-Bit' }, 'font-default': { name: 'Default' }, 'font-kalam': { name: 'Kalam' }, 'font-indie-flower': { name: 'Indie Flower' }, 'font-lato': { name: 'Lato' }, 'font-montserrat': { name: 'Montserrat' }, 'font-oswald': { name: 'Oswald' }, 'font-raleway': { name: 'Raleway' }, 'font-merriweather': { name: 'Merriweather' }, 'font-playfair-display': { name: 'Playfair Display' }, 'font-ubuntu': { name: 'Ubuntu' }, 'font-noto-sans': { name: 'Noto Sans' }, 'font-open-sans': { name: 'Open Sans' }, 'font-source-code-pro': { name: 'Source Code Pro' }, 'font-rubik': { name: 'Rubik' }, 'font-work-sans': { name: 'Work Sans' }, 'font-permanent-marker': { name: 'Permanent Marker' }, 'font-kaushan-script': { name: 'Kaushan Script' }, 'font-press-start-2p': { name: 'Press Start 2P' }, 'font-bebas-neue': { name: 'Bebas Neue' }, 'font-lobster': { name: 'Lobster' }, 'font-anton': { name: 'Anton' }, 'font-fjalla-one': { name: 'Fjalla One' }, 'font-gloria-hallelujah': { name: 'Gloria Hallelujah' }, 'font-comfortaa': { name: 'Comfortaa' }, 'font-cinzel': { name: 'Cinzel' }, 'font-josefin-sans': { name: 'Josefin Sans' }, 'font-arimo': { name: 'Arimo' }, 'font-orbitron': { name: 'Orbitron' }, 'sound-default': { name: 'Default' }, 'sound-8bit': { name: '8-Bit' }, 'sound-nature': { name: 'Nature' },
         };
-
         const backgroundStyles = {
-            'bg-default': { type: 'css', animation: 'gradientBG 15s ease infinite', style: 'linear-gradient(45deg, #fdf6f6, #f1e7fe, #e7f5fe, #fdf6f6)', size: '400% 400%' }, 'bg-stars': { type: 'css', animation: 'bg-stars 150s linear infinite', style: 'url(https://www.transparenttextures.com/patterns/stardust.png) #2a2a3e', size: 'auto' }, 'bg-fireflies': { type: 'js', function: 'createFireflies', size: 'auto' }, 'bg-rain': { type: 'js', function: 'createRain', size: 'auto' }, 'bg-leaves': { type: 'js', function: 'createLeaves', size: 'auto' }, 'bg-ripples': { type: 'js', function: 'createRipples', size: 'auto' }, 'bg-bubbles': { type: 'js', function: 'createBubbles', size: 'auto' }, 'bg-snow': { type: 'js', function: 'createSnow', size: 'auto' }, 'bg-lanterns': { type: 'js', function: 'createLanterns', size: 'auto' }, 'bg-swirl': { type: 'css', animation: 'swirl 60s linear infinite', style: 'radial-gradient(ellipse at center, #2e3192 0%, #1b2949 100%)', size: 'auto' }, 'bg-sunbeams': { type: 'css', animation: 'gradientBG 20s ease infinite', style: 'radial-gradient(ellipse at top, #f9d423 0%, #ff4e50 100%)', size: '400% 400%' }, 'bg-aurora': { type: 'css', animation: 'gradientBG 10s ease infinite', style: 'linear-gradient(124deg, #2E3192, #1B2949, #009245, #FCEE21, #F15A24, #D4145A)', size: '400% 400%' }, 'bg-pastel-rainbow': { type: 'css', animation: 'gradientBG 18s ease infinite', style: 'linear-gradient(124deg, #ffc3a0, #ffafbd, #d4a5a5, #89a5ea, #6991c7, #a8e6cf)', size: '400% 400%' }, 
-            /* ✨ FIXED: Changed bg-fog to use a vertical animation that is now visible */
-            'bg-fog': { type: 'css', animation: 'verticalGradientBG 25s ease infinite', style: 'linear-gradient(to top, #dfe9f3 0%, white 100%)', size: '100% 400%' }, 
-            'bg-ocean-waves': { type: 'css', animation: 'gradientBG 10s ease infinite', style: 'linear-gradient(-45deg, #43cea2, #185a9d, #43cea2, #185a9d)', size: '400% 400%'},
+            'bg-default': { type: 'css', animation: 'gradientBG 15s ease infinite', style: 'linear-gradient(45deg, #fdf6f6, #f1e7fe, #e7f5fe, #fdf6f6)', size: '400% 400%' }, 'bg-stars': { type: 'css', animation: 'bg-stars 150s linear infinite', style: 'url(https://www.transparenttextures.com/patterns/stardust.png) #2a2a3e', size: 'auto' }, 'bg-fireflies': { type: 'js', function: 'createFireflies', size: 'auto' }, 'bg-rain': { type: 'js', function: 'createRain', size: 'auto' }, 'bg-leaves': { type: 'js', function: 'createLeaves', size: 'auto' }, 'bg-ripples': { type: 'js', function: 'createRipples', size: 'auto' }, 'bg-bubbles': { type: 'js', function: 'createBubbles', size: 'auto' }, 'bg-snow': { type: 'js', function: 'createSnow', size: 'auto' }, 'bg-lanterns': { type: 'js', function: 'createLanterns', size: 'auto' }, 'bg-swirl': { type: 'css', animation: 'swirl 60s linear infinite', style: 'radial-gradient(ellipse at center, #2e3192 0%, #1b2949 100%)', size: 'auto' }, 'bg-sunbeams': { type: 'css', animation: 'gradientBG 20s ease infinite', style: 'radial-gradient(ellipse at top, #f9d423 0%, #ff4e50 100%)', size: '400% 400%' }, 'bg-aurora': { type: 'css', animation: 'gradientBG 10s ease infinite', style: 'linear-gradient(124deg, #2E3192, #1B2949, #009245, #FCEE21, #F15A24, #D4145A)', size: '400% 400%' }, 'bg-pastel-rainbow': { type: 'css', animation: 'gradientBG 18s ease infinite', style: 'linear-gradient(124deg, #ffc3a0, #ffafbd, #d4a5a5, #89a5ea, #6991c7, #a8e6cf)', size: '400% 400%' }, 'bg-fog': { type: 'css', animation: 'verticalGradientBG 25s ease infinite', style: 'linear-gradient(to top, #dfe9f3 0%, white 100%)', size: '100% 400%' }, 'bg-ocean-waves': { type: 'css', animation: 'gradientBG 10s ease infinite', style: 'linear-gradient(-45deg, #43cea2, #185a9d, #43cea2, #185a9d)', size: '400% 400%'},
         };
-
         const themeStyles = {
             'theme-default': { '--background-color': '#fdf6f6', '--grid-background': '#a3d8f4', '--cell-background': '#f1f7f8', '--text-color': '#6155a6', '--button-bg': '#ffc2e2', '--accent-color': '#ff9494' }, 'theme-forest': { '--background-color': '#f0fff0', '--grid-background': '#228B22', '--cell-background': '#98FB98', '--text-color': '#006400', '--button-bg': '#3CB371', '--accent-color': '#8FBC8F' }, 'theme-ocean': { '--background-color': '#E0FFFF', '--grid-background': '#00BFFF', '--cell-background': '#AFEEEE', '--text-color': '#191970', '--button-bg': '#87CEFA', '--accent-color': '#4682B4' }, 'theme-sunset': { '--background-color': '#FFF0F5', '--grid-background': '#FF6347', '--cell-background': '#FFA07A', '--text-color': '#8B0000', '--button-bg': '#FF7F50', '--accent-color': '#E9967A' }, 'theme-vampire': { '--background-color': '#1a1a1a', '--grid-background': '#4b0000', '--cell-background': '#800000', '--text-color': '#ffc0cb', '--button-bg': '#dc143c', '--accent-color': '#ff69b4' }, 'theme-8bit': { '--background-color': '#000000', '--grid-background': '#00ff00', '--cell-background': '#333333', '--text-color': '#00ff00', '--button-bg': '#ff00ff', '--accent-color': '#ffff00' },
         };
-
         const fontStyles = {
             'font-default': "'Poppins', sans-serif", 'font-kalam': "'Kalam', cursive", 'font-patrick-hand': "'Patrick Hand', cursive", 'font-caveat': "'Caveat', cursive", 'font-shadows': "'Shadows Into Light', cursive", 'font-architect': "'Architects Daughter', cursive", 'font-roboto-mono': "'Roboto Mono', monospace", 'font-bangers': "'Bangers', cursive", 'font-creepster': "'Creepster', cursive", 'font-nosifier': "'Nosifier', cursive", 'font-indie-flower': "'Indie Flower', cursive", 'font-amatic-sc': "'Amatic SC', cursive", 'font-pacifico': "'Pacifico', cursive", 'font-dancing-script': "'Dancing Script', cursive", 'font-sriracha': "'Sriracha', cursive", 'font-marck-script': "'Marck Script', cursive", 'font-courgette': "'Courgette', cursive", 'font-satisfy': "'Satisfy', cursive", 'font-lobster-two': "'Lobster Two', cursive", 'font-cookie': "'Cookie', cursive", 'font-great-vibes': "'Great Vibes', cursive", 'font-sacramento': "'Sacramento', cursive", 'font-tangerine': "'Tangerine', cursive", 'font-bad-script': "'Bad Script', cursive", 'font-homemade-apple': "'Homemade Apple', cursive", 'font-rock-salt': "'Rock Salt', cursive", 'font-special-elite': "'Special Elite', cursive", 'font-unkempt': "'Unkempt', cursive", 'font-neucha': "'Neucha', cursive", 'font-lato': "'Lato', sans-serif", 'font-montserrat': "'Montserrat', sans-serif", 'font-oswald': "'Oswald', sans-serif", 'font-raleway': "'Raleway', sans-serif", 'font-merriweather': "'Merriweather', serif", 'font-playfair-display': "'Playfair Display', serif", 'font-ubuntu': "'Ubuntu', sans-serif", 'font-noto-sans': "'Noto Sans', sans-serif", 'font-open-sans': "'Open Sans', sans-serif", 'font-source-code-pro': "'Source Code Pro', monospace", 'font-rubik': "'Rubik', sans-serif", 'font-work-sans': "'Work Sans', sans-serif", 'font-permanent-marker': "'Permanent Marker', cursive", 'font-kaushan-script': "'Kaushan Script', cursive", 'font-press-start-2p': "'Press Start 2P', cursive", 'font-bebas-neue': "'Bebas Neue', cursive", 'font-lobster': "'Lobster', cursive", 'font-anton': "'Anton', sans-serif", 'font-fjalla-one': "'Fjalla One', sans-serif", 'font-gloria-hallelujah': "'Gloria Hallelujah', cursive", 'font-comfortaa': "'Comfortaa', cursive", 'font-cinzel': "'Cinzel', serif", 'font-josefin-sans': "'Josefin Sans', sans-serif", 'font-arimo': "'Arimo', sans-serif", 'font-orbitron': "'Orbitron', sans-serif",
         };
-         
-        // --- Sound Engine (Tone.js) ---
+        const musicPlaylist = Array.from({length: 10}, (_, i) => `music/${(i + 1).toString().padStart(2, '0')}.mp3`);
         const soundPacks = {
             'sound-default': { type: 'synth' }, 'sound-8bit': { type: 'player', name: '8-Bit Sounds', urls: { correct: 'https://cdn.jsdelivr.net/gh/devmastery/sounds/sfx_sounds_powerup2.wav', error: 'https://cdn.jsdelivr.net/gh/devmastery/sounds/sfx_sounds_error2.wav', click: 'https://cdn.jsdelivr.net/gh/devmastery/sounds/sfx_sounds_Blip4.wav', win: 'https://cdn.jsdelivr.net/gh/devmastery/sounds/sfx_music_level7.wav', } }, 'sound-nature': { type: 'player', name: 'Nature Sounds', urls: { correct: 'https://cdn.jsdelivr.net/gh/k-bruner/web-dev-helpers/sudoku-sounds/zapsplat_nature_water_droplet_single_in_cave_001_59833.mp3', error: 'https://cdn.jsdelivr.net/gh/k-bruner/web-dev-helpers/sudoku-sounds/zapsplat_animals_bird_crow_single_caw_002_62342.mp3', click: 'https://cdn.jsdelivr.net/gh/k-bruner/web-dev-helpers/sudoku-sounds/zapsplat_nature_forest_wood_branch_snap_break_001_12158.mp3', win: 'https://cdn.jsdelivr.net/gh/k-bruner/web-dev-helpers/sudoku-sounds/zapsplat_nature_wind_chimes_bamboo_light_breeze_short_burst_001_44131.mp3' } }
         };
-
         const synthSounds = {
             correct: new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.1 } }).toDestination(), error: new Tone.Synth({ oscillator: { type: 'square' }, envelope: { attack: 0.01, decay: 0.3, sustain: 0, release: 0.1 } }).toDestination(), click: new Tone.Synth({ oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 } }).toDestination(), win: new Tone.Synth({ oscillator: { type: 'sawtooth' }, envelope: { attack: 0.1, decay: 0.5, sustain: 0.2, release: 0.5 } }).toDestination(), levelUp: new Tone.Synth({ oscillator: { type: 'fmsine' }, envelope: { attack: 0.2, decay: 0.5, sustain: 0, release: 1 } }).toDestination(), pop: new Tone.Synth({ oscillator: { type: 'triangle' }, pitchDecay: 0.05, envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 } }).toDestination(),
+            achievement: new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.05, decay: 0.4, sustain: 0.1, release: 0.8 } }).toDestination()
         };
-
         let playerSounds = {};
 
-        function applySoundPack(packId) {
-            playSound('click'); 
-            currentSoundPack = packId;
-            const pack = soundPacks[packId];
+        function shuffleArray(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } }
+        function startMusic() { if (shuffledPlaylist.length === 0) { shuffledPlaylist = [...musicPlaylist]; shuffleArray(shuffledPlaylist); } currentTrackIndex = -1; playNextTrack(); }
+        function playTrack(index) { if (index < 0 || index >= shuffledPlaylist.length) return; currentTrackIndex = index; backgroundMusic.src = shuffledPlaylist[currentTrackIndex]; backgroundMusic.play().catch(e => console.error("Music play failed:", e)); }
+        function playNextTrack() { currentTrackIndex = (currentTrackIndex + 1) % shuffledPlaylist.length; playTrack(currentTrackIndex); }
+        function playNextTrackWithSound() { playSound('click'); playNextTrack(); }
+        function playPrevTrack() { playSound('click'); currentTrackIndex = (currentTrackIndex - 1 + shuffledPlaylist.length) % shuffledPlaylist.length; playTrack(currentTrackIndex); }
+        function setMusicVolume(volume) { backgroundMusic.volume = volume; const slider = document.getElementById('music-volume-slider'); if (slider) slider.value = volume; }
+        
+        function applySoundPack(packId) { playSound('click'); currentSoundPack = packId; const pack = soundPacks[packId]; Object.values(playerSounds).forEach(player => player.dispose()); playerSounds = {}; if (pack.type === 'player') { playerSounds = new Tone.Players(pack.urls, () => { console.log(`${itemManifest[packId]?.name || 'Sound pack'} loaded.`); }).toDestination(); } saveData(); buildOptionsModal(); }
+        function playAchievementJingle() { if(isMuted) return; const now = Tone.now(); synthSounds.achievement.triggerAttackRelease('C5', '8n', now); synthSounds.achievement.triggerAttackRelease('E5', '8n', now + 0.1); synthSounds.achievement.triggerAttackRelease('G5', '8n', now + 0.2); synthSounds.achievement.triggerAttackRelease('C6', '4n', now + 0.3); }
+        function playSound(sound, note = 'C4') { if (isMuted) return; if (Tone.context.state !== 'running') { Tone.start().catch(e => console.error("Tone.start() failed", e)); } const pack = soundPacks[currentSoundPack]; if (pack && pack.type === 'player' && playerSounds.has(sound)) { playerSounds.player(sound).start(); } else { if (sound === 'correct') synthSounds.correct.triggerAttackRelease('C5', '8n'); else if (sound === 'error') synthSounds.error.triggerAttackRelease('C3', '8n'); else if (sound === 'click') synthSounds.click.triggerAttackRelease('C4', '16n'); else if (sound === 'win') synthSounds.win.triggerAttackRelease('C4', '2n'); else if (sound === 'levelUp') synthSounds.levelUp.triggerAttackRelease('G5', '4n'); else if (sound === 'pop') synthSounds.pop.triggerAttackRelease(note, '16n'); } }
 
-            Object.values(playerSounds).forEach(player => player.dispose());
-            playerSounds = {};
-
-            if (pack.type === 'player') {
-                playerSounds = new Tone.Players(pack.urls, () => {
-                    console.log(`${itemManifest[packId]?.name || 'Sound pack'} loaded.`);
-                }).toDestination();
-            }
-            saveData();
-            buildOptionsModal();
-        }
-
-        function playSound(sound, note = 'C4') {
-            if (isMuted) return;
-            if (Tone.context.state !== 'running') { Tone.start().catch(e => console.error("Tone.start() failed", e)); }
-             
-            const pack = soundPacks[currentSoundPack];
-            if (pack && pack.type === 'player' && playerSounds.has(sound)) {
-                playerSounds.player(sound).start();
-            } else { 
-                if (sound === 'correct') synthSounds.correct.triggerAttackRelease('C5', '8n');
-                else if (sound === 'error') synthSounds.error.triggerAttackRelease('C3', '8n');
-                else if (sound === 'click') synthSounds.click.triggerAttackRelease('C4', '16n');
-                else if (sound === 'win') synthSounds.win.triggerAttackRelease('C4', '2n');
-                else if (sound === 'levelUp') synthSounds.levelUp.triggerAttackRelease('G5', '4n');
-                else if (sound === 'pop') synthSounds.pop.triggerAttackRelease(note, '16n');
-            }
-        }
-
-
-        // --- Timer & Best Time Functions ---
-        function formatTime(totalSeconds) {
-            const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
-            const seconds = (totalSeconds % 60).toString().padStart(2, '0');
-            return `${minutes}:${seconds}`;
-        }
-
-        function startTimer() {
-            if (gameTimerInterval) clearInterval(gameTimerInterval);
-            gameTimerInterval = setInterval(() => {
-                secondsElapsed++;
-                timerDisplay.textContent = formatTime(secondsElapsed);
-            }, 1000);
-        }
-
+        function formatTime(totalSeconds) { const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0'); const seconds = (totalSeconds % 60).toString().padStart(2, '0'); return `${minutes}:${seconds}`; }
+        function startTimer() { if (gameTimerInterval) clearInterval(gameTimerInterval); gameTimerInterval = setInterval(() => { secondsElapsed++; timerDisplay.textContent = formatTime(secondsElapsed); if(secondsElapsed >= 3600) unlockAchievement('timeTraveler'); }, 1000); }
         function stopTimer() { clearInterval(gameTimerInterval); }
         function resetTimer() { stopTimer(); secondsElapsed = 0; timerDisplay.textContent = '00:00'; }
+        function loadBestTimes() { const data = JSON.parse(localStorage.getItem('sudokuUserData')); return data && data.bestTimes ? data.bestTimes : []; }
+        function saveBestTime(timeInSeconds, difficulty) { let bestTimes = loadBestTimes(); bestTimes.push({ time: timeInSeconds, difficulty: difficulty }); bestTimes.sort((a, b) => a.time - b.time); currentSettings.bestTimes = bestTimes.slice(0, 10); saveData(); }
+        function displayBestTimes() { const bestTimes = loadBestTimes(); bestTimesList.innerHTML = ''; if (bestTimes.length === 0) { bestTimesList.innerHTML = '<li>No best times recorded yet. Play a game!</li>'; } else { bestTimes.forEach(score => { const li = document.createElement('li'); const difficultyDisplay = score.difficulty.charAt(0).toUpperCase() + score.difficulty.slice(1); li.textContent = `${formatTime(score.time)} - (${difficultyDisplay})`; bestTimesList.appendChild(li); }); } bestTimesModal.style.display = 'flex'; }
 
-        function loadBestTimes() {
-            const data = JSON.parse(localStorage.getItem('sudokuUserData'));
-            return data && data.bestTimes ? data.bestTimes : [];
-        }
-
-        function saveBestTime(timeInSeconds, difficulty) {
-            let bestTimes = loadBestTimes();
-            bestTimes.push({ time: timeInSeconds, difficulty: difficulty });
-            bestTimes.sort((a, b) => a.time - b.time);
-            currentSettings.bestTimes = bestTimes.slice(0, 10);
-            saveData();
-        }
-
-        function displayBestTimes() {
-            const bestTimes = loadBestTimes();
-            bestTimesList.innerHTML = ''; 
-            if (bestTimes.length === 0) {
-                bestTimesList.innerHTML = '<li>No best times recorded yet. Play a game!</li>';
-            } else {
-                bestTimes.forEach(score => {
-                    const li = document.createElement('li');
-                    const difficultyDisplay = score.difficulty.charAt(0).toUpperCase() + score.difficulty.slice(1);
-                    li.textContent = `${formatTime(score.time)} - (${difficultyDisplay})`;
-                    bestTimesList.appendChild(li);
-                });
-            }
-            bestTimesModal.style.display = 'flex';
-        }
-
-        // --- Data Persistence ---
-        function saveData() {
-            currentSettings.isMuted = isMuted;
-            currentSettings.soundPack = currentSoundPack;
-            currentSettings.background = document.body.dataset.background || 'bg-default';
-            currentSettings.theme = document.body.dataset.theme || 'theme-default';
-            currentSettings.font = document.body.dataset.font || 'font-default';
-            currentSettings.board = sudokuGrid.dataset.board || 'board-default';
-
-            const dataToSave = {
-                playerData: playerData,
-                settings: currentSettings,
-                bestTimes: loadBestTimes(),
-                dailyCompletions: JSON.parse(localStorage.getItem('sudokuDailyCompletions')) || []
-            };
-            localStorage.setItem('sudokuUserData', JSON.stringify(dataToSave));
-        }
-
-        function saveActiveGame() {
-            if (gameBoard.style.display !== 'block') return;
-            const activeGame = {
-                boardState, lives, secondsElapsed, currentDifficulty, isDailyPuzzle, isEasySeeMode, revealsLeft,
-            };
-            localStorage.setItem('sudokuActiveGame', JSON.stringify(activeGame));
-        }
-
+        function saveData() { currentSettings.isMuted = isMuted; currentSettings.musicVolume = backgroundMusic.volume; currentSettings.soundPack = currentSoundPack; currentSettings.background = document.body.dataset.background || 'bg-default'; currentSettings.theme = document.body.dataset.theme || 'theme-default'; currentSettings.font = document.body.dataset.font || 'font-default'; currentSettings.board = sudokuGrid.dataset.board || 'board-default'; const dataToSave = { playerData: playerData, settings: currentSettings, bestTimes: loadBestTimes(), dailyCompletions: JSON.parse(localStorage.getItem('sudokuDailyCompletions')) || [] }; localStorage.setItem('sudokuUserData', JSON.stringify(dataToSave)); }
+        function saveActiveGame() { if (gameBoard.style.display !== 'block') return; const activeGame = { boardState, lives, secondsElapsed, currentDifficulty, isDailyPuzzle, isEasySeeMode, revealsLeft, mistakesMade }; localStorage.setItem('sudokuActiveGame', JSON.stringify(activeGame)); }
         function loadData() {
             const savedData = JSON.parse(localStorage.getItem('sudokuUserData'));
             if (savedData) {
-                playerData = savedData.playerData || playerData;
+                playerData = {...playerData, ...savedData.playerData};
+                if (!playerData.achievements) { playerData.achievements = { unlocked: [], totalPoints: 0, stats: { gamesWon: 0, perfectGames: 0, notesUsed: false } }; }
+                playerData.achievements.unlocked.forEach(id => { if(achievements[id]) achievements[id].unlocked = true; });
                 currentSettings = savedData.settings || {};
                 isMuted = currentSettings.isMuted || false;
                 muteBtn.textContent = isMuted ? '🔇' : '🔊';
-                applyTheme(currentSettings.theme || 'theme-default');
-                applyFont(currentSettings.font || 'font-default');
-                applyBackground(currentSettings.background || 'bg-default');
-                applyBoard(currentSettings.board || 'board-default');
+                backgroundMusic.muted = isMuted;
+                setMusicVolume(currentSettings.musicVolume !== undefined ? currentSettings.musicVolume : 0.3);
+                applyTheme(currentSettings.theme || 'theme-default', true);
+                applyFont(currentSettings.font || 'font-default', true);
+                applyBackground(currentSettings.background || 'bg-default', true);
+                applyBoard(currentSettings.board || 'board-default', true);
                 applySoundPack(currentSettings.soundPack || 'sound-default');
+            } else {
+                 setMusicVolume(0.3);
             }
-
             const savedActiveGame = localStorage.getItem('sudokuActiveGame');
             if (savedActiveGame) {
-                const continueBtn = document.createElement('button');
-                continueBtn.id = 'continue-game-btn';
-                continueBtn.className = 'control-btn';
-                continueBtn.textContent = 'Continue Game';
-                continueBtn.onclick = () => resumeGame(JSON.parse(savedActiveGame));
-                titleButtons.insertBefore(continueBtn, newGameBtn);
+                try {
+                    const gameData = JSON.parse(savedActiveGame);
+                    if (gameData && gameData.boardState && gameData.boardState.puzzle && gameData.boardState.puzzle.length > 0) {
+                        const continueBtn = document.createElement('button');
+                        continueBtn.id = 'continue-game-btn';
+                        continueBtn.className = 'control-btn';
+                        continueBtn.textContent = 'Continue Game';
+                        continueBtn.onclick = () => resumeGame(gameData);
+                        titleButtons.insertBefore(continueBtn, newGameBtn);
+                    } else {
+                        localStorage.removeItem('sudokuActiveGame');
+                    }
+                } catch (e) {
+                    console.error("Failed to parse saved game, removing it.", e);
+                    localStorage.removeItem('sudokuActiveGame');
+                }
             }
             updateXPBar();
         }
-
         function resumeGame(savedGame) {
             playSound('click');
+            if (backgroundMusic.paused) startMusic();
             stopTitleAnimation();
             titleScreen.style.display = 'none';
             gameBoard.style.display = 'block';
-
             boardState = savedGame.boardState;
             lives = savedGame.lives;
             secondsElapsed = savedGame.secondsElapsed;
@@ -645,10 +457,9 @@
             isDailyPuzzle = savedGame.isDailyPuzzle;
             isEasySeeMode = savedGame.isEasySeeMode;
             revealsLeft = savedGame.revealsLeft;
-
+            mistakesMade = savedGame.mistakesMade || 0;
             if (isEasySeeMode) sudokuGrid.classList.add('easy-see-mode');
             else sudokuGrid.classList.remove('easy-see-mode');
-
             recreateGridFromSave();
             createControls();
             updateLivesDisplay();
@@ -658,329 +469,49 @@
             if (isColorMode) updateColorMode();
         }
 
-
-        // --- Seed Functions ---
         function mulberry32(a) { return function() { var t = a += 0x6D2B79F5; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; } }
         function stringToSeed(str) { let seed = 0; for (let i = 0; i < str.length; i++) { seed = (seed << 5) - seed + str.charCodeAt(i); seed |= 0; } return seed; }
-
-        // --- Sudoku Generator ---
-        class SudokuGenerator {
-            constructor(seed) { this.board = Array(9).fill(0).map(() => Array(9).fill(0)); this.random = mulberry32(seed); }
-            isValid(row, col, num) { for (let i = 0; i < 9; i++) { if (this.board[row][i] === num || this.board[i][col] === num) return false; } const startRow = Math.floor(row / 3) * 3, startCol = Math.floor(col / 3) * 3; for (let i = 0; i < 3; i++) { for (let j = 0; j < 3; j++) { if (this.board[startRow + i][startCol + j] === num) return false; } } return true; }
-            fillBoard() { const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]; for (let i = 0; i < 81; i++) { const row = Math.floor(i / 9), col = i % 9; if (this.board[row][col] === 0) { this.shuffle(numbers); for (const num of numbers) { if (this.isValid(row, col, num)) { this.board[row][col] = num; if (this.fillBoard()) return true; this.board[row][col] = 0; } } return false; } } return true; }
-            createPuzzle(difficulty) { this.board = Array(9).fill(0).map(() => Array(9).fill(0)); this.fillBoard(); boardState.solution = this.board.map(row => [...row]); let attempts; switch (difficulty) { case 'easy': attempts = 35; break; case 'medium': attempts = 45; break; case 'hard': attempts = 55; break; default: attempts = 45; } let puzzle = this.board.map(row => [...row]); while (attempts > 0) { let row = Math.floor(this.random() * 9); let col = Math.floor(this.random() * 9); if (puzzle[row][col] !== 0) { puzzle[row][col] = 0; attempts--; } } return puzzle; }
-            shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(this.random() * (i + 1));[array[i], array[j]] = [array[j], array[i]]; } }
-        }
-
-        // --- Game Logic & UI ---
+        class SudokuGenerator { constructor(seed) { this.board = Array(9).fill(0).map(() => Array(9).fill(0)); this.random = mulberry32(seed); } isValid(row, col, num) { for (let i = 0; i < 9; i++) { if (this.board[row][i] === num || this.board[i][col] === num) return false; } const startRow = Math.floor(row / 3) * 3, startCol = Math.floor(col / 3) * 3; for (let i = 0; i < 3; i++) { for (let j = 0; j < 3; j++) { if (this.board[startRow + i][startCol + j] === num) return false; } } return true; } fillBoard() { const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]; for (let i = 0; i < 81; i++) { const row = Math.floor(i / 9), col = i % 9; if (this.board[row][col] === 0) { this.shuffle(numbers); for (const num of numbers) { if (this.isValid(row, col, num)) { this.board[row][col] = num; if (this.fillBoard()) return true; this.board[row][col] = 0; } } return false; } } return true; } createPuzzle(difficulty) { this.board = Array(9).fill(0).map(() => Array(9).fill(0)); this.fillBoard(); boardState.solution = this.board.map(row => [...row]); let attempts; switch (difficulty) { case 'easy': attempts = 35; break; case 'medium': attempts = 45; break; case 'hard': attempts = 55; break; default: attempts = 45; } let puzzle = this.board.map(row => [...row]); while (attempts > 0) { let row = Math.floor(this.random() * 9); let col = Math.floor(this.random() * 9); if (puzzle[row][col] !== 0) { puzzle[row][col] = 0; attempts--; } } return puzzle; } shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(this.random() * (i + 1));[array[i], array[j]] = [array[j], array[i]]; } } }
+        
         function startTitleAnimation() { if (titleAnimationInterval) clearInterval(titleAnimationInterval); titleAnimationInterval = setInterval(() => { const num = document.createElement('div'); num.className = 'floating-number'; num.textContent = Math.floor(Math.random() * 9) + 1; num.style.left = `${Math.random() * 100}%`; num.style.top = `${Math.random() * 100}%`; num.style.animationDuration = `${Math.random() * 5 + 8}s`; titleAnimationContainer.appendChild(num); setTimeout(() => { num.style.animation = 'puff 1s forwards'; setTimeout(() => num.remove(), 1000); }, 7000); }, 500); }
         function stopTitleAnimation() { clearInterval(titleAnimationInterval); titleAnimationContainer.innerHTML = ''; }
-
-        function resetGame() {
-            titleScreen.style.display = 'flex';
-            titleButtons.style.display = 'flex';
-            difficultyScreen.style.display = 'none';
-            viewModeScreen.style.display = 'none';
-            seedScreen.style.display = 'none';
-            startTitleAnimation();
-            gameBoard.style.display = 'none';
-            gameOverModal.style.display = 'none';
-            winModal.style.display = 'none';
-            lives = 3;
-            isDailyPuzzle = false;
-            isEasySeeMode = false;
-            sudokuGrid.classList.remove('easy-see-mode');
-            updateLivesDisplay();
-            resetTimer();
-            // Re-check for continue button in case user returns to title screen
-            const continueBtn = document.getElementById('continue-game-btn');
-            if (!localStorage.getItem('sudokuActiveGame') && continueBtn) {
-                continueBtn.remove();
-            }
-        }
-
+        function resetGame() { titleScreen.style.display = 'flex'; titleButtons.style.display = 'flex'; difficultyScreen.style.display = 'none'; viewModeScreen.style.display = 'none'; seedScreen.style.display = 'none'; startTitleAnimation(); gameBoard.style.display = 'none'; gameOverModal.style.display = 'none'; winModal.style.display = 'none'; lives = 3; mistakesMade = 0; isDailyPuzzle = false; isEasySeeMode = false; sudokuGrid.classList.remove('easy-see-mode'); updateLivesDisplay(); resetTimer(); const continueBtn = document.getElementById('continue-game-btn'); if (!localStorage.getItem('sudokuActiveGame') && continueBtn) { continueBtn.remove(); } }
         function startNewGameFromWin() { winModal.style.display = 'none'; gameBoard.style.display = 'none'; difficultyScreen.style.display = 'block'; resetTimer(); lives = 3; updateLivesDisplay(); }
-
         newGameBtn.addEventListener('click', () => { playSound('click'); isDailyPuzzle = false; seedForNextGame = null; titleButtons.style.display = 'none'; difficultyScreen.style.display = 'block'; localStorage.removeItem('sudokuActiveGame'); const continueBtn = document.getElementById('continue-game-btn'); if (continueBtn) continueBtn.remove(); });
         dailyPuzzleBtn.addEventListener('click', () => { playSound('click'); isDailyPuzzle = true; const today = new Date(); const dateString = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`; seedForNextGame = dateString; titleButtons.style.display = 'none'; difficultyScreen.style.display = 'block'; });
         seedGameBtn.addEventListener('click', () => { playSound('click'); isDailyPuzzle = false; titleButtons.style.display = 'none'; seedScreen.style.display = 'block'; });
         startFromSeedBtn.addEventListener('click', () => { const seedWord = seedInput.value.trim(); if(seedWord === ''){ alert("Please enter a seed word."); return; } playSound('click'); seedForNextGame = seedWord; seedScreen.style.display = 'none'; difficultyScreen.style.display = 'block'; });
-
         difficultyScreen.addEventListener('click', (e) => { if (e.target.classList.contains('control-btn')) { playSound('click'); currentDifficulty = e.target.dataset.difficulty; difficultyScreen.style.display = 'none'; viewModeScreen.style.display = 'block'; } });
-
-        viewModeScreen.addEventListener('click', (e) => { if (e.target.classList.contains('control-btn')) { playSound('click'); const viewMode = e.target.dataset.view; isEasySeeMode = (viewMode === 'easy-see'); viewModeScreen.style.display = 'none'; const options = { difficulty: currentDifficulty }; if (seedForNextGame) { options.seed = stringToSeed(seedForNextGame.toLowerCase()); } startGame(options); seedForNextGame = null; } });
-
-        function startGame(options) {
-            stopTitleAnimation();
-            titleScreen.style.display = 'none';
-            difficultyScreen.style.display = 'none';
-            seedScreen.style.display = 'none';
-            gameBoard.style.display = 'block';
-
-            if (isEasySeeMode) sudokuGrid.classList.add('easy-see-mode');
-            else sudokuGrid.classList.remove('easy-see-mode');
-
-            const difficulty = options.difficulty;
-            const seed = options.seed || new Date().getTime(); 
-            currentDifficulty = difficulty;
-             
-            const generator = new SudokuGenerator(seed);
-            boardState.puzzle = generator.createPuzzle(difficulty);
-            boardState.playerBoard = boardState.puzzle.map(row => [...row]);
-            boardState.candidates = Array(81).fill(0).map(() => new Set());
-            createGrid(boardState.puzzle);
-            createControls();
-            lives = 3;
-            revealsLeft = 3;
-            updateLivesDisplay();
-            updateXPBar();
-            updateCompletedNumberButtons();
-            resetTimer();
-            startTimer();
-            if(isColorMode) updateColorMode();
-            saveActiveGame();
-        }
-
-        function createGrid(puzzle) {
-            sudokuGrid.innerHTML = '';
-            for (let row = 0; row < 9; row++) {
-                for (let col = 0; col < 9; col++) {
-                    const cell = document.createElement('div');
-                    cell.classList.add('sudoku-cell');
-                    cell.dataset.row = row;
-                    cell.dataset.col = col;
-                    const value = puzzle[row][col];
-                    if (value !== 0) {
-                        cell.textContent = value;
-                        cell.classList.add('given');
-                    }
-                    cell.addEventListener('click', () => handleCellClick(cell));
-                    sudokuGrid.appendChild(cell);
-                }
-            }
-        }
-        
-        function recreateGridFromSave() {
-            sudokuGrid.innerHTML = '';
-            for (let row = 0; row < 9; row++) {
-                for (let col = 0; col < 9; col++) {
-                    const cell = document.createElement('div');
-                    cell.classList.add('sudoku-cell');
-                    cell.dataset.row = row;
-                    cell.dataset.col = col;
-                    
-                    const playerValue = boardState.playerBoard[row][col];
-                    const puzzleValue = boardState.puzzle[row][col];
-                    
-                    if (puzzleValue !== 0) {
-                        cell.textContent = puzzleValue;
-                        cell.classList.add('given');
-                    } else if (playerValue !== 0) {
-                        cell.textContent = playerValue;
-                        cell.classList.add('correct'); // All saved player values are correct
-                    } else {
-                        // Draw candidates if the cell is empty
-                        const cellIndex = row * 9 + col;
-                        // The saved candidates object is plain, needs to be converted back to a Set
-                        boardState.candidates[cellIndex] = new Set(boardState.candidates[cellIndex]);
-                        if (boardState.candidates[cellIndex].size > 0) {
-                            drawCandidates(cell, cellIndex);
-                        }
-                    }
-                    
-                    cell.addEventListener('click', () => handleCellClick(cell));
-                    sudokuGrid.appendChild(cell);
-                }
-            }
-        }
-         
-        function handleCellClick(cell) {
-            const value = cell.textContent;
-            if (value && value.length === 1 && value >= '1' && value <= '9') {
-                highlightMatchingNumbers(cell);
-                if (selectedCell) { selectedCell.classList.remove('selected'); selectedCell = null; }
-            } else {
-                selectCell(cell);
-            }
-        }
-         
+        viewModeScreen.addEventListener('click', (e) => { if (e.target.classList.contains('control-btn')) { playSound('click'); const viewMode = e.target.dataset.view; isEasySeeMode = (viewMode === 'easy-see'); if (backgroundMusic.paused) { startMusic(); } viewModeScreen.style.display = 'none'; const options = { difficulty: currentDifficulty }; if (seedForNextGame) { options.seed = stringToSeed(seedForNextGame.toLowerCase()); } startGame(options); seedForNextGame = null; } });
+        function startGame(options) { stopTitleAnimation(); titleScreen.style.display = 'none'; difficultyScreen.style.display = 'none'; seedScreen.style.display = 'none'; gameBoard.style.display = 'block'; if (isEasySeeMode) sudokuGrid.classList.add('easy-see-mode'); else sudokuGrid.classList.remove('easy-see-mode'); const difficulty = options.difficulty; const seed = options.seed || new Date().getTime(); currentDifficulty = difficulty; const generator = new SudokuGenerator(seed); boardState.puzzle = generator.createPuzzle(difficulty); boardState.playerBoard = boardState.puzzle.map(row => [...row]); boardState.candidates = Array(81).fill(0).map(() => new Set()); createGrid(boardState.puzzle); createControls(); lives = 3; mistakesMade = 0; revealsLeft = 3; updateLivesDisplay(); updateXPBar(); updateCompletedNumberButtons(); resetTimer(); startTimer(); if(isColorMode) updateColorMode(); saveActiveGame(); }
+        function createGrid(puzzle) { sudokuGrid.innerHTML = ''; for (let row = 0; row < 9; row++) { for (let col = 0; col < 9; col++) { const cell = document.createElement('div'); cell.classList.add('sudoku-cell'); cell.dataset.row = row; cell.dataset.col = col; const value = puzzle[row][col]; if (value !== 0) { cell.textContent = value; cell.classList.add('given'); } cell.addEventListener('click', () => handleCellClick(cell)); sudokuGrid.appendChild(cell); } } }
+        function recreateGridFromSave() { sudokuGrid.innerHTML = ''; for (let row = 0; row < 9; row++) { for (let col = 0; col < 9; col++) { const cell = document.createElement('div'); cell.classList.add('sudoku-cell'); cell.dataset.row = row; cell.dataset.col = col; const playerValue = boardState.playerBoard[row][col]; const puzzleValue = boardState.puzzle[row][col]; if (puzzleValue !== 0) { cell.textContent = puzzleValue; cell.classList.add('given'); } else if (playerValue !== 0) { cell.textContent = playerValue; cell.classList.add('correct'); } else { const cellIndex = row * 9 + col; boardState.candidates[cellIndex] = new Set(boardState.candidates[cellIndex]); if (boardState.candidates[cellIndex].size > 0) { drawCandidates(cell, cellIndex); } } cell.addEventListener('click', () => handleCellClick(cell)); sudokuGrid.appendChild(cell); } } }
+        function handleCellClick(cell) { const hasCandidateGrid = cell.querySelector('.candidate-grid'); const isGivenOrCorrect = cell.classList.contains('given') || cell.classList.contains('correct'); if (isGivenOrCorrect && !hasCandidateGrid) { highlightMatchingNumbers(cell); if (selectedCell) { selectedCell.classList.remove('selected'); selectedCell = null; } } else { selectCell(cell); } }
         function clearNumberHighlights() { document.querySelectorAll('.highlighted-number').forEach(c => c.classList.remove('highlighted-number')); }
         function highlightMatchingNumbers(targetCell) { clearNumberHighlights(); const number = targetCell.textContent; if (!number) return; document.querySelectorAll('.sudoku-cell').forEach(cell => { if (cell.textContent === number) { cell.classList.add('highlighted-number'); } }); }
-
-        function createControls() {
-            controls.innerHTML = '';
-            for (let i = 1; i <= 9; i++) {
-                const btn = document.createElement('button');
-                btn.classList.add('control-btn');
-                btn.textContent = i;
-                btn.addEventListener('click', () => inputNumber(i));
-                controls.appendChild(btn);
-            }
-            const candidateBtn = document.createElement('button');
-            candidateBtn.classList.add('control-btn'); candidateBtn.id = 'candidate-btn'; candidateBtn.textContent = 'Notes';
-            candidateBtn.addEventListener('click', toggleCandidateMode);
-            controls.appendChild(candidateBtn);
-
-            if (playerData.unlocked.features.includes('feature-reveal')) {
-                const revealBtn = document.createElement('button');
-                revealBtn.classList.add('control-btn'); revealBtn.id = 'reveal-btn';
-                revealBtn.textContent = `Reveal (${revealsLeft})`;
-                revealBtn.addEventListener('click', useReveal);
-                controls.appendChild(revealBtn);
-            }
-        }
-
+        function createControls() { controls.innerHTML = ''; for (let i = 1; i <= 9; i++) { const btn = document.createElement('button'); btn.classList.add('control-btn'); btn.textContent = i; btn.addEventListener('click', () => inputNumber(i)); controls.appendChild(btn); } const candidateBtn = document.createElement('button'); candidateBtn.classList.add('control-btn'); candidateBtn.id = 'candidate-btn'; candidateBtn.textContent = 'Notes'; candidateBtn.addEventListener('click', toggleCandidateMode); controls.appendChild(candidateBtn); if (playerData.unlocked.features.includes('feature-reveal')) { const revealBtn = document.createElement('button'); revealBtn.classList.add('control-btn'); revealBtn.id = 'reveal-btn'; revealBtn.textContent = `Reveal (${revealsLeft})`; revealBtn.addEventListener('click', useReveal); controls.appendChild(revealBtn); } }
         function selectCell(cell) { clearNumberHighlights(); if (selectedCell) { selectedCell.classList.remove('selected'); } selectedCell = cell; selectedCell.classList.add('selected'); }
-
-        function inputNumber(num) {
-            if (!selectedCell || selectedCell.classList.contains('given') || selectedCell.classList.contains('correct')) { playSound('click'); return; }
-            
-            const row = parseInt(selectedCell.dataset.row);
-            const col = parseInt(selectedCell.dataset.col);
-            const cellIndex = row * 9 + col;
-
-            if (isCandidateMode) {
-                playSound('click');
-                selectedCell.innerHTML = ''; 
-                if (boardState.candidates[cellIndex].has(num)) boardState.candidates[cellIndex].delete(num);
-                else boardState.candidates[cellIndex].add(num);
-                drawCandidates(selectedCell, cellIndex);
-            } else {
-                if (boardState.solution[row][col] === num) {
-                    selectedCell.classList.add('glow-animation');
-                    setTimeout(() => selectedCell.classList.remove('glow-animation'), 700);
-                    createRipple(selectedCell);
-                    selectedCell.innerHTML = '';
-                    selectedCell.textContent = num;
-                    selectedCell.classList.add('correct');
-                    boardState.playerBoard[row][col] = num;
-                    playSound('correct');
-                    addXP(10);
-                    highlightMatchingNumbers(selectedCell); 
-                    checkCompletion(row, col, num);
-                    if (isColorMode) updateColorMode();
-                    selectedCell.classList.remove('selected');
-                    selectedCell = null;
-                } else {
-                    playSound('error');
-                    lives--;
-                    updateLivesDisplay();
-                    selectedCell.classList.add('error');
-                    setTimeout(() => { selectedCell.classList.remove('error'); }, 500);
-                    if (lives <= 0) { handleGameOver(); }
-                }
-            }
-            saveActiveGame();
-        }
-         
+        function inputNumber(num) { if (!selectedCell || selectedCell.classList.contains('given') || selectedCell.classList.contains('correct')) { playSound('click'); return; } const row = parseInt(selectedCell.dataset.row); const col = parseInt(selectedCell.dataset.col); const cellIndex = row * 9 + col; if (isCandidateMode) { playSound('click'); selectedCell.innerHTML = ''; if (boardState.candidates[cellIndex].has(num)) boardState.candidates[cellIndex].delete(num); else boardState.candidates[cellIndex].add(num); drawCandidates(selectedCell, cellIndex); if (!playerData.achievements.stats.notesUsed) { playerData.achievements.stats.notesUsed = true; unlockAchievement('noteTaker'); } } else { if (boardState.solution[row][col] === num) { selectedCell.classList.add('glow-animation'); setTimeout(() => selectedCell.classList.remove('glow-animation'), 700); createRipple(selectedCell); selectedCell.innerHTML = ''; selectedCell.textContent = num; selectedCell.classList.add('correct'); boardState.playerBoard[row][col] = num; playSound('correct'); addXP(10); highlightMatchingNumbers(selectedCell); checkCompletion(row, col, num); if (isColorMode) updateColorMode(); selectedCell.classList.remove('selected'); selectedCell = null; } else { playSound('error'); lives--; mistakesMade++; updateLivesDisplay(); selectedCell.classList.add('error'); setTimeout(() => { selectedCell.classList.remove('error'); }, 500); if (lives <= 0) { handleGameOver(); } } } saveActiveGame(); }
         function createRipple(cell) { const ripple = document.createElement("span"); ripple.classList.add("ripple"); cell.appendChild(ripple); setTimeout(() => ripple.remove(), 600); }
-
-        function drawCandidates(cell, cellIndex) {
-            let candidateGrid = cell.querySelector('.candidate-grid');
-            if (!candidateGrid) { candidateGrid = document.createElement('div'); candidateGrid.className = 'candidate-grid'; for (let i = 1; i <= 9; i++) { const candidateCell = document.createElement('div'); candidateCell.className = 'candidate-cell'; candidateCell.dataset.num = i; candidateGrid.appendChild(candidateCell); } cell.appendChild(candidateGrid); }
-            const candidates = boardState.candidates[cellIndex];
-            candidateGrid.querySelectorAll('.candidate-cell').forEach(c => { const num = parseInt(c.dataset.num); c.textContent = candidates.has(num) ? num : ''; });
-        }
-
+        function drawCandidates(cell, cellIndex) { let candidateGrid = cell.querySelector('.candidate-grid'); if (!candidateGrid) { candidateGrid = document.createElement('div'); candidateGrid.className = 'candidate-grid'; for (let i = 1; i <= 9; i++) { const candidateCell = document.createElement('div'); candidateCell.className = 'candidate-cell'; candidateCell.dataset.num = i; candidateGrid.appendChild(candidateCell); } cell.appendChild(candidateGrid); } const candidates = boardState.candidates[cellIndex]; candidateGrid.querySelectorAll('.candidate-cell').forEach(c => { const num = parseInt(c.dataset.num); c.textContent = candidates.has(num) ? num : ''; }); }
         function toggleCandidateMode() { playSound('click'); isCandidateMode = !isCandidateMode; document.getElementById('candidate-btn').classList.toggle('active', isCandidateMode); }
-
         function showCompletionMessage(text) { completionMessage.textContent = text; completionMessage.classList.add('show'); setTimeout(() => { completionMessage.classList.remove('show'); }, 2000); }
         function animateCompletion(cells) { playSound('pop', 'C5'); cells.forEach((cell, index) => { setTimeout(() => { cell.classList.add('light-up-animation'); }, index * 50); }); setTimeout(() => { cells.forEach(cell => cell.classList.remove('light-up-animation')); }, cells.length * 50 + 1000); }
-
-        function updateCompletedNumberButtons() {
-            for (let num = 1; num <= 9; num++) {
-                let count = 0;
-                for (let r = 0; r < 9; r++) { for (let c = 0; c < 9; c++) { if (boardState.playerBoard[r][c] === num) count++; } }
-                const btn = Array.from(controls.querySelectorAll('.control-btn')).find(b => parseInt(b.textContent) === num);
-                if (btn) {
-                    if (count === 9) btn.classList.add('disabled');
-                    else btn.classList.remove('disabled');
-                }
-            }
-        }
-         
-        function recordDailyCompletion() {
-            const today = new Date();
-            const dateString = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
-            let completions = JSON.parse(localStorage.getItem('sudokuDailyCompletions')) || [];
-            if (!completions.includes(dateString)) {
-                completions.push(dateString);
-                localStorage.setItem('sudokuDailyCompletions', JSON.stringify(completions));
-                saveData();
-            }
-        }
-
-        function checkCompletion(row, col, num) {
-            updateCompletedNumberButtons();
-            let isGameWon = boardState.playerBoard.every(r => r.every(cell => cell !== 0));
-
-            if (isGameWon) {
-                stopTimer();
-                const finalTime = secondsElapsed;
-                winTimeMessage.textContent = `Your time: ${formatTime(finalTime)}`;
-                saveBestTime(finalTime, currentDifficulty);
-                if (isDailyPuzzle) { recordDailyCompletion(); }
-                playSound('win');
-                addXP(100);
-                winModal.style.display = 'flex';
-                localStorage.removeItem('sudokuActiveGame');
-                return;
-            }
-
-            const btn = Array.from(controls.querySelectorAll('.control-btn')).find(b => parseInt(b.textContent) === num && !b.id);
-            if (btn && btn.classList.contains('disabled') && !btn.classList.contains('animation-done')) {
-                showCompletionMessage(`All ${num}s Done!`);
-                const numCells = Array.from(document.querySelectorAll(`.sudoku-cell`)).filter(c => (c.textContent == num));
-                animateCompletion(numCells);
-                btn.classList.add('animation-done');
-            }
-
-            if (boardState.playerBoard[row].every(val => val !== 0)) { showCompletionMessage('Row Complete!'); const rowCells = []; for (let c = 0; c < 9; c++) rowCells.push(getCell(row, c)); animateCompletion(rowCells); }
-            if (boardState.playerBoard.every(r => r[col] !== 0)) { showCompletionMessage('Column Complete!'); const colCells = []; for (let r = 0; r < 9; r++) colCells.push(getCell(r, col)); animateCompletion(colCells); }
-            const startRow = Math.floor(row / 3) * 3, startCol = Math.floor(col / 3) * 3; let isGridComplete = true; for (let r = 0; r < 3; r++) { for (let c = 0; c < 3; c++) { if (boardState.playerBoard[startRow + r][startCol + c] === 0) isGridComplete = false; } }
-            if (isGridComplete) { showCompletionMessage('Grid Complete!'); const gridCells = []; for (let r = 0; r < 3; r++) { for (let c = 0; c < 3; c++) gridCells.push(getCell(startRow + r, startCol + c)); } animateCompletion(gridCells); }
-        }
-         
-        function updateColorMode() {
-            if (!isColorMode) { document.querySelectorAll('.color-mode-one').forEach(c => c.classList.remove('color-mode-one')); return; }
-            for (let r = 0; r < 9; r++) {
-                for (let c = 0; c < 9; c++) {
-                    const cell = getCell(r, c);
-                    cell.classList.remove('color-mode-one');
-                    if (boardState.playerBoard[r][c] === 0) {
-                        let possible = [];
-                        for (let n = 1; n <= 9; n++) { if (isValidPlacement(boardState.playerBoard, r, c, n)) { possible.push(n); } }
-                        if (possible.length === 1) cell.classList.add('color-mode-one');
-                    }
-                }
-            }
-        }
-         
+        function updateCompletedNumberButtons() { for (let num = 1; num <= 9; num++) { let count = 0; for (let r = 0; r < 9; r++) { for (let c = 0; c < 9; c++) { if (boardState.playerBoard[r][c] === num) count++; } } const btn = Array.from(controls.querySelectorAll('.control-btn')).find(b => parseInt(b.textContent) === num); if (btn) { if (count === 9) btn.classList.add('disabled'); else btn.classList.remove('disabled'); } } }
+        function recordDailyCompletion() { const today = new Date(); const dateString = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`; let completions = JSON.parse(localStorage.getItem('sudokuDailyCompletions')) || []; if (!completions.includes(dateString)) { completions.push(dateString); localStorage.setItem('sudokuDailyCompletions', JSON.stringify(completions)); saveData(); } if (completions.length >= 7) unlockAchievement('weekender'); if (completions.length >= 30) unlockAchievement('dedicated'); }
+        function checkWinAchievements() { playerData.achievements.stats.gamesWon = (playerData.achievements.stats.gamesWon || 0) + 1; unlockAchievement('firstSteps'); if(currentDifficulty === 'easy' && secondsElapsed < 300) { unlockAchievement('quickThinker'); } if(mistakesMade === 0) { unlockAchievement('perfectionist'); playerData.achievements.stats.perfectGames = (playerData.achievements.stats.perfectGames || 0) + 1; if(currentDifficulty === 'hard' && playerData.achievements.stats.perfectGames >= 10) { unlockAchievement('sudokuMaster'); } } if(playerData.achievements.stats.gamesWon >= 10) { unlockAchievement('persistent'); } if(currentDifficulty === 'hard') { unlockAchievement('brainiac'); } }
+        function checkCompletion(row, col, num) { updateCompletedNumberButtons(); let isGameWon = boardState.playerBoard.every(r => r.every(cell => cell !== 0)); if (isGameWon) { stopTimer(); const finalTime = secondsElapsed; winTimeMessage.textContent = `Your time: ${formatTime(finalTime)}`; saveBestTime(finalTime, currentDifficulty); if (isDailyPuzzle) { recordDailyCompletion(); } playSound('win'); addXP(100); checkWinAchievements(); winModal.style.display = 'flex'; localStorage.removeItem('sudokuActiveGame'); saveData(); return; } const btn = Array.from(controls.querySelectorAll('.control-btn')).find(b => parseInt(b.textContent) === num && !b.id); if (btn && btn.classList.contains('disabled') && !btn.classList.contains('animation-done')) { showCompletionMessage(`All ${num}s Done!`); const numCells = Array.from(document.querySelectorAll(`.sudoku-cell`)).filter(c => (c.textContent == num)); animateCompletion(numCells); btn.classList.add('animation-done'); } if (boardState.playerBoard[row].every(val => val !== 0)) { showCompletionMessage('Row Complete!'); const rowCells = []; for (let c = 0; c < 9; c++) rowCells.push(getCell(row, c)); animateCompletion(rowCells); } if (boardState.playerBoard.every(r => r[col] !== 0)) { showCompletionMessage('Column Complete!'); const colCells = []; for (let r = 0; r < 9; r++) colCells.push(getCell(r, col)); animateCompletion(colCells); } const startRow = Math.floor(row / 3) * 3, startCol = Math.floor(col / 3) * 3; let isGridComplete = true; for (let r = 0; r < 3; r++) { for (let c = 0; c < 3; c++) { if (boardState.playerBoard[startRow + r][startCol + c] === 0) isGridComplete = false; } } if (isGridComplete) { showCompletionMessage('Grid Complete!'); const gridCells = []; for (let r = 0; r < 3; r++) { for (let c = 0; c < 3; c++) gridCells.push(getCell(startRow + r, startCol + c)); } animateCompletion(gridCells); } }
+        function updateColorMode() { if (!isColorMode) { document.querySelectorAll('.color-mode-one').forEach(c => c.classList.remove('color-mode-one')); return; } for (let r = 0; r < 9; r++) { for (let c = 0; c < 9; c++) { const cell = getCell(r, c); cell.classList.remove('color-mode-one'); if (boardState.playerBoard[r][c] === 0) { let possible = []; for (let n = 1; n <= 9; n++) { if (isValidPlacement(boardState.playerBoard, r, c, n)) { possible.push(n); } } if (possible.length === 1) cell.classList.add('color-mode-one'); } } } }
         function isValidPlacement(board, row, col, num) { for (let i = 0; i < 9; i++) { if (board[row][i] === num || board[i][col] === num) return false; } const startRow = Math.floor(row / 3) * 3, startCol = Math.floor(col / 3) * 3; for (let i = 0; i < 3; i++) { for (let j = 0; j < 3; j++) { if (board[startRow + i][startCol + j] === num) return false; } } return true; }
         function getCell(row, col) { return sudokuGrid.querySelector(`[data-row='${row}'][data-col='${col}']`); }
-         
         function handleGameOver() { stopTimer(); gameOverModal.style.display = 'flex'; localStorage.removeItem('sudokuActiveGame'); }
         function updateLivesDisplay() { livesContainer.textContent = '♥ '.repeat(lives); }
-         
-        function displayCalendar() {
-            calendarGrid.innerHTML = '';
-            const year = calendarDate.getFullYear(); const month = calendarDate.getMonth(); const today = new Date();
-            calendarMonthYear.textContent = `${calendarDate.toLocaleString('default', { month: 'long' })} ${year}`;
-            const firstDayOfMonth = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const completions = JSON.parse(localStorage.getItem('sudokuDailyCompletions')) || [];
-            const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            weekdays.forEach(day => { const weekdayCell = document.createElement('div'); weekdayCell.classList.add('calendar-weekday'); weekdayCell.textContent = day; calendarGrid.appendChild(weekdayCell); });
-            for (let i = 0; i < firstDayOfMonth; i++) { const emptyCell = document.createElement('div'); emptyCell.classList.add('calendar-day', 'empty'); calendarGrid.appendChild(emptyCell); }
-            for (let day = 1; day <= daysInMonth; day++) { const dayCell = document.createElement('div'); dayCell.classList.add('calendar-day'); dayCell.textContent = day; const dateString = `${year}-${month + 1}-${day}`; if (completions.includes(dateString)) { dayCell.innerHTML = `<span>${day}</span><span class="medal">🥇</span>`; } if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) { dayCell.classList.add('today'); } calendarGrid.appendChild(dayCell); }
-            calendarModal.style.display = 'flex';
-        }
-
-        // --- Event Listeners ---
+        function displayCalendar() { calendarGrid.innerHTML = ''; const year = calendarDate.getFullYear(); const month = calendarDate.getMonth(); const today = new Date(); calendarMonthYear.textContent = `${calendarDate.toLocaleString('default', { month: 'long' })} ${year}`; const firstDayOfMonth = new Date(year, month, 1).getDay(); const daysInMonth = new Date(year, month + 1, 0).getDate(); const completions = JSON.parse(localStorage.getItem('sudokuDailyCompletions')) || []; const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; weekdays.forEach(day => { const weekdayCell = document.createElement('div'); weekdayCell.classList.add('calendar-weekday'); weekdayCell.textContent = day; calendarGrid.appendChild(weekdayCell); }); for (let i = 0; i < firstDayOfMonth; i++) { const emptyCell = document.createElement('div'); emptyCell.classList.add('calendar-day', 'empty'); calendarGrid.appendChild(emptyCell); } for (let day = 1; day <= daysInMonth; day++) { const dayCell = document.createElement('div'); dayCell.classList.add('calendar-day'); dayCell.textContent = day; const dateString = `${year}-${month + 1}-${day}`; if (completions.includes(dateString)) { dayCell.innerHTML = `<span>${day}</span><span class="medal">🥇</span>`; } if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) { dayCell.classList.add('today'); } calendarGrid.appendChild(dayCell); } calendarModal.style.display = 'flex'; }
+        
         window.addEventListener('keydown', (e) => { if (gameBoard.style.display === 'block' && e.key >= '1' && e.key <= '9') { inputNumber(parseInt(e.key)); } });
         window.addEventListener('beforeunload', saveActiveGame);
-
-        muteBtn.addEventListener('click', () => { isMuted = !isMuted; muteBtn.textContent = isMuted ? '🔇' : '🔊'; unlockClickCounter++; if (unlockClickCounter === 8) { unlockAll(); } saveData(); });
+        backgroundMusic.addEventListener('ended', playNextTrack);
+        muteBtn.addEventListener('click', () => { isMuted = !isMuted; muteBtn.textContent = isMuted ? '🔇' : '🔊'; backgroundMusic.muted = isMuted; unlockClickCounter++; if (unlockClickCounter === 8) { unlockAll(); } saveData(); });
         fullscreenBtn.addEventListener('click', () => { unlockClickCounter = 0; if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => console.error(err)); } else { document.exitFullscreen(); } });
         optionsBtn.addEventListener('click', () => { unlockClickCounter = 0; buildOptionsModal(); optionsModal.style.display = 'flex'; playSound('click'); });
         restartGameBtn.addEventListener('click', () => { resetGame(); playSound('click'); });
@@ -988,91 +519,41 @@
         bestTimesBtn.addEventListener('click', () => { playSound('click'); displayBestTimes(); });
         closeBestTimesBtn.addEventListener('click', () => { playSound('click'); bestTimesModal.style.display = 'none'; });
         calendarBtn.addEventListener('click', () => { playSound('click'); calendarDate = new Date(); displayCalendar(); });
-        prevMonthBtn.addEventListener('click', () => { playSound('click'); calendarDate.setMonth(calendarDate.getMonth() - 1); displayCalendar(); });
+        prevMonthBtn.addEventListener('click', () => { playSound('click'); calendarDate.setMonth(calendarDate.getMonth() - 1); unlockAchievement('curiosity'); displayCalendar(); });
         nextMonthBtn.addEventListener('click', () => { playSound('click'); calendarDate.setMonth(calendarDate.getMonth() + 1); displayCalendar(); });
         closeCalendarBtn.addEventListener('click', () => { playSound('click'); calendarModal.style.display = 'none'; });
-
-        // --- XP, Leveling & Unlocks ---
-        function addXP(amount) { playerData.xp += amount; if (playerData.xp >= playerData.xpToNextLevel) { levelUp(); } updateXPBar(); saveData(); }
-        function levelUp() {
-            playerData.level++; playerData.xp -= playerData.xpToNextLevel; playerData.xpToNextLevel = Math.floor(playerData.xpToNextLevel * 1.2); playSound('levelUp');
-            const unlock = unlockables[playerData.level];
-            if (unlock) {
-                if (unlock.type === 'background') playerData.unlocked.backgrounds.push(unlock.id);
-                if (unlock.type === 'font') playerData.unlocked.fonts.push(unlock.id);
-                if (unlock.type === 'theme') playerData.unlocked.themes.push(unlock.id);
-                if (unlock.type === 'board') playerData.unlocked.boards.push(unlock.id);
-                if (unlock.type === 'feature') playerData.unlocked.features.push(unlock.id);
-                if (unlock.type === 'sound') playerData.unlocked.sounds.push(unlock.id);
-                showUnlockModal(unlock);
-            } else {
-                showUnlockModal({type: 'level', name: `Level ${playerData.level}`});
-            }
-            saveData();
-        }
-         
-        function unlockAll() { Object.values(unlockables).forEach(unlock => { if (unlock.type === 'background' && !playerData.unlocked.backgrounds.includes(unlock.id)) playerData.unlocked.backgrounds.push(unlock.id); if (unlock.type === 'font' && !playerData.unlocked.fonts.includes(unlock.id)) playerData.unlocked.fonts.push(unlock.id); if (unlock.type === 'theme' && !playerData.unlocked.themes.includes(unlock.id)) playerData.unlocked.themes.push(unlock.id); if (unlock.type === 'board' && !playerData.unlocked.boards.includes(unlock.id)) playerData.unlocked.boards.push(unlock.id); if (unlock.type === 'feature' && !playerData.unlocked.features.includes(unlock.id)) playerData.unlocked.features.push(unlock.id); if (unlock.type === 'sound' && !playerData.unlocked.sounds.includes(unlock.id)) playerData.unlocked.sounds.push(unlock.id); }); playerData.level = 52; alert('Developer Mode: All items unlocked!'); unlockClickCounter = 0; saveData(); }
-
-        function showUnlockModal(unlock) {
-            let message = `<h2>Level Up! You are now Level ${playerData.level}!</h2>`;
-            if (unlock.type !== 'level') message += `<p>You've unlocked: <strong>${unlock.name}</strong>!</p>`;
-            const buttonContainer = document.createElement('div');
-            if (['background', 'font', 'theme', 'board', 'sound'].includes(unlock.type)) {
-                const applyBtn = document.createElement('button');
-                applyBtn.className = 'control-btn';
-                applyBtn.textContent = 'Apply Now';
-                applyBtn.onclick = () => {
-                    if (unlock.type === 'background') applyBackground(unlock.id); if (unlock.type === 'font') applyFont(unlock.id); if (unlock.type === 'theme') applyTheme(unlock.id); if (unlock.type === 'board') applyBoard(unlock.id); if (unlock.type === 'sound') applySoundPack(unlock.id);
-                    unlockModal.style.display = 'none';
-                };
-                buttonContainer.appendChild(applyBtn);
-            }
-            const closeBtn = document.createElement('button'); closeBtn.className = 'control-btn'; closeBtn.textContent = 'Awesome!'; closeBtn.onclick = () => { unlockModal.style.display = 'none' }; buttonContainer.appendChild(closeBtn);
-            unlockContent.innerHTML = message; unlockContent.appendChild(buttonContainer); unlockModal.style.display = 'flex';
-        }
-
-        function updateXPBar() { const percentage = Math.min((playerData.xp / playerData.xpToNextLevel) * 100, 100); xpBar.style.width = `${percentage}%`; xpBar.textContent = `Level ${playerData.level}`; }
+        closeAchievementsBtn.addEventListener('click', () => { playSound('click'); achievementsModal.style.display = 'none'; });
         
-        function goToTitleScreen() {
-            playSound('click');
-            optionsModal.style.display = 'none';
-            resetGame();
-        }
-
-        // --- ✨ ADDED: Functions to handle resetting all player progress ---
-        function resetAllProgress() {
-            playSound('error');
-            localStorage.removeItem('sudokuUserData');
-            localStorage.removeItem('sudokuActiveGame');
-            alert('All progress has been reset. The page will now reload.');
-            location.reload();
-        }
-
-        function promptResetAllProgress() {
-            playSound('click');
-            if (confirm("Are you sure you want to reset ALL your progress? This includes your level, unlocks, and best times.")) {
-                if (confirm("This action is permanent and cannot be undone. Are you absolutely sure?")) {
-                    resetAllProgress();
-                }
-            }
-        }
-
+        function addXP(amount) { playerData.xp += amount; if (playerData.xp >= playerData.xpToNextLevel) { levelUp(); } updateXPBar(); saveData(); }
+        function levelUp() { playerData.level++; playerData.xp -= playerData.xpToNextLevel; playerData.xpToNextLevel = Math.floor(playerData.xpToNextLevel * 1.2); playSound('levelUp'); const unlock = unlockables[playerData.level]; if (unlock) { if (unlock.type === 'background') playerData.unlocked.backgrounds.push(unlock.id); if (unlock.type === 'font') playerData.unlocked.fonts.push(unlock.id); if (unlock.type === 'theme') playerData.unlocked.themes.push(unlock.id); if (unlock.type === 'board') playerData.unlocked.boards.push(unlock.id); if (unlock.type === 'feature') playerData.unlocked.features.push(unlock.id); if (unlock.type === 'sound') playerData.unlocked.sounds.push(unlock.id); showUnlockModal(unlock); } else { showUnlockModal({type: 'level', name: `Level ${playerData.level}`}); } saveData(); }
+        function unlockAll() { Object.values(unlockables).forEach(unlock => { if (unlock.type === 'background' && !playerData.unlocked.backgrounds.includes(unlock.id)) playerData.unlocked.backgrounds.push(unlock.id); if (unlock.type === 'font' && !playerData.unlocked.fonts.includes(unlock.id)) playerData.unlocked.fonts.push(unlock.id); if (unlock.type === 'theme' && !playerData.unlocked.themes.includes(unlock.id)) playerData.unlocked.themes.push(unlock.id); if (unlock.type === 'board' && !playerData.unlocked.boards.includes(unlock.id)) playerData.unlocked.boards.push(unlock.id); if (unlock.type === 'feature' && !playerData.unlocked.features.includes(unlock.id)) playerData.unlocked.features.push(unlock.id); if (unlock.type === 'sound' && !playerData.unlocked.sounds.includes(unlock.id)) playerData.unlocked.sounds.push(unlock.id); }); playerData.level = 52; alert('Developer Mode: All items unlocked!'); unlockClickCounter = 0; saveData(); }
+        function showUnlockModal(unlock) { let message = `<h2>Level Up! You are now Level ${playerData.level}!</h2>`; if (unlock.type !== 'level') message += `<p>You've unlocked: <strong>${unlock.name}</strong>!</p>`; const buttonContainer = document.createElement('div'); if (['background', 'font', 'theme', 'board', 'sound'].includes(unlock.type)) { const applyBtn = document.createElement('button'); applyBtn.className = 'control-btn'; applyBtn.textContent = 'Apply Now'; applyBtn.onclick = () => { if (unlock.type === 'background') applyBackground(unlock.id); if (unlock.type === 'font') applyFont(unlock.id); if (unlock.type === 'theme') applyTheme(unlock.id); if (unlock.type === 'board') applyBoard(unlock.id); if (unlock.type === 'sound') applySoundPack(unlock.id); unlockModal.style.display = 'none'; }; buttonContainer.appendChild(applyBtn); } const closeBtn = document.createElement('button'); closeBtn.className = 'control-btn'; closeBtn.textContent = 'Awesome!'; closeBtn.onclick = () => { unlockModal.style.display = 'none' }; buttonContainer.appendChild(closeBtn); unlockContent.innerHTML = message; unlockContent.appendChild(buttonContainer); unlockModal.style.display = 'flex'; }
+        function updateXPBar() { const percentage = Math.min((playerData.xp / playerData.xpToNextLevel) * 100, 100); xpBar.style.width = `${percentage}%`; xpBar.textContent = `Level ${playerData.level}`; }
+        function goToTitleScreen() { playSound('click'); optionsModal.style.display = 'none'; resetGame(); }
+        function resetAllProgress() { playSound('error'); localStorage.removeItem('sudokuUserData'); localStorage.removeItem('sudokuActiveGame'); alert('All progress has been reset. The page will now reload.'); location.reload(); }
+        function promptResetAllProgress() { playSound('click'); if (confirm("Are you sure you want to reset ALL your progress? This includes your level, unlocks, achievements, and best times.")) { if (confirm("This action is permanent and cannot be undone. Are you absolutely sure?")) { resetAllProgress(); } } }
+        function showAchievementNotification(id) { const ach = achievements[id]; achievementNotification.innerHTML = `<h4>🏆 Achievement Unlocked!</h4><p>${ach.name} (+<span class="points">${ach.points}</span> points)</p>`; achievementNotification.classList.add('show'); playAchievementJingle(); setTimeout(() => { achievementNotification.classList.remove('show'); }, 4000); }
+        function unlockAchievement(id) { if (playerData.achievements.unlocked.includes(id)) { return; } playerData.achievements.unlocked.push(id); playerData.achievements.totalPoints += achievements[id].points; achievements[id].unlocked = true; showAchievementNotification(id); saveData(); }
+        function displayAchievements() { achievementsList.innerHTML = ''; totalAchievementPoints.textContent = playerData.achievements.totalPoints; Object.keys(achievements).forEach(id => { const ach = achievements[id]; const isUnlocked = playerData.achievements.unlocked.includes(id); const item = document.createElement('div'); item.className = `achievement-item ${isUnlocked ? 'unlocked' : 'locked'}`; let description = ach.desc; if (ach.secret && !isUnlocked) { description = 'Unlock this secret achievement to see its description.'; } item.innerHTML = `<div class="achievement-icon">${ach.icon}</div><div class="achievement-details"><h4>${ach.name}</h4><p>${description}</p></div><div class="achievement-points">+${ach.points}</div>`; achievementsList.appendChild(item); }); achievementsModal.style.display = 'flex'; }
         function buildOptionsModal() {
-            let content = `<h2>Options</h2><button class="control-btn" onclick="goToTitleScreen()" style="margin-bottom: 15px; grid-column: 1 / -1;">Title Screen</button><div class="options-grid">`;
+            let content = `<h2>Options</h2>
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; grid-column: 1 / -1;"><button class="control-btn" onclick="goToTitleScreen()">Title Screen</button><button class="control-btn" onclick="displayAchievements()">Achievements</button></div>
+            <div class="options-grid">`;
+            content += `<h3>Music Controls</h3>`;
+            content += `<div style="grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; justify-content: center;">
+                            <button class="control-btn" onclick="playPrevTrack()">⏮️</button>
+                            <input type="range" min="0" max="1" step="0.01" value="${backgroundMusic.volume}" oninput="setMusicVolume(this.value)" onchange="saveData()" id="music-volume-slider" style="flex-grow: 1;">
+                            <button class="control-btn" onclick="playNextTrackWithSound()">⏭️</button>
+                        </div>`;
             content += `<h3>Sound Packs</h3>`; playerData.unlocked.sounds.forEach(soundId => { const soundName = itemManifest[soundId]?.name || 'Unknown'; const activeClass = currentSoundPack === soundId ? 'active' : ''; content += `<button class="control-btn ${activeClass}" onclick="applySoundPack('${soundId}')">${soundName}</button>`; });
             content += `<h3>Backgrounds</h3>`; playerData.unlocked.backgrounds.forEach(bgId => { const bgName = itemManifest[bgId]?.name || 'Unknown'; content += `<button class="control-btn" onclick="applyBackground('${bgId}')">${bgName}</button>`; });
             content += `<h3>Board Styles</h3>`; playerData.unlocked.boards.forEach(boardId => { const boardName = itemManifest[boardId]?.name || 'Unknown'; content += `<button class="control-btn" onclick="applyBoard('${boardId}')">${boardName}</button>`; });
             content += `<h3>Color Themes</h3>`; playerData.unlocked.themes.forEach(themeId => { const themeName = itemManifest[themeId]?.name || 'Unknown'; content += `<button class="control-btn" onclick="applyTheme('${themeId}')">${themeName}</button>`; });
             content += `<h3>Fonts</h3>`; playerData.unlocked.fonts.forEach(fontId => { const fontName = itemManifest[fontId]?.name || 'Unknown'; content += `<button class="control-btn" onclick="applyFont('${fontId}')">${fontName}</button>`; });
             if (playerData.unlocked.features.length > 0) { content += `<h3>Features</h3>`; if (playerData.unlocked.features.includes('feature-color-mode')) { content += `<button class="control-btn" id="color-mode-btn" onclick="toggleColorMode()">Color Mode: ${isColorMode ? 'ON' : 'OFF'}</button>`; } }
-            // ✨ ADDED: "Reset All Progress" button and "Close" button
-            content += `</div><div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
-                <button class="control-btn" id="reset-progress-btn" onclick="promptResetAllProgress()" style="background-color: var(--error-color); color: white;">Reset All Progress</button>
-                <button class="control-btn" onclick="optionsModal.style.display='none';">Close</button>
-            </div>`;
+            content += `</div><div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;"><button class="control-btn" id="reset-progress-btn" onclick="promptResetAllProgress()" style="background-color: var(--error-color); color: white;">Reset All Progress</button><button class="control-btn" onclick="optionsModal.style.display='none';">Close</button></div>`;
             optionsContent.innerHTML = content;
         }
-         
         function clearJsBackgrounds() { const existing = animatedBg.querySelectorAll('.firefly, .rain-drop, .leaf, .ripple-bg, .bubble, .snow-flake, .lantern'); existing.forEach(e => e.remove()); }
         function createFireflies() { clearJsBackgrounds(); animatedBg.style.background = '#0d1a26'; for (let i = 0; i < 20; i++) { const firefly = document.createElement('div'); firefly.className = 'firefly'; firefly.style.left = `${Math.random() * 100}%`; firefly.style.top = `${Math.random() * 100}%`; firefly.style.setProperty('--x-end', `${Math.random() * 200 - 100}px`); firefly.style.setProperty('--y-end', `${Math.random() * 200 - 100}px`); firefly.style.animationDelay = `${Math.random() * 20}s`; animatedBg.appendChild(firefly); } }
         function createRain() { clearJsBackgrounds(); animatedBg.style.background = '#a3d8f4'; for (let i = 0; i < 50; i++) { const drop = document.createElement('div'); drop.className = 'rain-drop'; drop.style.left = `${Math.random() * 100}%`; drop.style.animationDuration = `${Math.random() * 0.5 + 0.5}s`; drop.style.animationDelay = `${Math.random() * 5}s`; animatedBg.appendChild(drop); } }
@@ -1081,27 +562,15 @@
         function createBubbles() { clearJsBackgrounds(); animatedBg.style.background = '#005C97'; for (let i = 0; i < 40; i++) { const bubble = document.createElement('div'); bubble.className = 'bubble'; bubble.style.left = `${Math.random() * 100}%`; bubble.style.width = `${Math.random() * 60 + 20}px`; bubble.style.height = bubble.style.width; bubble.style.animationDuration = `${Math.random() * 10 + 8}s`; bubble.style.animationDelay = `${Math.random() * 5}s`; animatedBg.appendChild(bubble); } }
         function createSnow() { clearJsBackgrounds(); animatedBg.style.background = '#4a6fa5'; for (let i = 0; i < 100; i++) { const flake = document.createElement('div'); flake.className = 'snow-flake'; flake.style.left = `${Math.random() * 100}%`; flake.style.opacity = Math.random(); flake.style.width = `${Math.random() * 5 + 2}px`; flake.style.height = flake.style.width; flake.style.animationDuration = `${Math.random() * 10 + 5}s`; flake.style.animationDelay = `${Math.random() * 10}s`; animatedBg.appendChild(flake); } }
         function createLanterns() { clearJsBackgrounds(); animatedBg.style.background = '#1c1c3c'; for (let i = 0; i < 15; i++) { const lantern = document.createElement('div'); lantern.className = 'lantern'; lantern.style.left = `${Math.random() * 100}%`; lantern.style.animationDuration = `${Math.random() * 20 + 15}s`; lantern.style.animationDelay = `${Math.random() * 15}s`; animatedBg.appendChild(lantern); } }
-        
-        function applyBackground(bgId) { clearJsBackgrounds(); const bg = backgroundStyles[bgId]; animatedBg.style.animation = 'none'; animatedBg.style.backgroundSize = bg.size || 'auto'; if (bg.type === 'css') { animatedBg.style.background = bg.style; animatedBg.style.animation = bg.animation; } else if (bg.type === 'js') { window[bg.function](); } playSound('click'); document.body.dataset.background = bgId; saveData(); }
-        function applyBoard(boardId) { sudokuGrid.className = 'sudoku-grid'; if (isEasySeeMode) sudokuGrid.classList.add('easy-see-mode'); if (boardId !== 'board-default') { sudokuGrid.classList.add(boardId); } playSound('click'); sudokuGrid.dataset.board = boardId; saveData(); }
-        function applyTheme(themeId) { const theme = themeStyles[themeId]; for (const [key, value] of Object.entries(theme)) { root.style.setProperty(key, value); } playSound('click'); document.body.dataset.theme = themeId; saveData(); }
-        function applyFont(fontId) { document.body.style.fontFamily = fontStyles[fontId]; playSound('click'); document.body.dataset.font = fontId; saveData(); }
-        
+        function applyBackground(bgId, isInitialLoad = false) { clearJsBackgrounds(); const bg = backgroundStyles[bgId]; animatedBg.style.animation = 'none'; animatedBg.style.backgroundSize = bg.size || 'auto'; if (bg.type === 'css') { animatedBg.style.background = bg.style; animatedBg.style.animation = bg.animation; } else if (bg.type === 'js') { window[bg.function](); } if(!isInitialLoad) playSound('click'); document.body.dataset.background = bgId; saveData(); }
+        function applyBoard(boardId, isInitialLoad = false) { sudokuGrid.className = 'sudoku-grid'; if (isEasySeeMode) sudokuGrid.classList.add('easy-see-mode'); if (boardId !== 'board-default') { sudokuGrid.classList.add(boardId); } if(!isInitialLoad) playSound('click'); sudokuGrid.dataset.board = boardId; saveData(); }
+        function applyTheme(themeId, isInitialLoad = false) { const theme = themeStyles[themeId]; for (const [key, value] of Object.entries(theme)) { root.style.setProperty(key, value); } if(!isInitialLoad) playSound('click'); document.body.dataset.theme = themeId; saveData(); }
+        function applyFont(fontId, isInitialLoad = false) { document.body.style.fontFamily = fontStyles[fontId]; if(!isInitialLoad) playSound('click'); document.body.dataset.font = fontId; saveData(); }
         function toggleColorMode() { isColorMode = !isColorMode; const colorModeBtn = document.getElementById('color-mode-btn'); if (colorModeBtn) { colorModeBtn.textContent = `Color Mode: ${isColorMode ? 'ON' : 'OFF'}`; } updateColorMode(); playSound('click'); }
-        function useReveal() {
-            if (revealsLeft <= 0 || !selectedCell || selectedCell.classList.contains('given') || selectedCell.classList.contains('correct')) return;
-            playSound('click');
-            const row = parseInt(selectedCell.dataset.row); const col = parseInt(selectedCell.dataset.col); const solution = boardState.solution[row][col];
-            const wasCandidateMode = isCandidateMode; isCandidateMode = false;
-            inputNumber(solution);
-            isCandidateMode = wasCandidateMode; 
-            revealsLeft--;
-            const revealBtn = document.getElementById('reveal-btn');
-            if (revealBtn) { revealBtn.textContent = `Reveal (${revealsLeft})`; if(revealsLeft <= 0) revealBtn.classList.add('disabled'); }
-            saveActiveGame();
-        }
-         
-        // Initial load
+        function useReveal() { if (revealsLeft <= 0 || !selectedCell || selectedCell.classList.contains('given') || selectedCell.classList.contains('correct')) return; playSound('click'); const row = parseInt(selectedCell.dataset.row); const col = parseInt(selectedCell.dataset.col); const solution = boardState.solution[row][col]; const wasCandidateMode = isCandidateMode; isCandidateMode = false; inputNumber(solution); isCandidateMode = wasCandidateMode; revealsLeft--; const revealBtn = document.getElementById('reveal-btn'); if (revealBtn) { revealBtn.textContent = `Reveal (${revealsLeft})`; if(revealsLeft <= 0) revealBtn.classList.add('disabled'); } saveActiveGame(); }
+        
         startTitleAnimation();
         loadData();
-    </script></body></html>
+    </script>
+</body>
+</html>
