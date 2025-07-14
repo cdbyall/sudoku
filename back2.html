@@ -6,7 +6,7 @@
     <title>AI Sudoku</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Anton&family=Architects+Daughter&family=Arimo&family=Bad+Script&family=Bangers&family=Bebas+Neue&family=Caveat&family=Cinzel&family=Comfortaa&family=Cookie&family=Courgette&family=Creepster&family=Dancing+Script:wght@700&family=Fjalla+One&family=Gloria+Hallelujah&family=Great+Vibes&family=Homemade+Apple&family=Indie+Flower&family=Josefin+Sans&family=Kalam:wght@400;700&family=Kaushan+Script&family=Lato&family=Lobster&family=Lobster+Two:ital@1&family=Marck+Script&family=Merriweather&family=Montserrat&family=Neucha&family=Nosifier&family=Noto+Sans&family=Open+Sans&family=Orbitron&family=Oswald&family=Pacifico&family=Patrick+Hand&family=Permanent+Marker&family=Playfair+Display&family=Poppins:wght@400;600;700&family=Press+Start+2P&family=Raleway&family=Roboto+Mono&family=Rock+Salt&family=Rubik&family=Sacramento&family=Satisfy&family=Shadows+Into+Light&family=Source+Code+Pro&family=Special+Elite&family=Sriracha&family=Tangerine:wght@700&family=Ubuntu&family=Unkempt&family=Work+Sans&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Kalam:wght@400;700&family=Patrick+Hand&family=Caveat&family=Shadows+Into+Light&family=Architects+Daughter&family=Roboto+Mono&family=Bangers&family=Creepster&family=Nosifier&family=Indie+Flower&family=Amatic+SC:wght@700&family=Pacifico&family=Dancing+Script:wght@700&family=Sriracha&family=Marck+Script&family=Courgette&family=Satisfy&family=Lobster+Two:ital@1&family=Cookie&family=Great+Vibes&family=Sacramento&family=Tangerine:wght@700&family=Bad+Script&family=Homemade+Apple&family=Rock+Salt&family=Special+Elite&family=Unkempt&family=Neucha&family=Lato&family=Montserrat&family=Oswald&family=Raleway&family=Merriweather&family=Playfair+Display&family=Ubuntu&family=Noto+Sans&family=Open+Sans&family=Source+Code+Pro&family=Rubik&family=Work+Sans&family=Permanent+Marker&family=Kaushan+Script&family=Press+Start+2P&family=Bebas+Neue&family=Lobster&family=Anton&family=Fjalla+One&family=Gloria+Hallelujah&family=Comfortaa&family=Cinzel&family=Josefin+Sans&family=Arimo&family=Orbitron&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
     <style>
         :root {
@@ -51,47 +51,96 @@
             overflow: hidden;
         }
 
-        /* --- Animations --- */
+        /* --- Animated Backgrounds --- */
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        /* ✨ ADDED: New animation for vertical gradients like fog */
         @keyframes verticalGradientBG { 0% { background-position: 50% 0%; } 50% { background-position: 50% 100%; } 100% { background-position: 50% 0%; } }
         @keyframes bg-stars { from { background-position: 0 0; } to { background-position: -10000px 5000px; } }
+        
         .firefly { position: absolute; width: 5px; height: 5px; background: #fffae1; border-radius: 50%; box-shadow: 0 0 10px #fffae1, 0 0 20px #fffae1; animation: firefly-float 20s infinite alternate, firefly-blink 2s infinite alternate; }
         @keyframes firefly-float { from { transform: translate(0, 0); } to { transform: translate(var(--x-end), var(--y-end)); } }
         @keyframes firefly-blink { 0%, 100% { opacity: 0.1; } 50% { opacity: 1; } }
+
         .rain-drop { position: absolute; bottom: 100%; width: 2px; height: 80px; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.4)); animation: rain-fall 1s linear infinite; }
         @keyframes rain-fall { to { transform: translateY(100vh); } }
+
         .leaf { position: absolute; top: -20px; width: 20px; height: 20px; background-color: #8B4513; border-radius: 0 50% 0 50%; animation: fall 10s linear infinite; }
         @keyframes fall { to { transform: translateY(105vh) rotate(360deg); } }
+
         .ripple-bg { position: absolute; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; animation: ripple-expand 4s linear infinite; }
         @keyframes ripple-expand { from { width: 0; height: 0; opacity: 1; } to { width: 300px; height: 300px; opacity: 0; } }
+
         .bubble { position: absolute; bottom: -100px; width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 50%; animation: bubble-up 10s linear infinite; }
         @keyframes bubble-up { to { transform: translateY(-1080px); } }
+
         .snow-flake { position: absolute; top: -20px; width: 10px; height: 10px; background: white; border-radius: 50%; animation: snowfall 15s linear infinite; }
         @keyframes snowfall { to { transform: translateY(105vh) rotate(600deg); } }
+
         .lantern { position: absolute; bottom: -100px; width: 50px; height: 70px; background: #ff7e5f; border-radius: 40% 40% 0 0; opacity: 0.7; animation: float-up 25s linear infinite; }
         @keyframes float-up { to { transform: translateY(-1080px); } }
+
         @keyframes swirl { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes light-up-rainbow { 0% { box-shadow: 0 0 15px #ff2400; } 14% { box-shadow: 0 0 15px #e8b71d; } 28% { box-shadow: 0 0 15px #1de840; } 42% { box-shadow: 0 0 15px #1ddde8; } 57% { box-shadow: 0 0 15px #2b1de8; } 71% { box-shadow: 0 0 15px #dd00f3; } 85% { box-shadow: 0 0 15px #e81d1d; } 100% { box-shadow: 0 0 15px #ff2400; } }
+        
+        /* --- Completion & Input Animations --- */
+        @keyframes light-up-rainbow {
+            0% { box-shadow: 0 0 15px #ff2400; }
+            14% { box-shadow: 0 0 15px #e8b71d; }
+            28% { box-shadow: 0 0 15px #1de840; }
+            42% { box-shadow: 0 0 15px #1ddde8; }
+            57% { box-shadow: 0 0 15px #2b1de8; }
+            71% { box-shadow: 0 0 15px #dd00f3; }
+            85% { box-shadow: 0 0 15px #e81d1d; }
+            100% { box-shadow: 0 0 15px #ff2400; }
+        }
         .light-up-animation { animation: light-up-rainbow 1s ease-in-out; }
-        @keyframes glow-correct { from { box-shadow: 0 0 15px 5px rgba(46, 204, 113, 0.7); } to { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); } }
-        .glow-animation { animation: glow-correct 0.7s ease-out; }
+
+        @keyframes glow-correct {
+            from {
+                box-shadow: 0 0 15px 5px rgba(46, 204, 113, 0.7);
+            }
+            to {
+                box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
+            }
+        }
+        .glow-animation {
+            animation: glow-correct 0.7s ease-out;
+        }
+        
+        @keyframes rainbow-highlight-flow { 
+            0%{background-position:0% 50%}
+            50%{background-position:100% 50%}
+            100%{background-position:0% 50%}
+        }
+
         @keyframes puff { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
         @keyframes ripple { to { transform: scale(4); opacity: 0; } }
         .ripple { position: absolute; border-radius: 50%; transform: scale(0); animation: ripple 0.6s linear; background-color: var(--accent-color); }
-        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
-        
+
         #game-container { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 500px; padding: 10px; box-sizing: border-box; position: relative; }
         #title-screen { text-align: center; animation: fadeIn 2s; position: relative; width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;}
         .floating-number { position: absolute; font-size: 2rem; color: var(--accent-color); opacity: 0.7; animation: float 10s ease-in-out infinite; }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
         #title-screen h1 { font-size: clamp(2rem, 8vw, 3rem); margin-bottom: 20px; animation: slideIn 1s ease-out; color: var(--accent-color); font-weight: 600; z-index: 10;}
         #title-buttons { display: flex; flex-direction: column; gap: 10px; }
         
         #game-board { width: 100%; position: relative; }
-        #completion-message { position: absolute; top: -60px; left: 50%; transform: translateX(-50%); background-color: rgba(255, 255, 255, 0.9); color: var(--text-color); padding: 10px 20px; border-radius: 20px; font-size: 1.2em; font-weight: 600; z-index: 50; opacity: 0; pointer-events: none; transition: opacity 0.5s ease-in-out, top 0.5s ease-in-out; }
-        #completion-message.show { opacity: 1; top: -40px; }
+        #completion-message {
+            position: absolute;
+            top: -60px; /* Position above the board */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            color: var(--text-color);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 1.2em;
+            font-weight: 600;
+            z-index: 50;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease-in-out, top 0.5s ease-in-out;
+        }
+        #completion-message.show { opacity: 1; top: -40px; } /* Adjust final position to be clearly above */
 
         #top-bar { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 450px; margin: 0 auto 10px; }
         #lives-container { font-size: 1.5rem; color: var(--accent-color); }
@@ -109,6 +158,7 @@
         #sudoku-grid.board-metal { background: linear-gradient(135deg, #d3d3d3, #a9a9a9, #808080, #a9a9a9, #d3d3d3); }
         #sudoku-grid.board-galaxy { background: url('https://www.transparenttextures.com/patterns/stardust.png') #000030; }
         #sudoku-grid.board-circuit { background: url('https://www.transparenttextures.com/patterns/circuit-board.png') #003000; }
+
 
         .sudoku-cell {
             background-color: var(--cell-background);
@@ -132,16 +182,15 @@
         .candidate-grid { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; height: 100%; }
         .candidate-cell { font-size: 0.6rem; color: var(--candidate-color); text-align: center; }
 
-        /* These selectors cleverly target the cells just before a subgrid boundary to apply a thicker border. */
+        /* --- ✨ MODIFIED: Changed color of thick grid lines to be more prominent --- */
         .sudoku-cell:nth-child(3n):not(:nth-child(9n)) { border-right: 3px solid var(--text-color); }
         .sudoku-cell:nth-child(9n) { border-right: none; }
         .sudoku-cell:nth-of-type(n+19):nth-of-type(-n+27),
         .sudoku-cell:nth-of-type(n+46):nth-of-type(-n+54) { border-bottom: 3px solid var(--text-color); }
         
-        /* Remove outer borders */
-        .sudoku-cell:nth-of-type(-n+9) { border-top: none; } /* First row */
-        .sudoku-cell:nth-of-type(n+73) { border-bottom: none; } /* Last row */
-        .sudoku-cell:nth-child(9n+1) { border-left: none; } /* First column */
+        .sudoku-cell:nth-of-type(n+1):nth-of-type(-n+9) { border-top: none; }
+        .sudoku-cell:nth-of-type(n+73):nth-of-type(-n+81) { border-bottom: none; }
+        .sudoku-cell:nth-child(9n+1) { border-left: none; }
 
         .sudoku-cell.selected { background-color: var(--accent-color); color: white; }
         .sudoku-cell.given { color: var(--given-text-color); cursor: not-allowed; background-color: #e0eef5; }
@@ -151,8 +200,7 @@
         .sudoku-cell.highlighted-number {
             background: linear-gradient(135deg, rgba(168, 230, 207, 0.7), rgba(255, 211, 182, 0.7), rgba(163, 216, 244, 0.7));
             background-size: 400% 400%;
-            /* ✨ REFINED: Re-used existing animation keyframe */
-            animation: gradientBG 4s ease infinite; 
+            animation: rainbow-highlight-flow 4s ease infinite;
             color: var(--text-color);
         }
 
@@ -206,6 +254,44 @@
         .calendar-day.empty { background-color: transparent; }
         .calendar-day .medal { font-size: 1.2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.5; z-index: -1; }
         .calendar-day.today { font-weight: bold; border: 2px solid var(--accent-color); }
+
+        /* --- ✨ Achievement System Styles --- */
+        #achievement-notification {
+            position: fixed;
+            top: 20px;
+            right: -400px;
+            width: 300px;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 200;
+            transition: right 0.5s ease-in-out;
+            border-left: 5px solid #ffd700;
+        }
+        #achievement-notification.show { right: 20px; }
+        #achievement-notification h4 { margin: 0 0 5px 0; font-size: 1.2em; }
+        #achievement-notification p { margin: 0; font-size: 0.9em; }
+        #achievement-notification .points { font-weight: bold; color: #ffd700; }
+
+        #achievements-modal .modal-content { width: 90%; max-width: 500px; }
+        #achievements-list { list-style-type: none; padding: 0; margin-top: 15px; }
+        .achievement-item { display: flex; align-items: center; padding: 10px; border-bottom: 1px solid var(--grid-background); }
+        .achievement-item:last-child { border-bottom: none; }
+        .achievement-item.unlocked { color: var(--text-color); }
+        .achievement-item.locked { color: #aaa; filter: grayscale(1); }
+        .achievement-icon { font-size: 2.5em; margin-right: 15px; }
+        .achievement-details { text-align: left; flex-grow: 1; }
+        .achievement-details h4 { margin: 0; }
+        .achievement-details p { margin: 5px 0 0 0; font-size: 0.9em; }
+        .achievement-points { font-size: 1.2em; font-weight: bold; color: var(--accent-color); }
+        .achievement-item.locked .achievement-points { color: #aaa; }
+
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { translateY(0); opacity: 1; } }
+        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
     </style>
 </head>
 <body>
@@ -215,11 +301,11 @@
             <div id="title-animation-container"></div>
             <h1>Single Prompt AI Sudoku</h1>
             <div id="title-buttons">
-                <button class="control-btn" data-action="new-game">New Game</button>
-                <button class="control-btn" data-action="daily-puzzle">Daily Puzzle</button>
-                <button class="control-btn" data-action="seed-game">From Seed</button>
-                <button class="control-btn" data-action="best-times">Best Times</button>
-                <button class="control-btn" data-action="calendar">Calendar</button>
+                <button class="control-btn" id="new-game-btn">New Game</button>
+                <button class="control-btn" id="daily-puzzle-btn">Daily Puzzle</button>
+                <button class="control-btn" id="seed-game-btn">From Seed</button>
+                <button class="control-btn" id="best-times-btn">Best Times</button>
+                <button class="control-btn" id="calendar-btn">Calendar</button>
             </div>
         </div>
 
@@ -250,9 +336,9 @@
                 <div id="lives-container">♥ ♥ ♥</div>
                 <div id="timer-display">00:00</div>
                 <div id="game-buttons">
-                    <button data-action="options">⚙️</button>
-                    <button data-action="mute">🔊</button>
-                    <button data-action="fullscreen">⛶</button>
+                    <button id="options-btn">⚙️</button>
+                    <button id="mute-btn">🔊</button>
+                    <button id="fullscreen-btn">⛶</button>
                 </div>
             </div>
             <div id="sudoku-grid"></div>
@@ -262,64 +348,89 @@
             </div>
         </div>
     </div>
+    
+    <div id="achievement-notification"></div>
 
     <div id="options-modal" class="modal"><div class="modal-content" id="options-content"></div></div>
-    <div id="game-over-modal" class="modal"><div class="modal-content"><h2>Game Over</h2><p>You've run out of lives!</p><button class="control-btn" data-action="restart-game">Play Again</button></div></div>
-    <div id="win-modal" class="modal"><div class="modal-content"><h2>You Win!</h2><p>Puzzle complete! Great job!</p><p id="win-time-message"></p><button class="control-btn" data-action="win-new-game">New Game</button></div></div>
+    <div id="game-over-modal" class="modal"><div class="modal-content"><h2>Game Over</h2><p>You've run out of lives!</p><button class="control-btn" id="restart-game-btn">Play Again</button></div></div>
+    <div id="win-modal" class="modal"><div class="modal-content"><h2>You Win!</h2><p>Puzzle complete! Great job!</p><p id="win-time-message"></p><button class="control-btn" id="win-new-game-btn">New Game</button></div></div>
     <div id="unlock-modal" class="modal"><div class="modal-content" id="unlock-content"></div></div>
-    <div id="best-times-modal" class="modal"><div class="modal-content"><h2>Best Times</h2><ol id="best-times-list"></ol><button class="control-btn" data-action="close-best-times">Close</button></div></div>
+    <div id="best-times-modal" class="modal"><div class="modal-content"><h2>Best Times</h2><ol id="best-times-list"></ol><button class="control-btn" id="close-best-times-btn">Close</button></div></div>
+
     <div id="calendar-modal" class="modal">
         <div class="modal-content">
             <div id="calendar-header">
-                <button class="control-btn" data-action="prev-month">◀</button>
+                <button class="control-btn" id="prev-month-btn">◀</button>
                 <h2 id="calendar-month-year"></h2>
-                <button class="control-btn" data-action="next-month">▶</button>
+                <button class="control-btn" id="next-month-btn">▶</button>
             </div>
             <div id="calendar-grid"></div>
-            <button class="control-btn" data-action="close-calendar" style="margin-top: 15px;">Close</button>
+            <button class="control-btn" id="close-calendar-btn" style="margin-top: 15px;">Close</button>
+        </div>
+    </div>
+    
+    <div id="achievements-modal" class="modal">
+        <div class="modal-content">
+            <h2>🏆 Achievements 🏆</h2>
+            <p>Total Points: <span id="total-achievement-points">0</span> / 1000</p>
+            <div id="achievements-list"></div>
+            <button class="control-btn" id="close-achievements-btn" style="margin-top: 15px;">Close</button>
         </div>
     </div>
 
     
     <script>
-        // --- ✨ REFINED: Helper function for less verbose DOM selection ---
-        const getEl = id => document.getElementById(id);
-
         // --- DOM Elements ---
-        const DOM = {
-            root: document.documentElement,
-            animatedBg: getEl('animated-bg'),
-            titleScreen: getEl('title-screen'),
-            titleAnimationContainer: getEl('title-animation-container'),
-            titleButtons: getEl('title-buttons'),
-            difficultyScreen: getEl('difficulty-screen'),
-            viewModeScreen: getEl('view-mode-screen'),
-            seedScreen: getEl('seed-screen'),
-            seedInput: getEl('seed-input'),
-            startFromSeedBtn: getEl('start-from-seed-btn'),
-            gameBoard: getEl('game-board'),
-            completionMessage: getEl('completion-message'),
-            sudokuGrid: getEl('sudoku-grid'),
-            controls: getEl('controls'),
-            livesContainer: getEl('lives-container'),
-            timerDisplay: getEl('timer-display'),
-            xpBar: getEl('xp-bar'),
-            gameButtons: getEl('game-buttons'),
-            modals: {
-                options: getEl('options-modal'),
-                optionsContent: getEl('options-content'),
-                gameOver: getEl('game-over-modal'),
-                win: getEl('win-modal'),
-                winTimeMessage: getEl('win-time-message'),
-                unlock: getEl('unlock-modal'),
-                unlockContent: getEl('unlock-content'),
-                bestTimes: getEl('best-times-modal'),
-                bestTimesList: getEl('best-times-list'),
-                calendar: getEl('calendar-modal'),
-                calendarMonthYear: getEl('calendar-month-year'),
-                calendarGrid: getEl('calendar-grid'),
-            }
-        };
+        const root = document.documentElement;
+        const animatedBg = document.getElementById('animated-bg');
+        const titleScreen = document.getElementById('title-screen');
+        const titleAnimationContainer = document.getElementById('title-animation-container');
+        const titleButtons = document.getElementById('title-buttons');
+        const newGameBtn = document.getElementById('new-game-btn');
+        const dailyPuzzleBtn = document.getElementById('daily-puzzle-btn');
+        const seedGameBtn = document.getElementById('seed-game-btn');
+        const bestTimesBtn = document.getElementById('best-times-btn');
+        const calendarBtn = document.getElementById('calendar-btn');
+        const difficultyScreen = document.getElementById('difficulty-screen');
+        const viewModeScreen = document.getElementById('view-mode-screen');
+        const seedScreen = document.getElementById('seed-screen');
+        const seedInput = document.getElementById('seed-input');
+        const startFromSeedBtn = document.getElementById('start-from-seed-btn');
+        const gameBoard = document.getElementById('game-board');
+        const completionMessage = document.getElementById('completion-message');
+        const sudokuGrid = document.getElementById('sudoku-grid');
+        const controls = document.getElementById('controls');
+        const livesContainer = document.getElementById('lives-container');
+        const timerDisplay = document.getElementById('timer-display');
+        const xpBar = document.getElementById('xp-bar');
+        const optionsBtn = document.getElementById('options-btn');
+        const muteBtn = document.getElementById('mute-btn');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const optionsModal = document.getElementById('options-modal');
+        const optionsContent = document.getElementById('options-content');
+        const gameOverModal = document.getElementById('game-over-modal');
+        const winModal = document.getElementById('win-modal');
+        const winTimeMessage = document.getElementById('win-time-message');
+        const unlockModal = document.getElementById('unlock-modal');
+        const unlockContent = document.getElementById('unlock-content');
+        const bestTimesModal = document.getElementById('best-times-modal');
+        const bestTimesList = document.getElementById('best-times-list');
+        const closeBestTimesBtn = document.getElementById('close-best-times-btn');
+        const restartGameBtn = document.getElementById('restart-game-btn');
+        const winNewGameBtn = document.getElementById('win-new-game-btn');
+        const calendarModal = document.getElementById('calendar-modal');
+        const calendarMonthYear = document.getElementById('calendar-month-year');
+        const calendarGrid = document.getElementById('calendar-grid');
+        const prevMonthBtn = document.getElementById('prev-month-btn');
+        const nextMonthBtn = document.getElementById('next-month-btn');
+        const closeCalendarBtn = document.getElementById('close-calendar-btn');
+        // ✨ ADDED: Achievement System Elements
+        const achievementNotification = document.getElementById('achievement-notification');
+        const achievementsModal = document.getElementById('achievements-modal');
+        const achievementsList = document.getElementById('achievements-list');
+        const closeAchievementsBtn = document.getElementById('close-achievements-btn');
+        const totalAchievementPoints = document.getElementById('total-achievement-points');
+
 
         // --- Game State ---
         let selectedCell = null;
@@ -340,33 +451,110 @@
         let calendarDate = new Date();
         let currentSoundPack = 'sound-default'; 
         let currentSettings = {};
-        // ✨ OPTIMIZED: Added a cache for number counts to improve performance.
-        let numberCounts = Array(10).fill(0);
+        let mistakesMade = 0;
 
-        // --- Player Data & Unlock Manifests ---
+
+        // --- Player Data & Unlocks ---
         let playerData = {
-            level: 1, xp: 0, xpToNextLevel: 100,
+            level: 1,
+            xp: 0,
+            xpToNextLevel: 100,
             unlocked: {
-                backgrounds: ['bg-default'], fonts: ['font-default'], themes: ['theme-default'],
-                boards: ['board-default'], features: [], sounds: ['sound-default']
-            }
+                backgrounds: ['bg-default'],
+                fonts: ['font-default'],
+                themes: ['theme-default'],
+                boards: ['board-default'],
+                features: [],
+                sounds: ['sound-default']
+            },
+            // ✨ ADDED: Achievement tracking
+            achievements: { unlocked: [], totalPoints: 0, stats: { gamesWon: 0, perfectGames: 0, notesUsed: false } }
+        };
+
+        // --- ✨ Achievement Data ---
+        const achievements = {
+            // Easy
+            'firstSteps': { name: "First Steps", desc: "Complete your first puzzle.", points: 25, icon: '👟', unlocked: false },
+            'quickThinker': { name: "Quick Thinker", desc: "Solve an easy puzzle in under 5 minutes.", points: 50, icon: '⚡️', unlocked: false },
+            'noteTaker': { name: "Note Taker", desc: "Use the notes feature for the first time.", points: 25, icon: '📝', unlocked: false },
+            'perfectionist': { name: "Perfectionist", desc: "Complete any puzzle with no mistakes.", points: 75, icon: '👌', unlocked: false },
+            // Medium
+            'persistent': { name: "Persistent", desc: "Complete 10 puzzles in total.", points: 100, icon: '💪', unlocked: false },
+            'weekender': { name: "Weekender", desc: "Complete 7 daily puzzles.", points: 100, icon: '🗓️', unlocked: false },
+            'brainiac': { name: "Brainiac", desc: "Solve a hard puzzle.", points: 125, icon: '🧠', unlocked: false },
+            // Hard
+            'dedicated': { name: "Dedicated", desc: "Complete a daily puzzle for a whole month.", points: 200, icon: '📅', unlocked: false },
+            'sudokuMaster': { name: "Sudoku Master", desc: "Solve 10 hard puzzles with no mistakes.", points: 200, icon: '👑', unlocked: false },
+            // Secret
+            'curiosity': { name: "Curiosity", desc: "???", points: 50, icon: '❓', secret: true, unlocked: false },
+            'timeTraveler': { name: "Time Traveler", desc: "???", points: 50, icon: '⏳', secret: true, unlocked: false }
         };
 
         const unlockables = {
-            2: { type: 'background', id: 'bg-stars', name: 'Starry Night' }, 3: { type: 'font', id: 'font-lato', name: 'Lato' }, 4: { type: 'background', id: 'bg-fireflies', name: 'Fireflies' }, 5: { type: 'theme', id: 'theme-forest', name: 'Forest Theme' }, 6: { type: 'background', id: 'bg-rain', name: 'Gentle Rain' }, 7: { type: 'font', id: 'font-montserrat', name: 'Montserrat' }, 8: { type: 'feature', id: 'feature-color-mode', name: 'Color Mode' }, 9: { type: 'background', id: 'bg-leaves', name: 'Falling Leaves' }, 10: { type: 'board', id: 'board-rainbow', name: 'Rainbow Board' }, 11: { type: 'font', id: 'font-oswald', name: 'Oswald' }, 12: { type: 'background', id: 'bg-ripples', name: 'Water Ripples' }, 13: { type: 'sound', id: 'sound-8bit', name: '8-Bit Sounds' }, 14: { type: 'background', id: 'bg-bubbles', name: 'Bubbles' }, 15: { type: 'feature', id: 'feature-reveal', name: 'Reveal' }, 16: { type: 'font', id: 'font-raleway', name: 'Raleway' }, 17: { type: 'background', id: 'bg-snow', name: 'Snowfall' }, 18: { type: 'font', id: 'font-merriweather', name: 'Merriweather' }, 19: { type: 'background', id: 'bg-lanterns', name: 'Sky Lanterns' }, 20: { type: 'board', id: 'board-sands', name: 'Shifting Sands' }, 21: { type: 'font', id: 'font-playfair-display', name: 'Playfair Display' }, 22: { type: 'background', id: 'bg-swirl', name: 'Cosmic Swirl' }, 23: { type: 'sound', id: 'sound-nature', name: 'Nature Sounds' }, 24: { type: 'font', id: 'font-ubuntu', name: 'Ubuntu' }, 25: { type: 'background', id: 'bg-sunbeams', name: 'Sunbeams' }, 26: { type: 'theme', id: 'theme-vampire', name: 'Vampire Theme' }, 27: { type: 'font', id: 'font-noto-sans', name: 'Noto Sans' }, 28: { type: 'background', id: 'bg-aurora', name: 'Aurora' }, 29: { type: 'font', id: 'font-open-sans', name: 'Open Sans' }, 30: { type: 'board', id: 'board-wood', name: 'Wood Grain' }, 31: { type: 'font', id: 'font-source-code-pro', name: 'Source Code Pro' }, 32: { type: 'background', id: 'bg-fog', name: 'Gentle Fog' }, 33: { type: 'font', id: 'font-rubik', name: 'Rubik' }, 34: { type: 'background', id: 'bg-ocean-waves', name: 'Ocean Waves' }, 35: { type: 'font', id: 'font-work-sans', name: 'Work Sans' }, 36: { type: 'theme', id: 'theme-ocean', name: 'Ocean Theme' }, 37: { type: 'font', id: 'font-permanent-marker', name: 'Permanent Marker' }, 38: { type: 'font', id: 'font-kaushan-script', name: 'Kaushan Script' }, 39: { type: 'font', id: 'font-press-start-2p', name: 'Press Start 2P' }, 40: { type: 'board', id: 'board-stone', name: 'Stone Wall' }, 41: { type: 'font', id: 'font-bebas-neue', name: 'Bebas Neue' }, 42: { type: 'font', id: 'font-lobster', name: 'Lobster' }, 43: { type: 'font', id: 'font-anton', name: 'Anton' }, 44: { type: 'theme', id: 'theme-8bit', name: '8-Bit Theme' }, 45: { type: 'font', id: 'font-fjalla-one', name: 'Fjalla One' }, 46: { type: 'board', id: 'board-metal', name: 'Polished Metal' }, 47: { type: 'font', id: 'font-comfortaa', name: 'Comfortaa' }, 48: { type: 'board', id: 'board-galaxy', name: 'Galaxy' }, 49: { type: 'font', id: 'font-josefin-sans', name: 'Josefin Sans' }, 50: { type: 'board', id: 'board-circuit', name: 'Circuit Board' }, 51: { type: 'font', id: 'font-orbitron', name: 'Orbitron' }
+            2: { type: 'background', id: 'bg-stars', name: 'Starry Night' },
+            3: { type: 'font', id: 'font-lato', name: 'Lato' },
+            4: { type: 'background', id: 'bg-fireflies', name: 'Fireflies' },
+            5: { type: 'theme', id: 'theme-forest', name: 'Forest Theme' },
+            6: { type: 'background', id: 'bg-rain', name: 'Gentle Rain' },
+            7: { type: 'font', id: 'font-montserrat', name: 'Montserrat' },
+            8: { type: 'feature', id: 'feature-color-mode', name: 'Color Mode' },
+            9: { type: 'background', id: 'bg-leaves', name: 'Falling Leaves' },
+            10: { type: 'board', id: 'board-rainbow', name: 'Rainbow Board' },
+            11: { type: 'font', id: 'font-oswald', name: 'Oswald' },
+            12: { type: 'background', id: 'bg-ripples', name: 'Water Ripples' },
+            13: { type: 'sound', id: 'sound-8bit', name: '8-Bit Sounds' },
+            14: { type: 'background', id: 'bg-bubbles', name: 'Bubbles' },
+            15: { type: 'feature', id: 'feature-reveal', name: 'Reveal' },
+            16: { type: 'font', id: 'font-raleway', name: 'Raleway' },
+            17: { type: 'background', id: 'bg-snow', name: 'Snowfall' },
+            18: { type: 'font', id: 'font-merriweather', name: 'Merriweather' },
+            19: { type: 'background', id: 'bg-lanterns', name: 'Sky Lanterns' },
+            20: { type: 'board', id: 'board-sands', name: 'Shifting Sands' },
+            21: { type: 'font', id: 'font-playfair-display', name: 'Playfair Display' },
+            22: { type: 'background', id: 'bg-swirl', name: 'Cosmic Swirl' },
+            23: { type: 'sound', id: 'sound-nature', name: 'Nature Sounds' },
+            24: { type: 'font', id: 'font-ubuntu', name: 'Ubuntu' },
+            25: { type: 'background', id: 'bg-sunbeams', name: 'Sunbeams' },
+            26: { type: 'theme', id: 'theme-vampire', name: 'Vampire Theme' },
+            27: { type: 'font', id: 'font-noto-sans', name: 'Noto Sans' },
+            28: { type: 'background', id: 'bg-aurora', name: 'Aurora' },
+            29: { type: 'font', id: 'font-open-sans', name: 'Open Sans' },
+            30: { type: 'board', id: 'board-wood', name: 'Wood Grain' },
+            31: { type: 'font', id: 'font-source-code-pro', name: 'Source Code Pro' },
+            32: { type: 'background', id: 'bg-fog', name: 'Gentle Fog' },
+            33: { type: 'font', id: 'font-rubik', name: 'Rubik' },
+            34: { type: 'background', id: 'bg-ocean-waves', name: 'Ocean Waves' },
+            35: { type: 'font', id: 'font-work-sans', name: 'Work Sans' },
+            36: { type: 'theme', id: 'theme-ocean', name: 'Ocean Theme' },
+            37: { type: 'font', id: 'font-permanent-marker', name: 'Permanent Marker' },
+            38: { type: 'font', id: 'font-kaushan-script', name: 'Kaushan Script' },
+            39: { type: 'font', id: 'font-press-start-2p', name: 'Press Start 2P' },
+            40: { type: 'board', id: 'board-stone', name: 'Stone Wall' },
+            41: { type: 'font', id: 'font-bebas-neue', name: 'Bebas Neue' },
+            42: { type: 'font', id: 'font-lobster', name: 'Lobster' },
+            43: { type: 'font', id: 'font-anton', name: 'Anton' },
+            44: { type: 'theme', id: 'theme-8bit', name: '8-Bit Theme' },
+            45: { type: 'font', id: 'font-fjalla-one', name: 'Fjalla One' },
+            46: { type: 'board', id: 'board-metal', name: 'Polished Metal' },
+            47: { type: 'font', id: 'font-comfortaa', name: 'Comfortaa' },
+            48: { type: 'board', id: 'board-galaxy', name: 'Galaxy' },
+            49: { type: 'font', id: 'font-josefin-sans', name: 'Josefin Sans' },
+            50: { type: 'board', id: 'board-circuit', name: 'Circuit Board' },
+            51: { type: 'font', id: 'font-orbitron', name: 'Orbitron' }
         };
         
         const itemManifest = {
             'bg-default': { name: 'Default' }, 'bg-stars': { name: 'Starry Night' }, 'bg-fireflies': { name: 'Fireflies' }, 'bg-rain': { name: 'Gentle Rain' }, 'bg-leaves': { name: 'Falling Leaves' }, 'bg-ripples': { name: 'Water Ripples' }, 'bg-bubbles': { name: 'Bubbles' }, 'bg-snow': { name: 'Snowfall' }, 'bg-lanterns': { name: 'Sky Lanterns' }, 'bg-swirl': { name: 'Cosmic Swirl' }, 'bg-sunbeams': { name: 'Sunbeams' }, 'bg-aurora': { name: 'Aurora' }, 'bg-pastel-rainbow': { name: 'Pastel Rainbow' }, 'bg-fog': { name: 'Gentle Fog' }, 'bg-ocean-waves': { name: 'Ocean Waves' },
             'board-default': { name: 'Default' }, 'board-rainbow': { name: 'Rainbow' }, 'board-sands': { name: 'Shifting Sands' }, 'board-wood': { name: 'Wood Grain' }, 'board-stone': { name: 'Stone Wall' }, 'board-metal': { name: 'Polished Metal' }, 'board-galaxy': { name: 'Galaxy' }, 'board-circuit': { name: 'Circuit Board' },
             'theme-default': { name: 'Default' }, 'theme-forest': { name: 'Forest' }, 'theme-vampire': { name: 'Vampire' }, 'theme-ocean': { name: 'Ocean' }, 'theme-sunset': { name: 'Sunset' }, 'theme-8bit': { name: '8-Bit' },
-            'font-default': { name: 'Default (Poppins)' }, 'font-kalam': { name: 'Kalam' }, 'font-indie-flower': { name: 'Indie Flower' }, 'font-lato': { name: 'Lato' }, 'font-montserrat': { name: 'Montserrat' }, 'font-oswald': { name: 'Oswald' }, 'font-raleway': { name: 'Raleway' }, 'font-merriweather': { name: 'Merriweather' }, 'font-playfair-display': { name: 'Playfair Display' }, 'font-ubuntu': { name: 'Ubuntu' }, 'font-noto-sans': { name: 'Noto Sans' }, 'font-open-sans': { name: 'Open Sans' }, 'font-source-code-pro': { name: 'Source Code Pro' }, 'font-rubik': { name: 'Rubik' }, 'font-work-sans': { name: 'Work Sans' }, 'font-permanent-marker': { name: 'Permanent Marker' }, 'font-kaushan-script': { name: 'Kaushan Script' }, 'font-press-start-2p': { name: 'Press Start 2P' }, 'font-bebas-neue': { name: 'Bebas Neue' }, 'font-lobster': { name: 'Lobster' }, 'font-anton': { name: 'Anton' }, 'font-fjalla-one': { name: 'Fjalla One' }, 'font-gloria-hallelujah': { name: 'Gloria Hallelujah' }, 'font-comfortaa': { name: 'Comfortaa' }, 'font-cinzel': { name: 'Cinzel' }, 'font-josefin-sans': { name: 'Josefin Sans' }, 'font-arimo': { name: 'Arimo' }, 'font-orbitron': { name: 'Orbitron' },
+            'font-default': { name: 'Default' }, 'font-kalam': { name: 'Kalam' }, 'font-indie-flower': { name: 'Indie Flower' }, 'font-lato': { name: 'Lato' }, 'font-montserrat': { name: 'Montserrat' }, 'font-oswald': { name: 'Oswald' }, 'font-raleway': { name: 'Raleway' }, 'font-merriweather': { name: 'Merriweather' }, 'font-playfair-display': { name: 'Playfair Display' }, 'font-ubuntu': { name: 'Ubuntu' }, 'font-noto-sans': { name: 'Noto Sans' }, 'font-open-sans': { name: 'Open Sans' }, 'font-source-code-pro': { name: 'Source Code Pro' }, 'font-rubik': { name: 'Rubik' }, 'font-work-sans': { name: 'Work Sans' }, 'font-permanent-marker': { name: 'Permanent Marker' }, 'font-kaushan-script': { name: 'Kaushan Script' }, 'font-press-start-2p': { name: 'Press Start 2P' }, 'font-bebas-neue': { name: 'Bebas Neue' }, 'font-lobster': { name: 'Lobster' }, 'font-anton': { name: 'Anton' }, 'font-fjalla-one': { name: 'Fjalla One' }, 'font-gloria-hallelujah': { name: 'Gloria Hallelujah' }, 'font-comfortaa': { name: 'Comfortaa' }, 'font-cinzel': { name: 'Cinzel' }, 'font-josefin-sans': { name: 'Josefin Sans' }, 'font-arimo': { name: 'Arimo' }, 'font-orbitron': { name: 'Orbitron' },
             'sound-default': { name: 'Default' }, 'sound-8bit': { name: '8-Bit' }, 'sound-nature': { name: 'Nature' },
         };
 
         const backgroundStyles = {
-            'bg-default': { type: 'css', animation: 'gradientBG 15s ease infinite', style: 'linear-gradient(45deg, #fdf6f6, #f1e7fe, #e7f5fe, #fdf6f6)', size: '400% 400%' }, 'bg-stars': { type: 'css', animation: 'bg-stars 150s linear infinite', style: 'url(https://www.transparenttextures.com/patterns/stardust.png) #2a2a3e', size: 'auto' }, 'bg-fireflies': { type: 'js', function: 'createFireflies', size: 'auto' }, 'bg-rain': { type: 'js', function: 'createRain', size: 'auto' }, 'bg-leaves': { type: 'js', function: 'createLeaves', size: 'auto' }, 'bg-ripples': { type: 'js', function: 'createRipples', size: 'auto' }, 'bg-bubbles': { type: 'js', function: 'createBubbles', size: 'auto' }, 'bg-snow': { type: 'js', function: 'createSnow', size: 'auto' }, 'bg-lanterns': { type: 'js', function: 'createLanterns', size: 'auto' }, 'bg-swirl': { type: 'css', animation: 'swirl 60s linear infinite', style: 'radial-gradient(ellipse at center, #2e3192 0%, #1b2949 100%)', size: 'auto' }, 'bg-sunbeams': { type: 'css', animation: 'gradientBG 20s ease infinite', style: 'radial-gradient(ellipse at top, #f9d423 0%, #ff4e50 100%)', size: '400% 400%' }, 'bg-aurora': { type: 'css', animation: 'gradientBG 10s ease infinite', style: 'linear-gradient(124deg, #2E3192, #1B2949, #009245, #FCEE21, #F15A24, #D4145A)', size: '400% 400%' }, 'bg-pastel-rainbow': { type: 'css', animation: 'gradientBG 18s ease infinite', style: 'linear-gradient(124deg, #ffc3a0, #ffafbd, #d4a5a5, #89a5ea, #6991c7, #a8e6cf)', size: '400% 400%' },
-            'bg-fog': { type: 'css', animation: 'verticalGradientBG 25s ease infinite', style: 'linear-gradient(to top, #dfe9f3 0%, white 100%)', size: '100% 400%' },
+            'bg-default': { type: 'css', animation: 'gradientBG 15s ease infinite', style: 'linear-gradient(45deg, #fdf6f6, #f1e7fe, #e7f5fe, #fdf6f6)', size: '400% 400%' }, 'bg-stars': { type: 'css', animation: 'bg-stars 150s linear infinite', style: 'url(https://www.transparenttextures.com/patterns/stardust.png) #2a2a3e', size: 'auto' }, 'bg-fireflies': { type: 'js', function: 'createFireflies', size: 'auto' }, 'bg-rain': { type: 'js', function: 'createRain', size: 'auto' }, 'bg-leaves': { type: 'js', function: 'createLeaves', size: 'auto' }, 'bg-ripples': { type: 'js', function: 'createRipples', size: 'auto' }, 'bg-bubbles': { type: 'js', function: 'createBubbles', size: 'auto' }, 'bg-snow': { type: 'js', function: 'createSnow', size: 'auto' }, 'bg-lanterns': { type: 'js', function: 'createLanterns', size: 'auto' }, 'bg-swirl': { type: 'css', animation: 'swirl 60s linear infinite', style: 'radial-gradient(ellipse at center, #2e3192 0%, #1b2949 100%)', size: 'auto' }, 'bg-sunbeams': { type: 'css', animation: 'gradientBG 20s ease infinite', style: 'radial-gradient(ellipse at top, #f9d423 0%, #ff4e50 100%)', size: '400% 400%' }, 'bg-aurora': { type: 'css', animation: 'gradientBG 10s ease infinite', style: 'linear-gradient(124deg, #2E3192, #1B2949, #009245, #FCEE21, #F15A24, #D4145A)', size: '400% 400%' }, 'bg-pastel-rainbow': { type: 'css', animation: 'gradientBG 18s ease infinite', style: 'linear-gradient(124deg, #ffc3a0, #ffafbd, #d4a5a5, #89a5ea, #6991c7, #a8e6cf)', size: '400% 400%' }, 
+            /* ✨ FIXED: Changed bg-fog to use a vertical animation that is now visible */
+            'bg-fog': { type: 'css', animation: 'verticalGradientBG 25s ease infinite', style: 'linear-gradient(to top, #dfe9f3 0%, white 100%)', size: '100% 400%' }, 
             'bg-ocean-waves': { type: 'css', animation: 'gradientBG 10s ease infinite', style: 'linear-gradient(-45deg, #43cea2, #185a9d, #43cea2, #185a9d)', size: '400% 400%'},
         };
 
@@ -380,26 +568,15 @@
         
         // --- Sound Engine (Tone.js) ---
         const soundPacks = {
-            'sound-default': { type: 'synth' }, 'sound-8bit': { type: 'player', urls: { correct: 'https://cdn.jsdelivr.net/gh/devmastery/sounds/sfx_sounds_powerup2.wav', error: 'https://cdn.jsdelivr.net/gh/devmastery/sounds/sfx_sounds_error2.wav', click: 'https://cdn.jsdelivr.net/gh/devmastery/sounds/sfx_sounds_Blip4.wav', win: 'https://cdn.jsdelivr.net/gh/devmastery/sounds/sfx_music_level7.wav', } }, 'sound-nature': { type: 'player', urls: { correct: 'https://cdn.jsdelivr.net/gh/k-bruner/web-dev-helpers/sudoku-sounds/zapsplat_nature_water_droplet_single_in_cave_001_59833.mp3', error: 'https://cdn.jsdelivr.net/gh/k-bruner/web-dev-helpers/sudoku-sounds/zapsplat_animals_bird_crow_single_caw_002_62342.mp3', click: 'https://cdn.jsdelivr.net/gh/k-bruner/web-dev-helpers/sudoku-sounds/zapsplat_nature_forest_wood_branch_snap_break_001_12158.mp3', win: 'https://cdn.jsdelivr.net/gh/k-bruner/web-dev-helpers/sudoku-sounds/zapsplat_nature_wind_chimes_bamboo_light_breeze_short_burst_001_44131.mp3' } }
+            'sound-default': { type: 'synth' }, 'sound-8bit': { type: 'player', name: '8-Bit Sounds', urls: { correct: 'https://cdn.jsdelivr.net/gh/devmastery/sounds/sfx_sounds_powerup2.wav', error: 'https://cdn.jsdelivr.net/gh/devmastery/sounds/sfx_sounds_error2.wav', click: 'https://cdn.jsdelivr.net/gh/devmastery/sounds/sfx_sounds_Blip4.wav', win: 'https://cdn.jsdelivr.net/gh/devmastery/sounds/sfx_music_level7.wav', } }, 'sound-nature': { type: 'player', name: 'Nature Sounds', urls: { correct: 'https://cdn.jsdelivr.net/gh/k-bruner/web-dev-helpers/sudoku-sounds/zapsplat_nature_water_droplet_single_in_cave_001_59833.mp3', error: 'https://cdn.jsdelivr.net/gh/k-bruner/web-dev-helpers/sudoku-sounds/zapsplat_animals_bird_crow_single_caw_002_62342.mp3', click: 'https://cdn.jsdelivr.net/gh/k-bruner/web-dev-helpers/sudoku-sounds/zapsplat_nature_forest_wood_branch_snap_break_001_12158.mp3', win: 'https://cdn.jsdelivr.net/gh/k-bruner/web-dev-helpers/sudoku-sounds/zapsplat_nature_wind_chimes_bamboo_light_breeze_short_burst_001_44131.mp3' } }
         };
 
-        // ✨ REFINED: Centralized synth sound creation and configs for cleaner logic.
-        const createSynth = (options) => new Tone.Synth(options).toDestination();
         const synthSounds = {
-            correct: createSynth({ oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.1 } }),
-            error: createSynth({ oscillator: { type: 'square' }, envelope: { attack: 0.01, decay: 0.3, sustain: 0, release: 0.1 } }),
-            click: createSynth({ oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 } }),
-            win: createSynth({ oscillator: { type: 'sawtooth' }, envelope: { attack: 0.1, decay: 0.5, sustain: 0.2, release: 0.5 } }),
-            levelUp: createSynth({ oscillator: { type: 'fmsine' }, envelope: { attack: 0.2, decay: 0.5, sustain: 0, release: 1 } }),
-            pop: createSynth({ oscillator: { type: 'triangle' }, pitchDecay: 0.05, envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 } }),
+            correct: new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.1 } }).toDestination(), error: new Tone.Synth({ oscillator: { type: 'square' }, envelope: { attack: 0.01, decay: 0.3, sustain: 0, release: 0.1 } }).toDestination(), click: new Tone.Synth({ oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 } }).toDestination(), win: new Tone.Synth({ oscillator: { type: 'sawtooth' }, envelope: { attack: 0.1, decay: 0.5, sustain: 0.2, release: 0.5 } }).toDestination(), levelUp: new Tone.Synth({ oscillator: { type: 'fmsine' }, envelope: { attack: 0.2, decay: 0.5, sustain: 0, release: 1 } }).toDestination(), pop: new Tone.Synth({ oscillator: { type: 'triangle' }, pitchDecay: 0.05, envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 } }).toDestination(),
+            // ✨ ADDED: Sound for achievement unlock
+            achievement: new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.05, decay: 0.4, sustain: 0.1, release: 0.8 } }).toDestination()
         };
-        const synthSoundConfig = {
-            correct: { synth: 'correct', note: 'C5', duration: '8n'},
-            error: { synth: 'error', note: 'C3', duration: '8n'},
-            click: { synth: 'click', note: 'C4', duration: '16n'},
-            win: { synth: 'win', note: 'C4', duration: '2n'},
-            levelUp: { synth: 'levelUp', note: 'G5', duration: '4n'},
-        };
+
         let playerSounds = {};
 
         function applySoundPack(packId) {
@@ -418,23 +595,34 @@
             saveData();
             buildOptionsModal();
         }
+        
+        // ✨ ADDED: Jingle for achievements
+        function playAchievementJingle() {
+            if(isMuted) return;
+            const now = Tone.now();
+            synthSounds.achievement.triggerAttackRelease('C5', '8n', now);
+            synthSounds.achievement.triggerAttackRelease('E5', '8n', now + 0.1);
+            synthSounds.achievement.triggerAttackRelease('G5', '8n', now + 0.2);
+            synthSounds.achievement.triggerAttackRelease('C6', '4n', now + 0.3);
+        }
 
         function playSound(sound, note = 'C4') {
             if (isMuted) return;
             if (Tone.context.state !== 'running') { Tone.start().catch(e => console.error("Tone.start() failed", e)); }
             
             const pack = soundPacks[currentSoundPack];
-            if (pack && pack.type === 'player' && playerSounds.has && playerSounds.has(sound)) {
+            if (pack && pack.type === 'player' && playerSounds.has(sound)) {
                 playerSounds.player(sound).start();
             } else { 
-                const config = synthSoundConfig[sound];
-                if (config) {
-                    synthSounds[config.synth].triggerAttackRelease(config.note, config.duration);
-                } else if (sound === 'pop') {
-                    synthSounds.pop.triggerAttackRelease(note, '16n');
-                }
+                if (sound === 'correct') synthSounds.correct.triggerAttackRelease('C5', '8n');
+                else if (sound === 'error') synthSounds.error.triggerAttackRelease('C3', '8n');
+                else if (sound === 'click') synthSounds.click.triggerAttackRelease('C4', '16n');
+                else if (sound === 'win') synthSounds.win.triggerAttackRelease('C4', '2n');
+                else if (sound === 'levelUp') synthSounds.levelUp.triggerAttackRelease('G5', '4n');
+                else if (sound === 'pop') synthSounds.pop.triggerAttackRelease(note, '16n');
             }
         }
+
 
         // --- Timer & Best Time Functions ---
         function formatTime(totalSeconds) {
@@ -442,19 +630,25 @@
             const seconds = (totalSeconds % 60).toString().padStart(2, '0');
             return `${minutes}:${seconds}`;
         }
+
         function startTimer() {
             if (gameTimerInterval) clearInterval(gameTimerInterval);
             gameTimerInterval = setInterval(() => {
                 secondsElapsed++;
-                DOM.timerDisplay.textContent = formatTime(secondsElapsed);
+                timerDisplay.textContent = formatTime(secondsElapsed);
+                // Secret Achievement Check
+                if(secondsElapsed >= 3600) unlockAchievement('timeTraveler');
             }, 1000);
         }
+
         function stopTimer() { clearInterval(gameTimerInterval); }
-        function resetTimer() { stopTimer(); secondsElapsed = 0; DOM.timerDisplay.textContent = '00:00'; }
+        function resetTimer() { stopTimer(); secondsElapsed = 0; timerDisplay.textContent = '00:00'; }
+
         function loadBestTimes() {
             const data = JSON.parse(localStorage.getItem('sudokuUserData'));
-            return data?.bestTimes || [];
+            return data && data.bestTimes ? data.bestTimes : [];
         }
+
         function saveBestTime(timeInSeconds, difficulty) {
             let bestTimes = loadBestTimes();
             bestTimes.push({ time: timeInSeconds, difficulty: difficulty });
@@ -462,30 +656,31 @@
             currentSettings.bestTimes = bestTimes.slice(0, 10);
             saveData();
         }
+
         function displayBestTimes() {
             const bestTimes = loadBestTimes();
-            DOM.modals.bestTimesList.innerHTML = ''; 
+            bestTimesList.innerHTML = ''; 
             if (bestTimes.length === 0) {
-                DOM.modals.bestTimesList.innerHTML = '<li>No best times recorded yet. Play a game!</li>';
+                bestTimesList.innerHTML = '<li>No best times recorded yet. Play a game!</li>';
             } else {
                 bestTimes.forEach(score => {
                     const li = document.createElement('li');
                     const difficultyDisplay = score.difficulty.charAt(0).toUpperCase() + score.difficulty.slice(1);
                     li.textContent = `${formatTime(score.time)} - (${difficultyDisplay})`;
-                    DOM.modals.bestTimesList.appendChild(li);
+                    bestTimesList.appendChild(li);
                 });
             }
-            DOM.modals.bestTimes.style.display = 'flex';
+            bestTimesModal.style.display = 'flex';
         }
 
         // --- Data Persistence ---
         function saveData() {
             currentSettings.isMuted = isMuted;
             currentSettings.soundPack = currentSoundPack;
-            currentSettings.background = DOM.root.dataset.background || 'bg-default';
-            currentSettings.theme = DOM.root.dataset.theme || 'theme-default';
-            currentSettings.font = DOM.root.dataset.font || 'font-default';
-            currentSettings.board = DOM.sudokuGrid.dataset.board || 'board-default';
+            currentSettings.background = document.body.dataset.background || 'bg-default';
+            currentSettings.theme = document.body.dataset.theme || 'theme-default';
+            currentSettings.font = document.body.dataset.font || 'font-default';
+            currentSettings.board = sudokuGrid.dataset.board || 'board-default';
 
             const dataToSave = {
                 playerData: playerData,
@@ -495,23 +690,30 @@
             };
             localStorage.setItem('sudokuUserData', JSON.stringify(dataToSave));
         }
+
         function saveActiveGame() {
-            if (DOM.gameBoard.style.display !== 'block') return;
-            // Convert Sets to Arrays for JSON serialization
-            const serializableCandidates = boardState.candidates.map(s => Array.from(s));
+            if (gameBoard.style.display !== 'block') return;
             const activeGame = {
-                boardState: { ...boardState, candidates: serializableCandidates },
-                lives, secondsElapsed, currentDifficulty, isDailyPuzzle, isEasySeeMode, revealsLeft, numberCounts,
+                boardState, lives, secondsElapsed, currentDifficulty, isDailyPuzzle, isEasySeeMode, revealsLeft, mistakesMade
             };
             localStorage.setItem('sudokuActiveGame', JSON.stringify(activeGame));
         }
+
         function loadData() {
             const savedData = JSON.parse(localStorage.getItem('sudokuUserData'));
             if (savedData) {
-                playerData = savedData.playerData || playerData;
+                // Merge saved data with defaults to prevent errors if structure changes
+                playerData = {...playerData, ...savedData.playerData};
+                if (!playerData.achievements) { // Add achievements object if it doesn't exist from old save
+                     playerData.achievements = { unlocked: [], totalPoints: 0, stats: { gamesWon: 0, perfectGames: 0, notesUsed: false } };
+                }
+                playerData.achievements.unlocked.forEach(id => {
+                    if(achievements[id]) achievements[id].unlocked = true;
+                });
+
                 currentSettings = savedData.settings || {};
                 isMuted = currentSettings.isMuted || false;
-                getEl('game-buttons').querySelector('[data-action="mute"]').textContent = isMuted ? '🔇' : '🔊';
+                muteBtn.textContent = isMuted ? '🔇' : '🔊';
                 applyTheme(currentSettings.theme || 'theme-default', true);
                 applyFont(currentSettings.font || 'font-default', true);
                 applyBackground(currentSettings.background || 'bg-default', true);
@@ -519,47 +721,51 @@
                 applySoundPack(currentSettings.soundPack || 'sound-default');
             }
 
+            // --- ✨ MODIFIED: Added robust check for valid saved game data ---
             const savedActiveGame = localStorage.getItem('sudokuActiveGame');
             if (savedActiveGame) {
                 try {
                     const gameData = JSON.parse(savedActiveGame);
-                    // A valid game has a boardState with a non-empty puzzle array.
-                    if (gameData?.boardState?.puzzle?.length > 0) {
+                    // A valid game will have a boardState object with a puzzle array that is not empty.
+                    if (gameData && gameData.boardState && gameData.boardState.puzzle && gameData.boardState.puzzle.length > 0) {
                         const continueBtn = document.createElement('button');
-                        continueBtn.dataset.action = 'continue-game';
+                        continueBtn.id = 'continue-game-btn';
                         continueBtn.className = 'control-btn';
                         continueBtn.textContent = 'Continue Game';
                         continueBtn.onclick = () => resumeGame(gameData);
-                        DOM.titleButtons.insertBefore(continueBtn, DOM.titleButtons.querySelector('[data-action="new-game"]'));
+                        titleButtons.insertBefore(continueBtn, newGameBtn);
                     } else {
+                        // The saved game is invalid or empty, remove it.
                         localStorage.removeItem('sudokuActiveGame');
                     }
                 } catch (e) {
+                    // If parsing fails, the data is corrupt. Remove it.
                     console.error("Failed to parse saved game, removing it.", e);
                     localStorage.removeItem('sudokuActiveGame');
                 }
             }
             updateXPBar();
         }
+
         function resumeGame(savedGame) {
             playSound('click');
             stopTitleAnimation();
-            showScreen('game-board');
+            titleScreen.style.display = 'none';
+            gameBoard.style.display = 'block';
 
             boardState = savedGame.boardState;
-            // Convert saved candidate arrays back to Sets
-            boardState.candidates = boardState.candidates.map(arr => new Set(arr));
             lives = savedGame.lives;
             secondsElapsed = savedGame.secondsElapsed;
             currentDifficulty = savedGame.currentDifficulty;
             isDailyPuzzle = savedGame.isDailyPuzzle;
             isEasySeeMode = savedGame.isEasySeeMode;
             revealsLeft = savedGame.revealsLeft;
-            numberCounts = savedGame.numberCounts || Array(10).fill(0);
+            mistakesMade = savedGame.mistakesMade || 0;
 
-            DOM.sudokuGrid.classList.toggle('easy-see-mode', isEasySeeMode);
+            if (isEasySeeMode) sudokuGrid.classList.add('easy-see-mode');
+            else sudokuGrid.classList.remove('easy-see-mode');
 
-            renderGrid();
+            recreateGridFromSave();
             createControls();
             updateLivesDisplay();
             updateXPBar();
@@ -568,52 +774,68 @@
             if (isColorMode) updateColorMode();
         }
 
-        // --- Seed & Sudoku Generator ---
-        function mulberry32(a) { return function() { var t = a += 0x6D2B79F5; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; } }
-        function stringToSeed(str) { let h = 0; for (let i = 0; i < str.length; i++) { h = Math.imul(31, h) + str.charCodeAt(i) | 0; } return h; }
 
+        // --- Seed Functions ---
+        function mulberry32(a) { return function() { var t = a += 0x6D2B79F5; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; } }
+        function stringToSeed(str) { let seed = 0; for (let i = 0; i < str.length; i++) { seed = (seed << 5) - seed + str.charCodeAt(i); seed |= 0; } return seed; }
+
+        // --- Sudoku Generator ---
         class SudokuGenerator {
             constructor(seed) { this.board = Array(9).fill(0).map(() => Array(9).fill(0)); this.random = mulberry32(seed); }
-            isValid(row, col, num) { for (let i = 0; i < 9; i++) { if (this.board[row][i] === num || this.board[i][col] === num) return false; } const startRow = Math.floor(row / 3) * 3, startCol = Math.floor(col / 3) * 3; for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) if (this.board[startRow + i][startCol + j] === num) return false; return true; }
-            fillBoard() { for (let i = 0; i < 81; i++) { const row = Math.floor(i / 9), col = i % 9; if (this.board[row][col] === 0) { const numbers = this.shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]); for (const num of numbers) { if (this.isValid(row, col, num)) { this.board[row][col] = num; if (this.fillBoard()) return true; this.board[row][col] = 0; } } return false; } } return true; }
-            createPuzzle(difficulty) { this.fillBoard(); boardState.solution = this.board.map(row => [...row]); const holes = { easy: 35, medium: 45, hard: 55 }[difficulty] || 45; let puzzle = this.board.map(row => [...row]); let removed = 0; const cells = this.shuffle(Array.from({ length: 81 }, (_, i) => i)); for (const cellIndex of cells) { if (removed >= holes) break; const row = Math.floor(cellIndex / 9); const col = cellIndex % 9; if (puzzle[row][col] !== 0) { puzzle[row][col] = 0; removed++; } } return puzzle; }
-            shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(this.random() * (i + 1));[array[i], array[j]] = [array[j], array[i]]; } return array; }
+            isValid(row, col, num) { for (let i = 0; i < 9; i++) { if (this.board[row][i] === num || this.board[i][col] === num) return false; } const startRow = Math.floor(row / 3) * 3, startCol = Math.floor(col / 3) * 3; for (let i = 0; i < 3; i++) { for (let j = 0; j < 3; j++) { if (this.board[startRow + i][startCol + j] === num) return false; } } return true; }
+            fillBoard() { const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]; for (let i = 0; i < 81; i++) { const row = Math.floor(i / 9), col = i % 9; if (this.board[row][col] === 0) { this.shuffle(numbers); for (const num of numbers) { if (this.isValid(row, col, num)) { this.board[row][col] = num; if (this.fillBoard()) return true; this.board[row][col] = 0; } } return false; } } return true; }
+            createPuzzle(difficulty) { this.board = Array(9).fill(0).map(() => Array(9).fill(0)); this.fillBoard(); boardState.solution = this.board.map(row => [...row]); let attempts; switch (difficulty) { case 'easy': attempts = 35; break; case 'medium': attempts = 45; break; case 'hard': attempts = 55; break; default: attempts = 45; } let puzzle = this.board.map(row => [...row]); while (attempts > 0) { let row = Math.floor(this.random() * 9); let col = Math.floor(this.random() * 9); if (puzzle[row][col] !== 0) { puzzle[row][col] = 0; attempts--; } } return puzzle; }
+            shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(this.random() * (i + 1));[array[i], array[j]] = [array[j], array[i]]; } }
         }
 
         // --- Game Logic & UI ---
-        function showScreen(screenId) {
-            ['title-screen', 'difficulty-screen', 'view-mode-screen', 'seed-screen', 'game-board'].forEach(id => {
-                getEl(id).style.display = (id === screenId) ? (id === 'game-board' ? 'block' : 'flex') : 'none';
-            });
-            if(screenId === 'title-screen') getEl('title-buttons').style.display = 'flex';
-        }
-
-        function startTitleAnimation() { if (titleAnimationInterval) clearInterval(titleAnimationInterval); titleAnimationInterval = setInterval(() => { const num = document.createElement('div'); num.className = 'floating-number'; num.textContent = Math.floor(Math.random() * 9) + 1; num.style.left = `${Math.random() * 100}%`; num.style.top = `${Math.random() * 100}%`; num.style.animationDuration = `${Math.random() * 5 + 8}s`; DOM.titleAnimationContainer.appendChild(num); setTimeout(() => { num.style.animation = 'puff 1s forwards'; setTimeout(() => num.remove(), 1000); }, 7000); }, 500); }
-        function stopTitleAnimation() { clearInterval(titleAnimationInterval); DOM.titleAnimationContainer.innerHTML = ''; }
+        function startTitleAnimation() { if (titleAnimationInterval) clearInterval(titleAnimationInterval); titleAnimationInterval = setInterval(() => { const num = document.createElement('div'); num.className = 'floating-number'; num.textContent = Math.floor(Math.random() * 9) + 1; num.style.left = `${Math.random() * 100}%`; num.style.top = `${Math.random() * 100}%`; num.style.animationDuration = `${Math.random() * 5 + 8}s`; titleAnimationContainer.appendChild(num); setTimeout(() => { num.style.animation = 'puff 1s forwards'; setTimeout(() => num.remove(), 1000); }, 7000); }, 500); }
+        function stopTitleAnimation() { clearInterval(titleAnimationInterval); titleAnimationContainer.innerHTML = ''; }
 
         function resetGame() {
-            showScreen('title-screen');
+            titleScreen.style.display = 'flex';
+            titleButtons.style.display = 'flex';
+            difficultyScreen.style.display = 'none';
+            viewModeScreen.style.display = 'none';
+            seedScreen.style.display = 'none';
             startTitleAnimation();
-            DOM.modals.gameOver.style.display = 'none';
-            DOM.modals.win.style.display = 'none';
+            gameBoard.style.display = 'none';
+            gameOverModal.style.display = 'none';
+            winModal.style.display = 'none';
             lives = 3;
+            mistakesMade = 0;
             isDailyPuzzle = false;
             isEasySeeMode = false;
-            DOM.sudokuGrid.classList.remove('easy-see-mode');
+            sudokuGrid.classList.remove('easy-see-mode');
             updateLivesDisplay();
             resetTimer();
-            const continueBtn = DOM.titleButtons.querySelector('[data-action="continue-game"]');
+            // Re-check for continue button in case user returns to title screen
+            const continueBtn = document.getElementById('continue-game-btn');
             if (!localStorage.getItem('sudokuActiveGame') && continueBtn) {
                 continueBtn.remove();
             }
         }
-        function startNewGameFromWin() { DOM.modals.win.style.display = 'none'; showScreen('difficulty-screen'); resetTimer(); lives = 3; updateLivesDisplay(); }
+
+        function startNewGameFromWin() { winModal.style.display = 'none'; gameBoard.style.display = 'none'; difficultyScreen.style.display = 'block'; resetTimer(); lives = 3; updateLivesDisplay(); }
+
+        newGameBtn.addEventListener('click', () => { playSound('click'); isDailyPuzzle = false; seedForNextGame = null; titleButtons.style.display = 'none'; difficultyScreen.style.display = 'block'; localStorage.removeItem('sudokuActiveGame'); const continueBtn = document.getElementById('continue-game-btn'); if (continueBtn) continueBtn.remove(); });
+        dailyPuzzleBtn.addEventListener('click', () => { playSound('click'); isDailyPuzzle = true; const today = new Date(); const dateString = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`; seedForNextGame = dateString; titleButtons.style.display = 'none'; difficultyScreen.style.display = 'block'; });
+        seedGameBtn.addEventListener('click', () => { playSound('click'); isDailyPuzzle = false; titleButtons.style.display = 'none'; seedScreen.style.display = 'block'; });
+        startFromSeedBtn.addEventListener('click', () => { const seedWord = seedInput.value.trim(); if(seedWord === ''){ alert("Please enter a seed word."); return; } playSound('click'); seedForNextGame = seedWord; seedScreen.style.display = 'none'; difficultyScreen.style.display = 'block'; });
+
+        difficultyScreen.addEventListener('click', (e) => { if (e.target.classList.contains('control-btn')) { playSound('click'); currentDifficulty = e.target.dataset.difficulty; difficultyScreen.style.display = 'none'; viewModeScreen.style.display = 'block'; } });
+
+        viewModeScreen.addEventListener('click', (e) => { if (e.target.classList.contains('control-btn')) { playSound('click'); const viewMode = e.target.dataset.view; isEasySeeMode = (viewMode === 'easy-see'); viewModeScreen.style.display = 'none'; const options = { difficulty: currentDifficulty }; if (seedForNextGame) { options.seed = stringToSeed(seedForNextGame.toLowerCase()); } startGame(options); seedForNextGame = null; } });
 
         function startGame(options) {
             stopTitleAnimation();
-            showScreen('game-board');
+            titleScreen.style.display = 'none';
+            difficultyScreen.style.display = 'none';
+            seedScreen.style.display = 'none';
+            gameBoard.style.display = 'block';
 
-            DOM.sudokuGrid.classList.toggle('easy-see-mode', isEasySeeMode);
+            if (isEasySeeMode) sudokuGrid.classList.add('easy-see-mode');
+            else sudokuGrid.classList.remove('easy-see-mode');
 
             const difficulty = options.difficulty;
             const seed = options.seed || new Date().getTime(); 
@@ -623,14 +845,10 @@
             boardState.puzzle = generator.createPuzzle(difficulty);
             boardState.playerBoard = boardState.puzzle.map(row => [...row]);
             boardState.candidates = Array(81).fill(0).map(() => new Set());
-            
-            // Recalculate number counts for the new puzzle
-            numberCounts.fill(0);
-            for(let r=0; r<9; r++) { for(let c=0; c<9; c++) { if(boardState.playerBoard[r][c] !== 0) numberCounts[boardState.playerBoard[r][c]]++; }}
-            
-            renderGrid();
+            createGrid(boardState.puzzle);
             createControls();
             lives = 3;
+            mistakesMade = 0;
             revealsLeft = 3;
             updateLivesDisplay();
             updateXPBar();
@@ -641,36 +859,57 @@
             saveActiveGame();
         }
 
-        // ✨ REFINED: Combined createGrid and recreateGridFromSave into one function
-        function renderGrid() {
-            DOM.sudokuGrid.innerHTML = '';
-            const fragment = document.createDocumentFragment();
+        function createGrid(puzzle) {
+            sudokuGrid.innerHTML = '';
             for (let row = 0; row < 9; row++) {
                 for (let col = 0; col < 9; col++) {
                     const cell = document.createElement('div');
-                    cell.className = 'sudoku-cell';
+                    cell.classList.add('sudoku-cell');
+                    cell.dataset.row = row;
+                    cell.dataset.col = col;
+                    const value = puzzle[row][col];
+                    if (value !== 0) {
+                        cell.textContent = value;
+                        cell.classList.add('given');
+                    }
+                    cell.addEventListener('click', () => handleCellClick(cell));
+                    sudokuGrid.appendChild(cell);
+                }
+            }
+        }
+        
+        function recreateGridFromSave() {
+            sudokuGrid.innerHTML = '';
+            for (let row = 0; row < 9; row++) {
+                for (let col = 0; col < 9; col++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('sudoku-cell');
                     cell.dataset.row = row;
                     cell.dataset.col = col;
                     
-                    const puzzleValue = boardState.puzzle[row][col];
                     const playerValue = boardState.playerBoard[row][col];
-                    const cellIndex = row * 9 + col;
-
+                    const puzzleValue = boardState.puzzle[row][col];
+                    
                     if (puzzleValue !== 0) {
                         cell.textContent = puzzleValue;
                         cell.classList.add('given');
                     } else if (playerValue !== 0) {
                         cell.textContent = playerValue;
-                        cell.classList.add('correct');
-                    } else if (boardState.candidates[cellIndex]?.size > 0) {
-                        drawCandidates(cell, cellIndex);
+                        cell.classList.add('correct'); // All saved player values are correct
+                    } else {
+                        // Draw candidates if the cell is empty
+                        const cellIndex = row * 9 + col;
+                        // The saved candidates object is plain, needs to be converted back to a Set
+                        boardState.candidates[cellIndex] = new Set(boardState.candidates[cellIndex]);
+                        if (boardState.candidates[cellIndex].size > 0) {
+                            drawCandidates(cell, cellIndex);
+                        }
                     }
                     
                     cell.addEventListener('click', () => handleCellClick(cell));
-                    fragment.appendChild(cell);
+                    sudokuGrid.appendChild(cell);
                 }
             }
-            DOM.sudokuGrid.appendChild(fragment);
         }
         
         function handleCellClick(cell) {
@@ -687,26 +926,26 @@
         function highlightMatchingNumbers(targetCell) { clearNumberHighlights(); const number = targetCell.textContent; if (!number) return; document.querySelectorAll('.sudoku-cell').forEach(cell => { if (cell.textContent === number) { cell.classList.add('highlighted-number'); } }); }
 
         function createControls() {
-            DOM.controls.innerHTML = '';
-            const fragment = document.createDocumentFragment();
+            controls.innerHTML = '';
             for (let i = 1; i <= 9; i++) {
                 const btn = document.createElement('button');
-                btn.className = 'control-btn';
+                btn.classList.add('control-btn');
                 btn.textContent = i;
-                btn.dataset.number = i;
-                fragment.appendChild(btn);
+                btn.addEventListener('click', () => inputNumber(i));
+                controls.appendChild(btn);
             }
             const candidateBtn = document.createElement('button');
-            candidateBtn.className = 'control-btn'; candidateBtn.dataset.action = 'candidate'; candidateBtn.textContent = 'Notes';
-            fragment.appendChild(candidateBtn);
+            candidateBtn.classList.add('control-btn'); candidateBtn.id = 'candidate-btn'; candidateBtn.textContent = 'Notes';
+            candidateBtn.addEventListener('click', toggleCandidateMode);
+            controls.appendChild(candidateBtn);
 
             if (playerData.unlocked.features.includes('feature-reveal')) {
                 const revealBtn = document.createElement('button');
-                revealBtn.className = 'control-btn'; revealBtn.dataset.action = 'reveal';
+                revealBtn.classList.add('control-btn'); revealBtn.id = 'reveal-btn';
                 revealBtn.textContent = `Reveal (${revealsLeft})`;
-                fragment.appendChild(revealBtn);
+                revealBtn.addEventListener('click', useReveal);
+                controls.appendChild(revealBtn);
             }
-            DOM.controls.appendChild(fragment);
         }
 
         function selectCell(cell) { clearNumberHighlights(); if (selectedCell) { selectedCell.classList.remove('selected'); } selectedCell = cell; selectedCell.classList.add('selected'); }
@@ -724,6 +963,11 @@
                 if (boardState.candidates[cellIndex].has(num)) boardState.candidates[cellIndex].delete(num);
                 else boardState.candidates[cellIndex].add(num);
                 drawCandidates(selectedCell, cellIndex);
+                // Achievement Check
+                if (!playerData.achievements.stats.notesUsed) {
+                    playerData.achievements.stats.notesUsed = true;
+                    unlockAchievement('noteTaker');
+                }
             } else {
                 if (boardState.solution[row][col] === num) {
                     selectedCell.classList.add('glow-animation');
@@ -733,7 +977,6 @@
                     selectedCell.textContent = num;
                     selectedCell.classList.add('correct');
                     boardState.playerBoard[row][col] = num;
-                    numberCounts[num]++; // Increment the count
                     playSound('correct');
                     addXP(10);
                     highlightMatchingNumbers(selectedCell); 
@@ -744,6 +987,7 @@
                 } else {
                     playSound('error');
                     lives--;
+                    mistakesMade++;
                     updateLivesDisplay();
                     selectedCell.classList.add('error');
                     setTimeout(() => { selectedCell.classList.remove('error'); }, 500);
@@ -761,15 +1005,21 @@
             const candidates = boardState.candidates[cellIndex];
             candidateGrid.querySelectorAll('.candidate-cell').forEach(c => { const num = parseInt(c.dataset.num); c.textContent = candidates.has(num) ? num : ''; });
         }
-        function toggleCandidateMode() { playSound('click'); isCandidateMode = !isCandidateMode; DOM.controls.querySelector('[data-action="candidate"]').classList.toggle('active', isCandidateMode); }
-        function showCompletionMessage(text) { DOM.completionMessage.textContent = text; DOM.completionMessage.classList.add('show'); setTimeout(() => { DOM.completionMessage.classList.remove('show'); }, 2000); }
+
+        function toggleCandidateMode() { playSound('click'); isCandidateMode = !isCandidateMode; document.getElementById('candidate-btn').classList.toggle('active', isCandidateMode); }
+
+        function showCompletionMessage(text) { completionMessage.textContent = text; completionMessage.classList.add('show'); setTimeout(() => { completionMessage.classList.remove('show'); }, 2000); }
         function animateCompletion(cells) { playSound('pop', 'C5'); cells.forEach((cell, index) => { setTimeout(() => { cell.classList.add('light-up-animation'); }, index * 50); }); setTimeout(() => { cells.forEach(cell => cell.classList.remove('light-up-animation')); }, cells.length * 50 + 1000); }
 
-        // ✨ OPTIMIZED: This function is now much faster, reading from the numberCounts cache.
         function updateCompletedNumberButtons() {
             for (let num = 1; num <= 9; num++) {
-                const btn = DOM.controls.querySelector(`.control-btn[data-number='${num}']`);
-                if (btn) btn.classList.toggle('disabled', numberCounts[num] === 9);
+                let count = 0;
+                for (let r = 0; r < 9; r++) { for (let c = 0; c < 9; c++) { if (boardState.playerBoard[r][c] === num) count++; } }
+                const btn = Array.from(controls.querySelectorAll('.control-btn')).find(b => parseInt(b.textContent) === num);
+                if (btn) {
+                    if (count === 9) btn.classList.add('disabled');
+                    else btn.classList.remove('disabled');
+                }
             }
         }
         
@@ -782,58 +1032,74 @@
                 localStorage.setItem('sudokuDailyCompletions', JSON.stringify(completions));
                 saveData();
             }
+            // Achievement Checks
+            if (completions.length >= 7) unlockAchievement('weekender');
+            if (completions.length >= 30) unlockAchievement('dedicated');
         }
-
-        // ✨ REFINED: Created a helper to simplify completion checks.
-        function checkGroupCompletion(groupName, cells) {
-            if (cells.every(cell => cell && boardState.playerBoard[cell.dataset.row][cell.dataset.col] !== 0)) {
-                showCompletionMessage(`${groupName} Complete!`);
-                animateCompletion(cells);
-                return true;
+        
+        // ✨ MODIFIED: Added all achievement checks on win
+        function checkWinAchievements() {
+            playerData.achievements.stats.gamesWon = (playerData.achievements.stats.gamesWon || 0) + 1;
+            
+            // First Steps
+            unlockAchievement('firstSteps');
+            
+            // Quick Thinker
+            if(currentDifficulty === 'easy' && secondsElapsed < 300) {
+                unlockAchievement('quickThinker');
             }
-            return false;
+            
+            // Perfectionist
+            if(mistakesMade === 0) {
+                unlockAchievement('perfectionist');
+                playerData.achievements.stats.perfectGames = (playerData.achievements.stats.perfectGames || 0) + 1;
+                if(currentDifficulty === 'hard' && playerData.achievements.stats.perfectGames >= 10) {
+                    unlockAchievement('sudokuMaster');
+                }
+            }
+            
+            // Persistent
+            if(playerData.achievements.stats.gamesWon >= 10) {
+                unlockAchievement('persistent');
+            }
+            
+            // Brainiac
+            if(currentDifficulty === 'hard') {
+                unlockAchievement('brainiac');
+            }
         }
 
         function checkCompletion(row, col, num) {
             updateCompletedNumberButtons();
-            let isGameWon = numberCounts.slice(1).every(count => count === 9);
+            let isGameWon = boardState.playerBoard.every(r => r.every(cell => cell !== 0));
 
             if (isGameWon) {
                 stopTimer();
                 const finalTime = secondsElapsed;
-                DOM.modals.winTimeMessage.textContent = `Your time: ${formatTime(finalTime)}`;
+                winTimeMessage.textContent = `Your time: ${formatTime(finalTime)}`;
                 saveBestTime(finalTime, currentDifficulty);
                 if (isDailyPuzzle) { recordDailyCompletion(); }
                 playSound('win');
                 addXP(100);
-                DOM.modals.win.style.display = 'flex';
+                checkWinAchievements(); // Check achievements
+                winModal.style.display = 'flex';
                 localStorage.removeItem('sudokuActiveGame');
+                saveData();
                 return;
             }
 
-            // Check if all of a specific number have been placed
-            const btn = DOM.controls.querySelector(`[data-number='${num}']`);
-            if (btn && btn.classList.contains('disabled') && !btn.dataset.animated) {
+            const btn = Array.from(controls.querySelectorAll('.control-btn')).find(b => parseInt(b.textContent) === num && !b.id);
+            if (btn && btn.classList.contains('disabled') && !btn.classList.contains('animation-done')) {
                 showCompletionMessage(`All ${num}s Done!`);
-                animateCompletion(Array.from(document.querySelectorAll(`.sudoku-cell`)).filter(c => c.textContent == num));
-                btn.dataset.animated = 'true';
+                const numCells = Array.from(document.querySelectorAll(`.sudoku-cell`)).filter(c => (c.textContent == num));
+                animateCompletion(numCells);
+                btn.classList.add('animation-done');
             }
 
-            // Check row, column, and block completion
-            const rowCells = Array.from({length: 9}, (_, c) => getCell(row, c));
-            if (checkGroupCompletion('Row', rowCells)) return;
-            
-            const colCells = Array.from({length: 9}, (_, r) => getCell(r, col));
-            if (checkGroupCompletion('Column', colCells)) return;
-            
-            const startRow = Math.floor(row / 3) * 3, startCol = Math.floor(col / 3) * 3;
-            const blockCells = [];
-            for (let r_offset = 0; r_offset < 3; r_offset++) {
-                for (let c_offset = 0; c_offset < 3; c_offset++) {
-                    blockCells.push(getCell(startRow + r_offset, startCol + c_offset));
-                }
-            }
-            checkGroupCompletion('Block', blockCells);
+            if (boardState.playerBoard[row].every(val => val !== 0)) { showCompletionMessage('Row Complete!'); const rowCells = []; for (let c = 0; c < 9; c++) rowCells.push(getCell(row, c)); animateCompletion(rowCells); }
+            if (boardState.playerBoard.every(r => r[col] !== 0)) { showCompletionMessage('Column Complete!'); const colCells = []; for (let r = 0; r < 9; r++) colCells.push(getCell(r, col)); animateCompletion(colCells); }
+            const startRow = Math.floor(row / 3) * 3, startCol = Math.floor(col / 3) * 3; let isGridComplete = true; for (let r = 0; r < 3; r++) { for (let c = 0; c < 3; c++) { if (boardState.playerBoard[startRow + r][startCol + c] === 0) isGridComplete = false; } }
+            if (isGridComplete) { showCompletionMessage('Grid Complete!'); const gridCells = []; for (let r = 0; r < 3; r++) { for (let c = 0; c < 3; c++) gridCells.push(getCell(startRow + r, startCol + c)); } animateCompletion(gridCells); }
         }
         
         function updateColorMode() {
@@ -852,61 +1118,41 @@
         }
         
         function isValidPlacement(board, row, col, num) { for (let i = 0; i < 9; i++) { if (board[row][i] === num || board[i][col] === num) return false; } const startRow = Math.floor(row / 3) * 3, startCol = Math.floor(col / 3) * 3; for (let i = 0; i < 3; i++) { for (let j = 0; j < 3; j++) { if (board[startRow + i][startCol + j] === num) return false; } } return true; }
-        function getCell(row, col) { return DOM.sudokuGrid.querySelector(`[data-row='${row}'][data-col='${col}']`); }
+        function getCell(row, col) { return sudokuGrid.querySelector(`[data-row='${row}'][data-col='${col}']`); }
         
-        function handleGameOver() { stopTimer(); DOM.modals.gameOver.style.display = 'flex'; localStorage.removeItem('sudokuActiveGame'); }
-        function updateLivesDisplay() { DOM.livesContainer.textContent = '♥ '.repeat(lives); }
+        function handleGameOver() { stopTimer(); gameOverModal.style.display = 'flex'; localStorage.removeItem('sudokuActiveGame'); }
+        function updateLivesDisplay() { livesContainer.textContent = '♥ '.repeat(lives); }
         
         function displayCalendar() {
-            DOM.modals.calendarGrid.innerHTML = '';
-            const year = calendarDate.getFullYear(), month = calendarDate.getMonth(), today = new Date();
-            DOM.modals.calendarMonthYear.textContent = `${calendarDate.toLocaleString('default', { month: 'long' })} ${year}`;
+            calendarGrid.innerHTML = '';
+            const year = calendarDate.getFullYear(); const month = calendarDate.getMonth(); const today = new Date();
+            calendarMonthYear.textContent = `${calendarDate.toLocaleString('default', { month: 'long' })} ${year}`;
             const firstDayOfMonth = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
             const completions = JSON.parse(localStorage.getItem('sudokuDailyCompletions')) || [];
-            ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => { const cell = document.createElement('div'); cell.className = 'calendar-weekday'; cell.textContent = day; DOM.modals.calendarGrid.appendChild(cell); });
-            for (let i = 0; i < firstDayOfMonth; i++) { const cell = document.createElement('div'); cell.className = 'calendar-day empty'; DOM.modals.calendarGrid.appendChild(cell); }
-            for (let day = 1; day <= daysInMonth; day++) { const cell = document.createElement('div'); cell.className = 'calendar-day'; cell.textContent = day; const dateString = `${year}-${month + 1}-${day}`; if (completions.includes(dateString)) { cell.innerHTML = `<span>${day}</span><span class="medal">🥇</span>`; } if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) { cell.classList.add('today'); } DOM.modals.calendarGrid.appendChild(cell); }
-            DOM.modals.calendar.style.display = 'flex';
+            const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            weekdays.forEach(day => { const weekdayCell = document.createElement('div'); weekdayCell.classList.add('calendar-weekday'); weekdayCell.textContent = day; calendarGrid.appendChild(weekdayCell); });
+            for (let i = 0; i < firstDayOfMonth; i++) { const emptyCell = document.createElement('div'); emptyCell.classList.add('calendar-day', 'empty'); calendarGrid.appendChild(emptyCell); }
+            for (let day = 1; day <= daysInMonth; day++) { const dayCell = document.createElement('div'); dayCell.classList.add('calendar-day'); dayCell.textContent = day; const dateString = `${year}-${month + 1}-${day}`; if (completions.includes(dateString)) { dayCell.innerHTML = `<span>${day}</span><span class="medal">🥇</span>`; } if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) { dayCell.classList.add('today'); } calendarGrid.appendChild(dayCell); }
+            calendarModal.style.display = 'flex';
         }
 
-        // --- Event Delegation & Listeners ---
-        document.body.addEventListener('click', (e) => {
-            const action = e.target.dataset.action;
-            if (!action) return;
-
-            playSound('click');
-            switch (action) {
-                case 'new-game': isDailyPuzzle = false; seedForNextGame = null; showScreen('difficulty-screen'); localStorage.removeItem('sudokuActiveGame'); const btn = DOM.titleButtons.querySelector('[data-action="continue-game"]'); if(btn) btn.remove(); break;
-                case 'daily-puzzle': isDailyPuzzle = true; const today = new Date(); seedForNextGame = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`; showScreen('difficulty-screen'); break;
-                case 'seed-game': isDailyPuzzle = false; showScreen('seed-screen'); break;
-                case 'best-times': displayBestTimes(); break;
-                case 'calendar': calendarDate = new Date(); displayCalendar(); break;
-                case 'options': unlockClickCounter = 0; buildOptionsModal(); DOM.modals.options.style.display = 'flex'; break;
-                case 'mute': isMuted = !isMuted; e.target.textContent = isMuted ? '🔇' : '🔊'; unlockClickCounter++; if (unlockClickCounter === 8) unlockAll(); saveData(); break;
-                case 'fullscreen': unlockClickCounter = 0; if (!document.fullscreenElement) DOM.root.requestFullscreen().catch(err => console.error(err)); else document.exitFullscreen(); break;
-                case 'restart-game': resetGame(); break;
-                case 'win-new-game': startNewGameFromWin(); break;
-                case 'close-best-times': DOM.modals.bestTimes.style.display = 'none'; break;
-                case 'prev-month': calendarDate.setMonth(calendarDate.getMonth() - 1); displayCalendar(); break;
-                case 'next-month': calendarDate.setMonth(calendarDate.getMonth() + 1); displayCalendar(); break;
-                case 'close-calendar': DOM.modals.calendar.style.display = 'none'; break;
-            }
-        });
-
-        window.addEventListener('keydown', (e) => { if (DOM.gameBoard.style.display === 'block' && e.key >= '1' && e.key <= '9') { inputNumber(parseInt(e.key)); } });
+        // --- Event Listeners ---
+        window.addEventListener('keydown', (e) => { if (gameBoard.style.display === 'block' && e.key >= '1' && e.key <= '9') { inputNumber(parseInt(e.key)); } });
         window.addEventListener('beforeunload', saveActiveGame);
 
-        DOM.difficultyScreen.addEventListener('click', e => { if (e.target.dataset.difficulty) { playSound('click'); currentDifficulty = e.target.dataset.difficulty; showScreen('view-mode-screen'); } });
-        DOM.viewModeScreen.addEventListener('click', e => { if (e.target.dataset.view) { playSound('click'); isEasySeeMode = (e.target.dataset.view === 'easy-see'); showScreen('title-screen'); const options = { difficulty: currentDifficulty }; if (seedForNextGame) { options.seed = stringToSeed(seedForNextGame.toLowerCase()); } startGame(options); seedForNextGame = null; } });
-        DOM.startFromSeedBtn.addEventListener('click', () => { const seedWord = DOM.seedInput.value.trim(); if(seedWord === ''){ alert("Please enter a seed word."); return; } playSound('click'); seedForNextGame = seedWord; showScreen('difficulty-screen'); });
-        DOM.controls.addEventListener('click', e => {
-            const target = e.target;
-            if (target.dataset.number) inputNumber(parseInt(target.dataset.number));
-            else if (target.dataset.action === 'candidate') toggleCandidateMode();
-            else if (target.dataset.action === 'reveal') useReveal();
-        });
-
+        muteBtn.addEventListener('click', () => { isMuted = !isMuted; muteBtn.textContent = isMuted ? '🔇' : '🔊'; unlockClickCounter++; if (unlockClickCounter === 8) { unlockAll(); } saveData(); });
+        fullscreenBtn.addEventListener('click', () => { unlockClickCounter = 0; if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => console.error(err)); } else { document.exitFullscreen(); } });
+        optionsBtn.addEventListener('click', () => { unlockClickCounter = 0; buildOptionsModal(); optionsModal.style.display = 'flex'; playSound('click'); });
+        restartGameBtn.addEventListener('click', () => { resetGame(); playSound('click'); });
+        winNewGameBtn.addEventListener('click', () => { playSound('click'); startNewGameFromWin(); });
+        bestTimesBtn.addEventListener('click', () => { playSound('click'); displayBestTimes(); });
+        closeBestTimesBtn.addEventListener('click', () => { playSound('click'); bestTimesModal.style.display = 'none'; });
+        calendarBtn.addEventListener('click', () => { playSound('click'); calendarDate = new Date(); displayCalendar(); });
+        prevMonthBtn.addEventListener('click', () => { playSound('click'); calendarDate.setMonth(calendarDate.getMonth() - 1); unlockAchievement('curiosity'); displayCalendar(); });
+        nextMonthBtn.addEventListener('click', () => { playSound('click'); calendarDate.setMonth(calendarDate.getMonth() + 1); displayCalendar(); });
+        closeCalendarBtn.addEventListener('click', () => { playSound('click'); calendarModal.style.display = 'none'; });
+        closeAchievementsBtn.addEventListener('click', () => { playSound('click'); achievementsModal.style.display = 'none'; });
 
         // --- XP, Leveling & Unlocks ---
         function addXP(amount) { playerData.xp += amount; if (playerData.xp >= playerData.xpToNextLevel) { levelUp(); } updateXPBar(); saveData(); }
@@ -914,9 +1160,12 @@
             playerData.level++; playerData.xp -= playerData.xpToNextLevel; playerData.xpToNextLevel = Math.floor(playerData.xpToNextLevel * 1.2); playSound('levelUp');
             const unlock = unlockables[playerData.level];
             if (unlock) {
-                // ✨ REFINED: Simplified unlock logic
-                const category = unlock.type + 's'; // e.g., 'background' -> 'backgrounds'
-                if(playerData.unlocked[category]) playerData.unlocked[category].push(unlock.id);
+                if (unlock.type === 'background') playerData.unlocked.backgrounds.push(unlock.id);
+                if (unlock.type === 'font') playerData.unlocked.fonts.push(unlock.id);
+                if (unlock.type === 'theme') playerData.unlocked.themes.push(unlock.id);
+                if (unlock.type === 'board') playerData.unlocked.boards.push(unlock.id);
+                if (unlock.type === 'feature') playerData.unlocked.features.push(unlock.id);
+                if (unlock.type === 'sound') playerData.unlocked.sounds.push(unlock.id);
                 showUnlockModal(unlock);
             } else {
                 showUnlockModal({type: 'level', name: `Level ${playerData.level}`});
@@ -924,101 +1173,144 @@
             saveData();
         }
         
-        function unlockAll() {
-            // ✨ REFINED: Simplified unlock logic
-            Object.values(unlockables).forEach(unlock => {
-                const key = unlock.type + 's';
-                if (playerData.unlocked[key] && !playerData.unlocked[key].includes(unlock.id)) {
-                    playerData.unlocked[key].push(unlock.id);
-                }
-            });
-            playerData.level = 52;
-            alert('Developer Mode: All items unlocked!');
-            unlockClickCounter = 0;
-            saveData();
-        }
+        function unlockAll() { Object.values(unlockables).forEach(unlock => { if (unlock.type === 'background' && !playerData.unlocked.backgrounds.includes(unlock.id)) playerData.unlocked.backgrounds.push(unlock.id); if (unlock.type === 'font' && !playerData.unlocked.fonts.includes(unlock.id)) playerData.unlocked.fonts.push(unlock.id); if (unlock.type === 'theme' && !playerData.unlocked.themes.includes(unlock.id)) playerData.unlocked.themes.push(unlock.id); if (unlock.type === 'board' && !playerData.unlocked.boards.includes(unlock.id)) playerData.unlocked.boards.push(unlock.id); if (unlock.type === 'feature' && !playerData.unlocked.features.includes(unlock.id)) playerData.unlocked.features.push(unlock.id); if (unlock.type === 'sound' && !playerData.unlocked.sounds.includes(unlock.id)) playerData.unlocked.sounds.push(unlock.id); }); playerData.level = 52; alert('Developer Mode: All items unlocked!'); unlockClickCounter = 0; saveData(); }
 
         function showUnlockModal(unlock) {
             let message = `<h2>Level Up! You are now Level ${playerData.level}!</h2>`;
             if (unlock.type !== 'level') message += `<p>You've unlocked: <strong>${unlock.name}</strong>!</p>`;
-            
-            DOM.modals.unlockContent.innerHTML = message;
             const buttonContainer = document.createElement('div');
-            buttonContainer.style.display = 'flex';
-            buttonContainer.style.gap = '10px';
-            buttonContainer.style.justifyContent = 'center';
-
             if (['background', 'font', 'theme', 'board', 'sound'].includes(unlock.type)) {
                 const applyBtn = document.createElement('button');
                 applyBtn.className = 'control-btn';
                 applyBtn.textContent = 'Apply Now';
                 applyBtn.onclick = () => {
-                    const actions = {
-                        background: applyBackground, font: applyFont, theme: applyTheme, board: applyBoard, sound: applySoundPack
-                    };
-                    actions[unlock.type](unlock.id);
-                    DOM.modals.unlock.style.display = 'none';
+                    if (unlock.type === 'background') applyBackground(unlock.id); if (unlock.type === 'font') applyFont(unlock.id); if (unlock.type === 'theme') applyTheme(unlock.id); if (unlock.type === 'board') applyBoard(unlock.id); if (unlock.type === 'sound') applySoundPack(unlock.id);
+                    unlockModal.style.display = 'none';
                 };
                 buttonContainer.appendChild(applyBtn);
             }
-            const closeBtn = document.createElement('button');
-            closeBtn.className = 'control-btn';
-            closeBtn.textContent = 'Awesome!';
-            closeBtn.onclick = () => { DOM.modals.unlock.style.display = 'none' };
-            buttonContainer.appendChild(closeBtn);
-            DOM.modals.unlockContent.appendChild(buttonContainer);
-            DOM.modals.unlock.style.display = 'flex';
+            const closeBtn = document.createElement('button'); closeBtn.className = 'control-btn'; closeBtn.textContent = 'Awesome!'; closeBtn.onclick = () => { unlockModal.style.display = 'none' }; buttonContainer.appendChild(closeBtn);
+            unlockContent.innerHTML = message; unlockContent.appendChild(buttonContainer); unlockModal.style.display = 'flex';
         }
 
-        function updateXPBar() { const percentage = Math.min((playerData.xp / playerData.xpToNextLevel) * 100, 100); DOM.xpBar.style.width = `${percentage}%`; DOM.xpBar.textContent = `Level ${playerData.level}`; }
-        function goToTitleScreen() { playSound('click'); DOM.modals.options.style.display = 'none'; resetGame(); }
+        function updateXPBar() { const percentage = Math.min((playerData.xp / playerData.xpToNextLevel) * 100, 100); xpBar.style.width = `${percentage}%`; xpBar.textContent = `Level ${playerData.level}`; }
+        
+        function goToTitleScreen() {
+            playSound('click');
+            optionsModal.style.display = 'none';
+            resetGame();
+        }
 
-        function resetAllProgress() { playSound('error'); localStorage.removeItem('sudokuUserData'); localStorage.removeItem('sudokuActiveGame'); alert('All progress has been reset. The page will now reload.'); location.reload(); }
-        function promptResetAllProgress() { playSound('click'); if (confirm("Are you sure you want to reset ALL your progress? This includes your level, unlocks, and best times.\nThis action is permanent and cannot be undone.")) { resetAllProgress(); } }
+        // --- ✨ ADDED: Functions to handle resetting all player progress ---
+        function resetAllProgress() {
+            playSound('error');
+            localStorage.removeItem('sudokuUserData');
+            localStorage.removeItem('sudokuActiveGame');
+            alert('All progress has been reset. The page will now reload.');
+            location.reload();
+        }
 
-        // ✨ REFINED: Helper function to generate button sections for the options modal.
-        function createOptionButtons(title, unlockedIds, activeId, clickHandler) {
-            let html = `<h3>${title}</h3>`;
-            unlockedIds.forEach(id => {
-                const name = itemManifest[id]?.name || 'Unknown';
-                const activeClass = activeId === id ? 'active' : '';
-                html += `<button class="control-btn ${activeClass}" onclick="${clickHandler}('${id}')">${name}</button>`;
+        function promptResetAllProgress() {
+            playSound('click');
+            if (confirm("Are you sure you want to reset ALL your progress? This includes your level, unlocks, achievements, and best times.")) {
+                if (confirm("This action is permanent and cannot be undone. Are you absolutely sure?")) {
+                    resetAllProgress();
+                }
+            }
+        }
+        
+        // --- ✨ ADDED: Achievement System Logic ---
+        function showAchievementNotification(id) {
+            const ach = achievements[id];
+            achievementNotification.innerHTML = `
+                <h4>🏆 Achievement Unlocked!</h4>
+                <p>${ach.name} (+<span class="points">${ach.points}</span> points)</p>
+            `;
+            achievementNotification.classList.add('show');
+            playAchievementJingle();
+            setTimeout(() => {
+                achievementNotification.classList.remove('show');
+            }, 4000);
+        }
+
+        function unlockAchievement(id) {
+            if (playerData.achievements.unlocked.includes(id)) {
+                return; // Already unlocked
+            }
+
+            playerData.achievements.unlocked.push(id);
+            playerData.achievements.totalPoints += achievements[id].points;
+            achievements[id].unlocked = true;
+            
+            showAchievementNotification(id);
+            saveData();
+        }
+
+        function displayAchievements() {
+            achievementsList.innerHTML = '';
+            totalAchievementPoints.textContent = playerData.achievements.totalPoints;
+
+            Object.keys(achievements).forEach(id => {
+                const ach = achievements[id];
+                const isUnlocked = playerData.achievements.unlocked.includes(id);
+
+                const item = document.createElement('div');
+                item.className = `achievement-item ${isUnlocked ? 'unlocked' : 'locked'}`;
+                
+                let description = ach.desc;
+                if (ach.secret && !isUnlocked) {
+                    description = 'Unlock this secret achievement to see its description.';
+                }
+
+                item.innerHTML = `
+                    <div class="achievement-icon">${ach.icon}</div>
+                    <div class="achievement-details">
+                        <h4>${ach.name}</h4>
+                        <p>${description}</p>
+                    </div>
+                    <div class="achievement-points">+${ach.points}</div>
+                `;
+                achievementsList.appendChild(item);
             });
-            return html;
+            achievementsModal.style.display = 'flex';
         }
 
         function buildOptionsModal() {
-            let content = `<h2>Options</h2><button class="control-btn" onclick="goToTitleScreen()" style="margin-bottom: 15px; grid-column: 1 / -1;">Title Screen</button><div class="options-grid">`;
-            content += createOptionButtons('Sound Packs', playerData.unlocked.sounds, currentSoundPack, 'applySoundPack');
-            content += createOptionButtons('Backgrounds', playerData.unlocked.backgrounds, DOM.root.dataset.background, 'applyBackground');
-            content += createOptionButtons('Board Styles', playerData.unlocked.boards, DOM.sudokuGrid.dataset.board, 'applyBoard');
-            content += createOptionButtons('Color Themes', playerData.unlocked.themes, DOM.root.dataset.theme, 'applyTheme');
-            content += createOptionButtons('Fonts', playerData.unlocked.fonts, DOM.root.dataset.font, 'applyFont');
-            if (playerData.unlocked.features.length > 0) { content += `<h3>Features</h3>`; if (playerData.unlocked.features.includes('feature-color-mode')) { content += `<button class="control-btn" onclick="toggleColorMode(this)">Color Mode: ${isColorMode ? 'ON' : 'OFF'}</button>`; } }
+            let content = `<h2>Options</h2>
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; grid-column: 1 / -1;">
+                <button class="control-btn" onclick="goToTitleScreen()">Title Screen</button>
+                <button class="control-btn" onclick="displayAchievements()">Achievements</button>
+            </div>
+            <div class="options-grid">`;
+            content += `<h3>Sound Packs</h3>`; playerData.unlocked.sounds.forEach(soundId => { const soundName = itemManifest[soundId]?.name || 'Unknown'; const activeClass = currentSoundPack === soundId ? 'active' : ''; content += `<button class="control-btn ${activeClass}" onclick="applySoundPack('${soundId}')">${soundName}</button>`; });
+            content += `<h3>Backgrounds</h3>`; playerData.unlocked.backgrounds.forEach(bgId => { const bgName = itemManifest[bgId]?.name || 'Unknown'; content += `<button class="control-btn" onclick="applyBackground('${bgId}')">${bgName}</button>`; });
+            content += `<h3>Board Styles</h3>`; playerData.unlocked.boards.forEach(boardId => { const boardName = itemManifest[boardId]?.name || 'Unknown'; content += `<button class="control-btn" onclick="applyBoard('${boardId}')">${boardName}</button>`; });
+            content += `<h3>Color Themes</h3>`; playerData.unlocked.themes.forEach(themeId => { const themeName = itemManifest[themeId]?.name || 'Unknown'; content += `<button class="control-btn" onclick="applyTheme('${themeId}')">${themeName}</button>`; });
+            content += `<h3>Fonts</h3>`; playerData.unlocked.fonts.forEach(fontId => { const fontName = itemManifest[fontId]?.name || 'Unknown'; content += `<button class="control-btn" onclick="applyFont('${fontId}')">${fontName}</button>`; });
+            if (playerData.unlocked.features.length > 0) { content += `<h3>Features</h3>`; if (playerData.unlocked.features.includes('feature-color-mode')) { content += `<button class="control-btn" id="color-mode-btn" onclick="toggleColorMode()">Color Mode: ${isColorMode ? 'ON' : 'OFF'}</button>`; } }
+            // ✨ ADDED: "Reset All Progress" button and "Close" button
             content += `</div><div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
-                <button class="control-btn" onclick="promptResetAllProgress()" style="background-color: var(--error-color); color: white;">Reset All Progress</button>
-                <button class="control-btn" onclick="DOM.modals.options.style.display='none';">Close</button>
+                <button class="control-btn" id="reset-progress-btn" onclick="promptResetAllProgress()" style="background-color: var(--error-color); color: white;">Reset All Progress</button>
+                <button class="control-btn" onclick="optionsModal.style.display='none';">Close</button>
             </div>`;
-            DOM.modals.optionsContent.innerHTML = content;
+            optionsContent.innerHTML = content;
         }
         
-        // --- Visual Effects & Theming ---
-        function clearJsBackgrounds() { DOM.animatedBg.querySelectorAll('.firefly, .rain-drop, .leaf, .ripple-bg, .bubble, .snow-flake, .lantern').forEach(e => e.remove()); }
-        function createDynamicBgElements(count, className, setupFn) { clearJsBackgrounds(); for (let i = 0; i < count; i++) { const el = document.createElement('div'); el.className = className; if(setupFn) setupFn(el); DOM.animatedBg.appendChild(el); } }
-        function createFireflies() { DOM.animatedBg.style.background = '#0d1a26'; createDynamicBgElements(20, 'firefly', el => { el.style.left = `${Math.random() * 100}%`; el.style.top = `${Math.random() * 100}%`; el.style.setProperty('--x-end', `${Math.random() * 200 - 100}px`); el.style.setProperty('--y-end', `${Math.random() * 200 - 100}px`); el.style.animationDelay = `${Math.random() * 20}s`; }); }
-        function createRain() { DOM.animatedBg.style.background = '#a3d8f4'; createDynamicBgElements(50, 'rain-drop', el => { el.style.left = `${Math.random() * 100}%`; el.style.animationDuration = `${Math.random() * 0.5 + 0.5}s`; el.style.animationDelay = `${Math.random() * 5}s`; }); }
-        function createLeaves() { DOM.animatedBg.style.background = '#fdf6f6'; const colors = ['#DAA520', '#B22222', '#8B4513']; createDynamicBgElements(25, 'leaf', el => { el.style.left = `${Math.random() * 100}%`; el.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)]; el.style.animationDuration = `${Math.random() * 5 + 5}s`; el.style.animationDelay = `${Math.random() * 5}s`; }); }
-        function createRipples() { DOM.animatedBg.style.background = '#6155a6'; createDynamicBgElements(15, 'ripple-bg', el => { el.style.left = `${Math.random() * 100}%`; el.style.top = `${Math.random() * 100}%`; el.style.animationDelay = `${Math.random() * 4}s`; }); }
-        function createBubbles() { DOM.animatedBg.style.background = '#005C97'; createDynamicBgElements(40, 'bubble', el => { el.style.left = `${Math.random() * 100}%`; const size = `${Math.random() * 60 + 20}px`; el.style.width = size; el.style.height = size; el.style.animationDuration = `${Math.random() * 10 + 8}s`; el.style.animationDelay = `${Math.random() * 5}s`; }); }
-        function createSnow() { DOM.animatedBg.style.background = '#4a6fa5'; createDynamicBgElements(100, 'snow-flake', el => { el.style.left = `${Math.random() * 100}%`; el.style.opacity = Math.random(); const size = `${Math.random() * 5 + 2}px`; el.style.width = size; el.style.height = size; el.style.animationDuration = `${Math.random() * 10 + 5}s`; el.style.animationDelay = `${Math.random() * 10}s`; }); }
-        function createLanterns() { DOM.animatedBg.style.background = '#1c1c3c'; createDynamicBgElements(15, 'lantern', el => { el.style.left = `${Math.random() * 100}%`; el.style.animationDuration = `${Math.random() * 20 + 15}s`; el.style.animationDelay = `${Math.random() * 15}s`; }); }
+        function clearJsBackgrounds() { const existing = animatedBg.querySelectorAll('.firefly, .rain-drop, .leaf, .ripple-bg, .bubble, .snow-flake, .lantern'); existing.forEach(e => e.remove()); }
+        function createFireflies() { clearJsBackgrounds(); animatedBg.style.background = '#0d1a26'; for (let i = 0; i < 20; i++) { const firefly = document.createElement('div'); firefly.className = 'firefly'; firefly.style.left = `${Math.random() * 100}%`; firefly.style.top = `${Math.random() * 100}%`; firefly.style.setProperty('--x-end', `${Math.random() * 200 - 100}px`); firefly.style.setProperty('--y-end', `${Math.random() * 200 - 100}px`); firefly.style.animationDelay = `${Math.random() * 20}s`; animatedBg.appendChild(firefly); } }
+        function createRain() { clearJsBackgrounds(); animatedBg.style.background = '#a3d8f4'; for (let i = 0; i < 50; i++) { const drop = document.createElement('div'); drop.className = 'rain-drop'; drop.style.left = `${Math.random() * 100}%`; drop.style.animationDuration = `${Math.random() * 0.5 + 0.5}s`; drop.style.animationDelay = `${Math.random() * 5}s`; animatedBg.appendChild(drop); } }
+        function createLeaves() { clearJsBackgrounds(); animatedBg.style.background = '#fdf6f6'; const colors = ['#DAA520', '#B22222', '#8B4513']; for (let i = 0; i < 25; i++) { const leaf = document.createElement('div'); leaf.className = 'leaf'; leaf.style.left = `${Math.random() * 100}%`; leaf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)]; leaf.style.animationDuration = `${Math.random() * 5 + 5}s`; leaf.style.animationDelay = `${Math.random() * 5}s`; animatedBg.appendChild(leaf); } }
+        function createRipples() { clearJsBackgrounds(); animatedBg.style.background = '#6155a6'; for (let i = 0; i < 15; i++) { const ripple = document.createElement('div'); ripple.className = 'ripple-bg'; ripple.style.left = `${Math.random() * 100}%`; ripple.style.top = `${Math.random() * 100}%`; ripple.style.animationDelay = `${Math.random() * 4}s`; animatedBg.appendChild(ripple); } }
+        function createBubbles() { clearJsBackgrounds(); animatedBg.style.background = '#005C97'; for (let i = 0; i < 40; i++) { const bubble = document.createElement('div'); bubble.className = 'bubble'; bubble.style.left = `${Math.random() * 100}%`; bubble.style.width = `${Math.random() * 60 + 20}px`; bubble.style.height = bubble.style.width; bubble.style.animationDuration = `${Math.random() * 10 + 8}s`; bubble.style.animationDelay = `${Math.random() * 5}s`; animatedBg.appendChild(bubble); } }
+        function createSnow() { clearJsBackgrounds(); animatedBg.style.background = '#4a6fa5'; for (let i = 0; i < 100; i++) { const flake = document.createElement('div'); flake.className = 'snow-flake'; flake.style.left = `${Math.random() * 100}%`; flake.style.opacity = Math.random(); flake.style.width = `${Math.random() * 5 + 2}px`; flake.style.height = flake.style.width; flake.style.animationDuration = `${Math.random() * 10 + 5}s`; flake.style.animationDelay = `${Math.random() * 10}s`; animatedBg.appendChild(flake); } }
+        function createLanterns() { clearJsBackgrounds(); animatedBg.style.background = '#1c1c3c'; for (let i = 0; i < 15; i++) { const lantern = document.createElement('div'); lantern.className = 'lantern'; lantern.style.left = `${Math.random() * 100}%`; lantern.style.animationDuration = `${Math.random() * 20 + 15}s`; lantern.style.animationDelay = `${Math.random() * 15}s`; animatedBg.appendChild(lantern); } }
         
-        function applyBackground(bgId, isInitialLoad = false) { clearJsBackgrounds(); const bg = backgroundStyles[bgId]; DOM.animatedBg.style.animation = 'none'; DOM.animatedBg.style.backgroundSize = bg.size || 'auto'; if (bg.type === 'css') { DOM.animatedBg.style.background = bg.style; DOM.animatedBg.style.animation = bg.animation; } else if (bg.type === 'js') { window[bg.function](); } if (!isInitialLoad) playSound('click'); DOM.root.dataset.background = bgId; saveData(); }
-        function applyBoard(boardId, isInitialLoad = false) { DOM.sudokuGrid.className = 'sudoku-grid'; if (isEasySeeMode) DOM.sudokuGrid.classList.add('easy-see-mode'); if (boardId !== 'board-default') { DOM.sudokuGrid.classList.add(boardId); } if (!isInitialLoad) playSound('click'); DOM.sudokuGrid.dataset.board = boardId; saveData(); }
-        function applyTheme(themeId, isInitialLoad = false) { const theme = themeStyles[themeId]; for (const [key, value] of Object.entries(theme)) { DOM.root.style.setProperty(key, value); } if (!isInitialLoad) playSound('click'); DOM.root.dataset.theme = themeId; saveData(); }
-        function applyFont(fontId, isInitialLoad = false) { DOM.root.style.fontFamily = fontStyles[fontId]; if (!isInitialLoad) playSound('click'); DOM.root.dataset.font = fontId; saveData(); }
+        function applyBackground(bgId, isInitialLoad = false) { clearJsBackgrounds(); const bg = backgroundStyles[bgId]; animatedBg.style.animation = 'none'; animatedBg.style.backgroundSize = bg.size || 'auto'; if (bg.type === 'css') { animatedBg.style.background = bg.style; animatedBg.style.animation = bg.animation; } else if (bg.type === 'js') { window[bg.function](); } if(!isInitialLoad) playSound('click'); document.body.dataset.background = bgId; saveData(); }
+        function applyBoard(boardId, isInitialLoad = false) { sudokuGrid.className = 'sudoku-grid'; if (isEasySeeMode) sudokuGrid.classList.add('easy-see-mode'); if (boardId !== 'board-default') { sudokuGrid.classList.add(boardId); } if(!isInitialLoad) playSound('click'); sudokuGrid.dataset.board = boardId; saveData(); }
+        function applyTheme(themeId, isInitialLoad = false) { const theme = themeStyles[themeId]; for (const [key, value] of Object.entries(theme)) { root.style.setProperty(key, value); } if(!isInitialLoad) playSound('click'); document.body.dataset.theme = themeId; saveData(); }
+        function applyFont(fontId, isInitialLoad = false) { document.body.style.fontFamily = fontStyles[fontId]; if(!isInitialLoad) playSound('click'); document.body.dataset.font = fontId; saveData(); }
         
-        function toggleColorMode(btn) { isColorMode = !isColorMode; if (btn) { btn.textContent = `Color Mode: ${isColorMode ? 'ON' : 'OFF'}`; } updateColorMode(); playSound('click'); }
+        function toggleColorMode() { isColorMode = !isColorMode; const colorModeBtn = document.getElementById('color-mode-btn'); if (colorModeBtn) { colorModeBtn.textContent = `Color Mode: ${isColorMode ? 'ON' : 'OFF'}`; } updateColorMode(); playSound('click'); }
         function useReveal() {
             if (revealsLeft <= 0 || !selectedCell || selectedCell.classList.contains('given') || selectedCell.classList.contains('correct')) return;
             playSound('click');
@@ -1027,12 +1319,12 @@
             inputNumber(solution);
             isCandidateMode = wasCandidateMode; 
             revealsLeft--;
-            const revealBtn = DOM.controls.querySelector('[data-action="reveal"]');
+            const revealBtn = document.getElementById('reveal-btn');
             if (revealBtn) { revealBtn.textContent = `Reveal (${revealsLeft})`; if(revealsLeft <= 0) revealBtn.classList.add('disabled'); }
             saveActiveGame();
         }
         
-        // --- Initial load ---
+        // Initial load
         startTitleAnimation();
         loadData();
     </script>
