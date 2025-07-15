@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Sudoku</title>
+    <title>Smooth Moves Sudoku</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Kalam:wght@400;700&family=Patrick+Hand&family=Caveat&family=Shadows+Into+Light&family=Architects+Daughter&family=Roboto+Mono&family=Bangers&family=Creepster&family=Nosifier&family=Indie+Flower&family=Amatic+SC:wght@700&family=Pacifico&family=Dancing+Script:wght@700&family=Sriracha&family=Marck+Script&family=Courgette&family=Satisfy&family=Lobster+Two:ital@1&family=Cookie&family=Great+Vibes&family=Sacramento&family=Tangerine:wght@700&family=Bad+Script&family=Homemade+Apple&family=Rock+Salt&family=Special+Elite&family=Unkempt&family=Neucha&family=Lato&family=Montserrat&family=Oswald&family=Raleway&family=Merriweather&family=Playfair+Display&family=Ubuntu&family=Noto+Sans&family=Open+Sans&family=Source+Code+Pro&family=Rubik&family=Work+Sans&family=Permanent+Marker&family=Kaushan+Script&family=Press+Start+2P&family=Bebas+Neue&family=Lobster&family=Anton&family=Fjalla+One&family=Gloria+Hallelujah&family=Comfortaa&family=Cinzel&family=Josefin+Sans&family=Arimo&family=Orbitron&display=swap" rel="stylesheet">
@@ -198,7 +198,7 @@
     <div id="game-container">
         <div id="title-screen">
             <div id="title-animation-container"></div>
-            <h1>Single Prompt AI Sudoku</h1>
+            <h1>Smooth Moves Sudoku</h1>
             <div id="title-buttons">
                 <button class="control-btn" id="new-game-btn">New Game</button>
                 <button class="control-btn" id="daily-puzzle-btn">Daily Puzzle</button>
@@ -404,7 +404,6 @@
 
         function saveData() { currentSettings.isMuted = isMuted; currentSettings.musicVolume = backgroundMusic.volume; currentSettings.soundPack = currentSoundPack; currentSettings.background = document.body.dataset.background || 'bg-default'; currentSettings.theme = document.body.dataset.theme || 'theme-default'; currentSettings.font = document.body.dataset.font || 'font-default'; currentSettings.board = sudokuGrid.dataset.board || 'board-default'; const dataToSave = { playerData: playerData, settings: currentSettings, bestTimes: loadBestTimes(), dailyCompletions: JSON.parse(localStorage.getItem('sudokuDailyCompletions')) || [] }; localStorage.setItem('sudokuUserData', JSON.stringify(dataToSave)); }
         function saveActiveGame() { if (gameBoard.style.display !== 'block') return; const activeGame = { boardState, lives, secondsElapsed, currentDifficulty, isDailyPuzzle, isEasySeeMode, revealsLeft, mistakesMade }; localStorage.setItem('sudokuActiveGame', JSON.stringify(activeGame)); }
-        
         function loadData() {
             const savedData = JSON.parse(localStorage.getItem('sudokuUserData'));
             if (savedData) {
@@ -418,14 +417,14 @@
                 setMusicVolume(currentSettings.musicVolume !== undefined ? currentSettings.musicVolume : 0.3);
                 applyTheme(currentSettings.theme || 'theme-default', true);
                 applyFont(currentSettings.font || 'font-default', true);
+                applyBackground(currentSettings.background || 'bg-default', true);
                 applyBoard(currentSettings.board || 'board-default', true);
                 applySoundPack(currentSettings.soundPack || 'sound-default');
             } else {
                  setMusicVolume(0.3);
             }
-            updateXPBar();
+                      updateXPBar();
         }
-
         function resumeGame(savedGame) {
             playSound('click');
             if (backgroundMusic.paused) startMusic();
@@ -451,124 +450,29 @@
             if (isColorMode) updateColorMode();
         }
 
-        function isBoardSolutionValid(board) {
-            for (let i = 0; i < 9; i++) {
-                const rowSet = new Set();
-                const colSet = new Set();
-                for (let j = 0; j < 9; j++) {
-                    if (board[i][j] === 0 || rowSet.has(board[i][j])) return false;
-                    rowSet.add(board[i][j]);
-                    if (board[j][i] === 0 || colSet.has(board[j][i])) return false;
-                    colSet.add(board[j][i]);
-                }
-            }
-            for (let boxRow = 0; boxRow < 9; boxRow += 3) {
-                for (let boxCol = 0; boxCol < 9; boxCol += 3) {
-                    const boxSet = new Set();
-                    for (let i = 0; i < 3; i++) {
-                        for (let j = 0; j < 3; j++) {
-                            const cell = board[boxRow + i][boxCol + j];
-                            if (cell === 0 || boxSet.has(cell)) return false;
-                            boxSet.add(cell);
-                        }
-                    }
-                }
-            }
-            return true;
-        }
-
         function mulberry32(a) { return function() { var t = a += 0x6D2B79F5; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; } }
         function stringToSeed(str) { let seed = 0; for (let i = 0; i < str.length; i++) { seed = (seed << 5) - seed + str.charCodeAt(i); seed |= 0; } return seed; }
         class SudokuGenerator { constructor(seed) { this.board = Array(9).fill(0).map(() => Array(9).fill(0)); this.random = mulberry32(seed); } isValid(row, col, num) { for (let i = 0; i < 9; i++) { if (this.board[row][i] === num || this.board[i][col] === num) return false; } const startRow = Math.floor(row / 3) * 3, startCol = Math.floor(col / 3) * 3; for (let i = 0; i < 3; i++) { for (let j = 0; j < 3; j++) { if (this.board[startRow + i][startCol + j] === num) return false; } } return true; } fillBoard() { const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]; for (let i = 0; i < 81; i++) { const row = Math.floor(i / 9), col = i % 9; if (this.board[row][col] === 0) { this.shuffle(numbers); for (const num of numbers) { if (this.isValid(row, col, num)) { this.board[row][col] = num; if (this.fillBoard()) return true; this.board[row][col] = 0; } } return false; } } return true; } createPuzzle(difficulty) { this.board = Array(9).fill(0).map(() => Array(9).fill(0)); this.fillBoard(); boardState.solution = this.board.map(row => [...row]); let attempts; switch (difficulty) { case 'easy': attempts = 35; break; case 'medium': attempts = 45; break; case 'hard': attempts = 55; break; default: attempts = 45; } let puzzle = this.board.map(row => [...row]); while (attempts > 0) { let row = Math.floor(this.random() * 9); let col = Math.floor(this.random() * 9); if (puzzle[row][col] !== 0) { puzzle[row][col] = 0; attempts--; } } return puzzle; } shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(this.random() * (i + 1));[array[i], array[j]] = [array[j], array[i]]; } } }
         
         function startTitleAnimation() { if (titleAnimationInterval) clearInterval(titleAnimationInterval); titleAnimationInterval = setInterval(() => { const num = document.createElement('div'); num.className = 'floating-number'; num.textContent = Math.floor(Math.random() * 9) + 1; num.style.left = `${Math.random() * 100}%`; num.style.top = `${Math.random() * 100}%`; num.style.animationDuration = `${Math.random() * 5 + 8}s`; titleAnimationContainer.appendChild(num); setTimeout(() => { num.style.animation = 'puff 1s forwards'; setTimeout(() => num.remove(), 1000); }, 7000); }, 500); }
         function stopTitleAnimation() { clearInterval(titleAnimationInterval); titleAnimationContainer.innerHTML = ''; }
-        function resetGame() { titleScreen.style.display = 'flex'; titleButtons.style.display = 'flex'; difficultyScreen.style.display = 'none'; viewModeScreen.style.display = 'none'; seedScreen.style.display = 'none'; startTitleAnimation(); gameBoard.style.display = 'none'; gameOverModal.style.display = 'none'; winModal.style.display = 'none'; lives = 3; mistakesMade = 0; isDailyPuzzle = false; isEasySeeMode = false; sudokuGrid.classList.remove('easy-see-mode'); updateLivesDisplay(); resetTimer(); }
+        function resetGame() { titleScreen.style.display = 'flex'; titleButtons.style.display = 'flex'; difficultyScreen.style.display = 'none'; viewModeScreen.style.display = 'none'; seedScreen.style.display = 'none'; startTitleAnimation(); gameBoard.style.display = 'none'; gameOverModal.style.display = 'none'; winModal.style.display = 'none'; lives = 3; mistakesMade = 0; isDailyPuzzle = false; isEasySeeMode = false; sudokuGrid.classList.remove('easy-see-mode'); updateLivesDisplay(); resetTimer(); const continueBtn = document.getElementById('continue-game-btn'); if (!localStorage.getItem('sudokuActiveGame') && continueBtn) { continueBtn.remove(); } }
         function startNewGameFromWin() { winModal.style.display = 'none'; gameBoard.style.display = 'none'; difficultyScreen.style.display = 'block'; resetTimer(); lives = 3; updateLivesDisplay(); }
-        newGameBtn.addEventListener('click', () => { playSound('click'); isDailyPuzzle = false; seedForNextGame = null; titleButtons.style.display = 'none'; difficultyScreen.style.display = 'block'; });
+        newGameBtn.addEventListener('click', () => { playSound('click'); isDailyPuzzle = false; seedForNextGame = null; titleButtons.style.display = 'none'; difficultyScreen.style.display = 'block'; localStorage.removeItem('sudokuActiveGame'); const continueBtn = document.getElementById('continue-game-btn'); if (continueBtn) continueBtn.remove(); });
         dailyPuzzleBtn.addEventListener('click', () => { playSound('click'); isDailyPuzzle = true; const today = new Date(); const dateString = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`; seedForNextGame = dateString; titleButtons.style.display = 'none'; difficultyScreen.style.display = 'block'; });
         seedGameBtn.addEventListener('click', () => { playSound('click'); isDailyPuzzle = false; titleButtons.style.display = 'none'; seedScreen.style.display = 'block'; });
         startFromSeedBtn.addEventListener('click', () => { const seedWord = seedInput.value.trim(); if(seedWord === ''){ alert("Please enter a seed word."); return; } playSound('click'); seedForNextGame = seedWord; seedScreen.style.display = 'none'; difficultyScreen.style.display = 'block'; });
         difficultyScreen.addEventListener('click', (e) => { if (e.target.classList.contains('control-btn')) { playSound('click'); currentDifficulty = e.target.dataset.difficulty; difficultyScreen.style.display = 'none'; viewModeScreen.style.display = 'block'; } });
         viewModeScreen.addEventListener('click', (e) => { if (e.target.classList.contains('control-btn')) { playSound('click'); const viewMode = e.target.dataset.view; isEasySeeMode = (viewMode === 'easy-see'); if (backgroundMusic.paused) { startMusic(); } viewModeScreen.style.display = 'none'; const options = { difficulty: currentDifficulty }; if (seedForNextGame) { options.seed = stringToSeed(seedForNextGame.toLowerCase()); } startGame(options); seedForNextGame = null; } });
-        function startGame(options) { stopTitleAnimation(); titleScreen.style.display = 'none'; difficultyScreen.style.display = 'none'; seedScreen.style.display = 'none'; gameBoard.style.display = 'block'; if (isEasySeeMode) sudokuGrid.classList.add('easy-see-mode'); else sudokuGrid.classList.remove('easy-see-mode'); const difficulty = options.difficulty; const seed = options.seed || new Date().getTime(); currentDifficulty = difficulty; const generator = new SudokuGenerator(seed); boardState.puzzle = generator.createPuzzle(difficulty); boardState.playerBoard = boardState.puzzle.map(row => [...row]); boardState.candidates = Array(81).fill(0).map(() => new Set()); createGrid(boardState.puzzle); createControls(); lives = 3; mistakesMade = 0; revealsLeft = 3; updateLivesDisplay(); updateXPBar(); updateCompletedNumberButtons(); resetTimer(); startTimer(); if(isColorMode) updateColorMode(); }
+        function startGame(options) { stopTitleAnimation(); titleScreen.style.display = 'none'; difficultyScreen.style.display = 'none'; seedScreen.style.display = 'none'; gameBoard.style.display = 'block'; if (isEasySeeMode) sudokuGrid.classList.add('easy-see-mode'); else sudokuGrid.classList.remove('easy-see-mode'); const difficulty = options.difficulty; const seed = options.seed || new Date().getTime(); currentDifficulty = difficulty; const generator = new SudokuGenerator(seed); boardState.puzzle = generator.createPuzzle(difficulty); boardState.playerBoard = boardState.puzzle.map(row => [...row]); boardState.candidates = Array(81).fill(0).map(() => new Set()); createGrid(boardState.puzzle); createControls(); lives = 3; mistakesMade = 0; revealsLeft = 3; updateLivesDisplay(); updateXPBar(); updateCompletedNumberButtons(); resetTimer(); startTimer(); if(isColorMode) updateColorMode(); saveActiveGame(); }
         function createGrid(puzzle) { sudokuGrid.innerHTML = ''; for (let row = 0; row < 9; row++) { for (let col = 0; col < 9; col++) { const cell = document.createElement('div'); cell.classList.add('sudoku-cell'); cell.dataset.row = row; cell.dataset.col = col; const value = puzzle[row][col]; if (value !== 0) { cell.textContent = value; cell.classList.add('given'); } cell.addEventListener('click', () => handleCellClick(cell)); sudokuGrid.appendChild(cell); } } }
-        function recreateGridFromSave() {
-            sudokuGrid.innerHTML = '';
-            for (let row = 0; row < 9; row++) {
-                for (let col = 0; col < 9; col++) {
-                    const cell = document.createElement('div');
-                    cell.classList.add('sudoku-cell');
-                    cell.dataset.row = row;
-                    cell.dataset.col = col;
-                    
-                    const playerValue = boardState.playerBoard[row][col];
-                    const puzzleValue = boardState.puzzle[row][col];
-                    
-                    if (puzzleValue !== 0) {
-                        cell.textContent = puzzleValue;
-                        cell.classList.add('given');
-                    } else if (playerValue !== 0) {
-                        cell.textContent = playerValue;
-                        cell.classList.add('correct');
-                    } else {
-                        const cellIndex = row * 9 + col;
-                        boardState.candidates[cellIndex] = new Set(boardState.candidates[cellIndex]);
-                        if (boardState.candidates[cellIndex].size > 0) {
-                            drawCandidates(cell, cellIndex);
-                        }
-                    }
-                    
-                    cell.addEventListener('click', () => handleCellClick(cell));
-                    sudokuGrid.appendChild(cell);
-                }
-            }
-        }
+        function recreateGridFromSave() { sudokuGrid.innerHTML = ''; for (let row = 0; row < 9; row++) { for (let col = 0; col < 9; col++) { const cell = document.createElement('div'); cell.classList.add('sudoku-cell'); cell.dataset.row = row; cell.dataset.col = col; const playerValue = boardState.playerBoard[row][col]; const puzzleValue = boardState.puzzle[row][col]; if (puzzleValue !== 0) { cell.textContent = puzzleValue; cell.classList.add('given'); } else if (playerValue !== 0) { cell.textContent = playerValue; cell.classList.add('correct'); } else { const cellIndex = row * 9 + col; boardState.candidates[cellIndex] = new Set(boardState.candidates[cellIndex]); if (boardState.candidates[cellIndex].size > 0) { drawCandidates(cell, cellIndex); } } cell.addEventListener('click', () => handleCellClick(cell)); sudokuGrid.appendChild(cell); } } }
         function handleCellClick(cell) { const hasCandidateGrid = cell.querySelector('.candidate-grid'); const isGivenOrCorrect = cell.classList.contains('given') || cell.classList.contains('correct'); if (isGivenOrCorrect && !hasCandidateGrid) { highlightMatchingNumbers(cell); if (selectedCell) { selectedCell.classList.remove('selected'); selectedCell = null; } } else { selectCell(cell); } }
         function clearNumberHighlights() { document.querySelectorAll('.highlighted-number').forEach(c => c.classList.remove('highlighted-number')); }
         function highlightMatchingNumbers(targetCell) { clearNumberHighlights(); const number = targetCell.textContent; if (!number) return; document.querySelectorAll('.sudoku-cell').forEach(cell => { if (cell.textContent === number) { cell.classList.add('highlighted-number'); } }); }
         function createControls() { controls.innerHTML = ''; for (let i = 1; i <= 9; i++) { const btn = document.createElement('button'); btn.classList.add('control-btn'); btn.textContent = i; btn.addEventListener('click', () => inputNumber(i)); controls.appendChild(btn); } const candidateBtn = document.createElement('button'); candidateBtn.classList.add('control-btn'); candidateBtn.id = 'candidate-btn'; candidateBtn.textContent = 'Notes'; candidateBtn.addEventListener('click', toggleCandidateMode); controls.appendChild(candidateBtn); if (playerData.unlocked.features.includes('feature-reveal')) { const revealBtn = document.createElement('button'); revealBtn.classList.add('control-btn'); revealBtn.id = 'reveal-btn'; revealBtn.textContent = `Reveal (${revealsLeft})`; revealBtn.addEventListener('click', useReveal); controls.appendChild(revealBtn); } }
         function selectCell(cell) { clearNumberHighlights(); if (selectedCell) { selectedCell.classList.remove('selected'); } selectedCell = cell; selectedCell.classList.add('selected'); }
-        function inputNumber(num) {
-            if (!selectedCell || selectedCell.classList.contains('given') || selectedCell.classList.contains('correct')) {
-                playSound('click');
-                return;
-            }
-            const row = parseInt(selectedCell.dataset.row);
-            const col = parseInt(selectedCell.dataset.col);
-            const cellIndex = row * 9 + col;
-
-            if (isCandidateMode) {
-                playSound('click');
-                selectedCell.innerHTML = '';
-                if (boardState.candidates[cellIndex].has(num)) {
-                    boardState.candidates[cellIndex].delete(num);
-                } else {
-                    boardState.candidates[cellIndex].add(num);
-                }
-                drawCandidates(selectedCell, cellIndex);
-                if (!playerData.achievements.stats.notesUsed) {
-                    playerData.achievements.stats.notesUsed = true;
-                    unlockAchievement('noteTaker');
-                }
-            } else {
-                // ✨ MODIFIED: This logic now accepts any valid move and checks for a win.
-                selectedCell.classList.add('glow-animation');
-                setTimeout(() => selectedCell.classList.remove('glow-animation'), 700);
-                createRipple(selectedCell);
-                selectedCell.innerHTML = '';
-                selectedCell.textContent = num;
-                selectedCell.classList.add('correct');
-                boardState.playerBoard[row][col] = num;
-                playSound('correct');
-                addXP(10);
-                highlightMatchingNumbers(selectedCell);
-                checkCompletion(); // Call the new win check
-                if (isColorMode) updateColorMode();
-                selectedCell.classList.remove('selected');
-                selectedCell = null;
-            }
-        }
+        function inputNumber(num) { if (!selectedCell || selectedCell.classList.contains('given') || selectedCell.classList.contains('correct')) { playSound('click'); return; } const row = parseInt(selectedCell.dataset.row); const col = parseInt(selectedCell.dataset.col); const cellIndex = row * 9 + col; if (isCandidateMode) { playSound('click'); selectedCell.innerHTML = ''; if (boardState.candidates[cellIndex].has(num)) boardState.candidates[cellIndex].delete(num); else boardState.candidates[cellIndex].add(num); drawCandidates(selectedCell, cellIndex); if (!playerData.achievements.stats.notesUsed) { playerData.achievements.stats.notesUsed = true; unlockAchievement('noteTaker'); } } else { if (boardState.solution[row][col] === num) { selectedCell.classList.add('glow-animation'); setTimeout(() => selectedCell.classList.remove('glow-animation'), 700); createRipple(selectedCell); selectedCell.innerHTML = ''; selectedCell.textContent = num; selectedCell.classList.add('correct'); boardState.playerBoard[row][col] = num; playSound('correct'); addXP(10); highlightMatchingNumbers(selectedCell); checkCompletion(row, col, num); if (isColorMode) updateColorMode(); selectedCell.classList.remove('selected'); selectedCell = null; } else { playSound('error'); lives--; mistakesMade++; updateLivesDisplay(); selectedCell.classList.add('error'); setTimeout(() => { selectedCell.classList.remove('error'); }, 500); if (lives <= 0) { handleGameOver(); } } } saveActiveGame(); }
         function createRipple(cell) { const ripple = document.createElement("span"); ripple.classList.add("ripple"); cell.appendChild(ripple); setTimeout(() => ripple.remove(), 600); }
         function drawCandidates(cell, cellIndex) { let candidateGrid = cell.querySelector('.candidate-grid'); if (!candidateGrid) { candidateGrid = document.createElement('div'); candidateGrid.className = 'candidate-grid'; for (let i = 1; i <= 9; i++) { const candidateCell = document.createElement('div'); candidateCell.className = 'candidate-cell'; candidateCell.dataset.num = i; candidateGrid.appendChild(candidateCell); } cell.appendChild(candidateGrid); } const candidates = boardState.candidates[cellIndex]; candidateGrid.querySelectorAll('.candidate-cell').forEach(c => { const num = parseInt(c.dataset.num); c.textContent = candidates.has(num) ? num : ''; }); }
         function toggleCandidateMode() { playSound('click'); isCandidateMode = !isCandidateMode; document.getElementById('candidate-btn').classList.toggle('active', isCandidateMode); }
@@ -577,31 +481,11 @@
         function updateCompletedNumberButtons() { for (let num = 1; num <= 9; num++) { let count = 0; for (let r = 0; r < 9; r++) { for (let c = 0; c < 9; c++) { if (boardState.playerBoard[r][c] === num) count++; } } const btn = Array.from(controls.querySelectorAll('.control-btn')).find(b => parseInt(b.textContent) === num); if (btn) { if (count === 9) btn.classList.add('disabled'); else btn.classList.remove('disabled'); } } }
         function recordDailyCompletion() { const today = new Date(); const dateString = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`; let completions = JSON.parse(localStorage.getItem('sudokuDailyCompletions')) || []; if (!completions.includes(dateString)) { completions.push(dateString); localStorage.setItem('sudokuDailyCompletions', JSON.stringify(completions)); saveData(); } if (completions.length >= 7) unlockAchievement('weekender'); if (completions.length >= 30) unlockAchievement('dedicated'); }
         function checkWinAchievements() { playerData.achievements.stats.gamesWon = (playerData.achievements.stats.gamesWon || 0) + 1; unlockAchievement('firstSteps'); if(currentDifficulty === 'easy' && secondsElapsed < 300) { unlockAchievement('quickThinker'); } if(mistakesMade === 0) { unlockAchievement('perfectionist'); playerData.achievements.stats.perfectGames = (playerData.achievements.stats.perfectGames || 0) + 1; if(currentDifficulty === 'hard' && playerData.achievements.stats.perfectGames >= 10) { unlockAchievement('sudokuMaster'); } } if(playerData.achievements.stats.gamesWon >= 10) { unlockAchievement('persistent'); } if(currentDifficulty === 'hard') { unlockAchievement('brainiac'); } }
-        
-        // ✨ REPLACED: This function is now more robust.
-        function checkCompletion() {
-            updateCompletedNumberButtons();
-            const isFull = boardState.playerBoard.every(r => r.every(cell => cell !== 0));
-            if (isFull) {
-                if (isBoardSolutionValid(boardState.playerBoard)) {
-                    stopTimer();
-                    const finalTime = secondsElapsed;
-                    winTimeMessage.textContent = `Your time: ${formatTime(finalTime)}`;
-                    saveBestTime(finalTime, currentDifficulty);
-                    if (isDailyPuzzle) { recordDailyCompletion(); }
-                    playSound('win');
-                    addXP(100);
-                    checkWinAchievements();
-                    winModal.style.display = 'flex';
-                    saveData();
-                }
-            }
-        }
-
+        function checkCompletion(row, col, num) { updateCompletedNumberButtons(); let isGameWon = boardState.playerBoard.every(r => r.every(cell => cell !== 0)); if (isGameWon) { stopTimer(); const finalTime = secondsElapsed; winTimeMessage.textContent = `Your time: ${formatTime(finalTime)}`; saveBestTime(finalTime, currentDifficulty); if (isDailyPuzzle) { recordDailyCompletion(); } playSound('win'); addXP(100); checkWinAchievements(); winModal.style.display = 'flex'; localStorage.removeItem('sudokuActiveGame'); saveData(); return; } const btn = Array.from(controls.querySelectorAll('.control-btn')).find(b => parseInt(b.textContent) === num && !b.id); if (btn && btn.classList.contains('disabled') && !btn.classList.contains('animation-done')) { showCompletionMessage(`All ${num}s Done!`); const numCells = Array.from(document.querySelectorAll(`.sudoku-cell`)).filter(c => (c.textContent == num)); animateCompletion(numCells); btn.classList.add('animation-done'); } if (boardState.playerBoard[row].every(val => val !== 0)) { showCompletionMessage('Row Complete!'); const rowCells = []; for (let c = 0; c < 9; c++) rowCells.push(getCell(row, c)); animateCompletion(rowCells); } if (boardState.playerBoard.every(r => r[col] !== 0)) { showCompletionMessage('Column Complete!'); const colCells = []; for (let r = 0; r < 9; r++) colCells.push(getCell(r, col)); animateCompletion(colCells); } const startRow = Math.floor(row / 3) * 3, startCol = Math.floor(col / 3) * 3; let isGridComplete = true; for (let r = 0; r < 3; r++) { for (let c = 0; c < 3; c++) { if (boardState.playerBoard[startRow + r][startCol + c] === 0) isGridComplete = false; } } if (isGridComplete) { showCompletionMessage('Grid Complete!'); const gridCells = []; for (let r = 0; r < 3; r++) { for (let c = 0; c < 3; c++) gridCells.push(getCell(startRow + r, startCol + c)); } animateCompletion(gridCells); } }
         function updateColorMode() { if (!isColorMode) { document.querySelectorAll('.color-mode-one').forEach(c => c.classList.remove('color-mode-one')); return; } for (let r = 0; r < 9; r++) { for (let c = 0; c < 9; c++) { const cell = getCell(r, c); cell.classList.remove('color-mode-one'); if (boardState.playerBoard[r][c] === 0) { let possible = []; for (let n = 1; n <= 9; n++) { if (isValidPlacement(boardState.playerBoard, r, c, n)) { possible.push(n); } } if (possible.length === 1) cell.classList.add('color-mode-one'); } } } }
         function isValidPlacement(board, row, col, num) { for (let i = 0; i < 9; i++) { if (board[row][i] === num || board[i][col] === num) return false; } const startRow = Math.floor(row / 3) * 3, startCol = Math.floor(col / 3) * 3; for (let i = 0; i < 3; i++) { for (let j = 0; j < 3; j++) { if (board[startRow + i][startCol + j] === num) return false; } } return true; }
         function getCell(row, col) { return sudokuGrid.querySelector(`[data-row='${row}'][data-col='${col}']`); }
-        function handleGameOver() { stopTimer(); gameOverModal.style.display = 'flex'; }
+        function handleGameOver() { stopTimer(); gameOverModal.style.display = 'flex'; localStorage.removeItem('sudokuActiveGame'); }
         function updateLivesDisplay() { livesContainer.textContent = '♥ '.repeat(lives); }
         function displayCalendar() { calendarGrid.innerHTML = ''; const year = calendarDate.getFullYear(); const month = calendarDate.getMonth(); const today = new Date(); calendarMonthYear.textContent = `${calendarDate.toLocaleString('default', { month: 'long' })} ${year}`; const firstDayOfMonth = new Date(year, month, 1).getDay(); const daysInMonth = new Date(year, month + 1, 0).getDate(); const completions = JSON.parse(localStorage.getItem('sudokuDailyCompletions')) || []; const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; weekdays.forEach(day => { const weekdayCell = document.createElement('div'); weekdayCell.classList.add('calendar-weekday'); weekdayCell.textContent = day; calendarGrid.appendChild(weekdayCell); }); for (let i = 0; i < firstDayOfMonth; i++) { const emptyCell = document.createElement('div'); emptyCell.classList.add('calendar-day', 'empty'); calendarGrid.appendChild(emptyCell); } for (let day = 1; day <= daysInMonth; day++) { const dayCell = document.createElement('div'); dayCell.classList.add('calendar-day'); dayCell.textContent = day; const dateString = `${year}-${month + 1}-${day}`; if (completions.includes(dateString)) { dayCell.innerHTML = `<span>${day}</span><span class="medal">🥇</span>`; } if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) { dayCell.classList.add('today'); } calendarGrid.appendChild(dayCell); } calendarModal.style.display = 'flex'; }
         
@@ -664,7 +548,7 @@
         function applyTheme(themeId, isInitialLoad = false) { const theme = themeStyles[themeId]; for (const [key, value] of Object.entries(theme)) { root.style.setProperty(key, value); } if(!isInitialLoad) playSound('click'); document.body.dataset.theme = themeId; saveData(); }
         function applyFont(fontId, isInitialLoad = false) { document.body.style.fontFamily = fontStyles[fontId]; if(!isInitialLoad) playSound('click'); document.body.dataset.font = fontId; saveData(); }
         function toggleColorMode() { isColorMode = !isColorMode; const colorModeBtn = document.getElementById('color-mode-btn'); if (colorModeBtn) { colorModeBtn.textContent = `Color Mode: ${isColorMode ? 'ON' : 'OFF'}`; } updateColorMode(); playSound('click'); }
-        function useReveal() { if (revealsLeft <= 0 || !selectedCell || selectedCell.classList.contains('given') || selectedCell.classList.contains('correct')) return; playSound('click'); const row = parseInt(selectedCell.dataset.row); const col = parseInt(selectedCell.dataset.col); const solution = boardState.solution[row][col]; const wasCandidateMode = isCandidateMode; isCandidateMode = false; inputNumber(solution); isCandidateMode = wasCandidateMode; revealsLeft--; const revealBtn = document.getElementById('reveal-btn'); if (revealBtn) { revealBtn.textContent = `Reveal (${revealsLeft})`; if(revealsLeft <= 0) revealBtn.classList.add('disabled'); } }
+        function useReveal() { if (revealsLeft <= 0 || !selectedCell || selectedCell.classList.contains('given') || selectedCell.classList.contains('correct')) return; playSound('click'); const row = parseInt(selectedCell.dataset.row); const col = parseInt(selectedCell.dataset.col); const solution = boardState.solution[row][col]; const wasCandidateMode = isCandidateMode; isCandidateMode = false; inputNumber(solution); isCandidateMode = wasCandidateMode; revealsLeft--; const revealBtn = document.getElementById('reveal-btn'); if (revealBtn) { revealBtn.textContent = `Reveal (${revealsLeft})`; if(revealsLeft <= 0) revealBtn.classList.add('disabled'); } saveActiveGame(); }
         
         startTitleAnimation();
         loadData();
